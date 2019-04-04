@@ -1,0 +1,56 @@
+{
+  "name": "3box-account",
+  "version": "0.0.1",
+  "description": "Account management for 3Box",
+  "scripts": {
+    "lint": "./node_modules/.bin/standard --verbose src/**",
+    "test": "jest --detectOpenHandles --coverage",
+    "build:dist": "./node_modules/.bin/webpack --config webpack.config.js --mode=development",
+    "build:dist:watch": "./node_modules/.bin/webpack --config webpack.config.js --mode=development --watch",
+    "build:dist:prod": "./node_modules/.bin/webpack --config webpack.config.js --mode=production --output-filename index.min.js",
+    "build": "npm run build:dist; npm run build:dist:prod",
+    "prepublishOnly": "npm run build",
+    "example-server:start": "http-server -c-1 -p 54345 public",
+    "example:start": "npm run build:dist:watch & npm run example-server:start"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "lib"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3box/3box-account.git"
+  },
+  "author": "3box <team@3box.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/3box/3box-account/issues"
+  },
+  "homepage": "https://github.com/3box/3box-account#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.1.2",
+    "ethers": "^4.0.20",
+    "postmsg-rpc": "^2.4.0",
+    "store": "^2.0.12",
+    "tweetnacl": "^1.0.1",
+    "tweetnacl-util": "^0.15.0"
+  },
+  "devDependencies": {
+    "3box": "file:../3box-js",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-loader": "^8.0.5",
+    "standard": "^12.0.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  }
+}
