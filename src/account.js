@@ -4,7 +4,7 @@ nacl.util = naclutil
 import crypto from 'crypto'
 import store from 'store'
 
-const AUTH_SERVICE_URL = 'http://localhost:3000'
+const AUTH_SERVICE_URL = 'http://localhost:3003'
 
 
 class Account {
