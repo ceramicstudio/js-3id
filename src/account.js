@@ -43,9 +43,10 @@ class Account {
   }
 
   async create (email, password) {
-    const authProof = crypto.createHash('sha256').update(email + password).digest('hex')
+    const auth = email + password
+    const authProof = crypto.createHash('sha256').update(auth).digest('hex')
     const e1Salt = Buffer.from(nacl.randomBytes(32)).toString('hex')
-    const e1 = crypto.pbkdf2Sync(authProof, e1Salt, 20000, 32, 'sha256')
+    const e1 = crypto.pbkdf2Sync(auth, e1Salt, 20000, 32, 'sha256')
     const seed = nacl.randomBytes(32)
     const e0 = nacl.randomBytes(32)
     const nonceSeed = nacl.randomBytes(24)
@@ -81,12 +82,13 @@ class Account {
   }
 
   async auth (email, password) {
-    const authProof = crypto.createHash('sha256').update(email + password).digest('hex')
+    const auth = email + password
+    const authProof = crypto.createHash('sha256').update(auth).digest('hex')
 
     const res = await fetch(`${AUTH_SERVICE_URL}/authenticate?auth-proof=${authProof}`)
     if (res.ok) {
       const { data } = await res.json()
-      const e1 = crypto.pbkdf2Sync(authProof, data['key-salt'], 20000, 32, 'sha256')
+      const e1 = crypto.pbkdf2Sync(auth, data['key-salt'], 20000, 32, 'sha256')
       const e0 = nacl.secretbox.open(
         nacl.util.decodeBase64(data['enc-secret'].ciphertext),
         nacl.util.decodeBase64(data['enc-secret'].nonce),
