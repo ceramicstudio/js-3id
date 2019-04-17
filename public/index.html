@@ -9,10 +9,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
   <body>
+    <div align="center" id="dispError" style="color: red;"></div>
     <div id="viewMain" align="center" style="display: none; margin-top: 25px;">
       <button id="auth" class="btn btn-primary">Log in</button>
       </br>
       <button id="create" class="btn btn-primary">Create Account</button>
+      </br>
+      <button id="cancel" class="btn btn-primary">Cancel</button>
     </div>
     <div id="viewCreate" align="center" style="display: none; margin-top: 25px;">
       <input type="text" id="emailAddrCreate" placeholder="Email Address" />
@@ -22,7 +25,6 @@
       <input type="password" id="pw2Create" placeholder="Repeat Password" />
       </br>
       <button id="create2" class="btn btn-primary">Create Account</button>
-      <div align="center" id="createError" style="color: red;"></div>
     </div>
     <div id="viewAuth" align="center" style="display: none; margin-top: 25px;">
       <input type="text" id="emailAddrAuth" placeholder="Email Address" />
@@ -30,7 +32,6 @@
       <input type="password" id="pw1Auth" placeholder="Password" />
       </br>
       <button id="auth2" class="btn btn-primary">Log in</button>
-      <div align="center" id="authError" style="color: red;"></div>
     </div>
     <div id="viewConsent" align="center" style="display: none; margin-top: 25px;">
       </br>
@@ -38,6 +39,7 @@
       </br>
       </br>
       <button id="acceptConsent" class="btn btn-primary">Accept</button>
+      <button id="rejectConsent" class="btn btn-primary">Reject</button>
     </div>
     <div align="center" id="displaySeed"></div>
   </body>

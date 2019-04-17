@@ -1,3 +1,4 @@
+import { expose } from 'postmsg-rpc'
 import nacl from 'tweetnacl'
 import naclutil from 'tweetnacl-util'
 nacl.util = naclutil
@@ -8,13 +9,54 @@ const AUTH_SERVICE_URL = 'http://localhost:3003'
 
 
 class Account {
-  constructor (opts = {}) {
+  constructor (actions, opts = {}) {
+    this.actions = actions
     this.persist = !opts.noPersist
     this.allowedOrigins = {}
     if (this.persist) {
       this._seed = store.get('seed')
       this.allowedOrigins = store.get('allowedOrigins')
     }
+    this.exposeRpc()
+  }
+
+  exposeRpc () {
+    expose('auth', this.authenticateApp.bind(this), {
+      postMessage: window.parent.postMessage.bind(window.parent),
+      getMessageData: e => {
+        if (e.data.sender === 'postmsg-rpc/client') {
+          e.data.args.unshift(e.origin)
+        }
+        return e.data
+      }
+    })
+  }
+
+  async authenticateApp (origin, spaces) {
+    console.log('ori', origin)
+
+    if (!this.seed) {
+      let err
+      do {
+        const authInput = await this.actions.getAuthInput()
+        if (authInput.type === 'create') {
+          err = await this.create(authInput.email, authInput.pass)
+        } else if (authInput.type === 'auth') {
+          err = await this.auth(authInput.email, authInput.pass)
+        } else if (authInput.type === 'cancel') {
+          throw new Error('Access denied')
+        }
+        if (err) {
+          this.actions.displayError(err)
+        }
+      } while (err)
+    }
+    if (!this.isOriginAllowed(origin)) {
+      await this.actions.getOriginConsent(origin)
+      // the above throws if consent not given
+      this.allowOrigin(origin)
+    }
+    return this.seed
   }
 
   get seed () {
@@ -73,12 +115,10 @@ class Account {
     }
     const res = await fetch(AUTH_SERVICE_URL + '/create', opts)
     console.log('res', res)
-    if (res.ok) {
-      this.seed = Buffer.from(seed).toString('hex')
-      return this.seed
-    } else {
-      throw new Error((await res.json()).message)
+    if (!res.ok) {
+      return (await res.json()).message
     }
+    this.seed = Buffer.from(seed).toString('hex')
   }
 
   async auth (email, password) {
@@ -86,24 +126,22 @@ class Account {
     const authProof = crypto.createHash('sha256').update(auth).digest('hex')
 
     const res = await fetch(`${AUTH_SERVICE_URL}/authenticate?auth-proof=${authProof}`)
-    if (res.ok) {
-      const { data } = await res.json()
-      const e1 = crypto.pbkdf2Sync(auth, data['key-salt'], 20000, 32, 'sha256')
-      const e0 = nacl.secretbox.open(
-        nacl.util.decodeBase64(data['enc-secret'].ciphertext),
-        nacl.util.decodeBase64(data['enc-secret'].nonce),
-        e1
-      )
-      const seed = nacl.secretbox.open(
-        nacl.util.decodeBase64(data['enc-seed'].ciphertext),
-        nacl.util.decodeBase64(data['enc-seed'].nonce),
-        e0
-      )
-      this.seed = Buffer.from(seed).toString('hex')
-      return this.seed
-    } else {
-      throw new Error((await res.json()).message)
+    if (!res.ok) {
+      return (await res.json()).message
     }
+    const { data } = await res.json()
+    const e1 = crypto.pbkdf2Sync(auth, data['key-salt'], 20000, 32, 'sha256')
+    const e0 = nacl.secretbox.open(
+      nacl.util.decodeBase64(data['enc-secret'].ciphertext),
+      nacl.util.decodeBase64(data['enc-secret'].nonce),
+      e1
+    )
+    const seed = nacl.secretbox.open(
+      nacl.util.decodeBase64(data['enc-seed'].ciphertext),
+      nacl.util.decodeBase64(data['enc-seed'].nonce),
+      e0
+    )
+    this.seed = Buffer.from(seed).toString('hex')
   }
 }
 
