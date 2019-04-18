@@ -1,8 +1,14 @@
 import Account from './account'
 
-const getOriginConsent = (origin) => {
+const getOriginConsent = (origin, spaces) => {
   viewConsent.style.display = 'block'
   consentText.innerHTML = `Allow ${origin} to access your 3Box account`
+  if (spaces.length) {
+    consentText.innerHTML += '<br />And spaces:'
+    spaces.map(space => {
+      consentText.innerHTML += `<br />${space}`
+    })
+  }
   return new Promise((resolve, reject) => {
     acceptConsent.addEventListener('click', () => {
       viewConsent.style.display = 'none'
