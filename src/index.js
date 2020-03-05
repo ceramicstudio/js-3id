@@ -1,82 +1,40 @@
-import Account from './account'
+import { expose, caller } from 'postmsg-rpc'
+const IdentityWallet = require('identity-wallet')
+const seed = '0x8C8F7aa1512db8b5150f36db0e1409749E234a2c'
 
-const getOriginConsent = (origin, spaces) => {
-  viewConsent.style.display = 'block'
-  consentText.innerHTML = `Allow ${origin} to access your 3Box account`
-  if (spaces.length) {
-    consentText.innerHTML += '<br />And spaces:'
-    spaces.map(space => {
-      consentText.innerHTML += `<br />${space}`
-    })
+window.ethereum.enable().then(addresses => {
+  console.log(addresses)
+})
+
+// hook into consent ui
+const getConsent = async (req) => {
+  console.log('get consent!')
+  const display = caller('display', {postMessage: window.parent.postMessage.bind(window.parent)})
+  await display()
+  console.log('consentreq')
+  console.log(req)
+  reqPayload.innerHTML = JSON.stringify(req)
+  // return false
+
+  const result = await new Promise((resolve, reject) => {
+    accept.addEventListener('click', () => { resolve(true) })
+    decline.addEventListener('click', () => { resolve(false )})
+  })
+
+  const hide = caller('hide', {postMessage: window.parent.postMessage.bind(window.parent)})
+  await hide()
+
+  return result
+}
+
+const idWallet = new IdentityWallet(getConsent, { seed })
+const provider = idWallet.get3idProvider()
+
+const connectService = {
+  providerRelay: async (message) => {
+    const res = await provider.send(message, 'localhost')
+    return JSON.stringify(res)
   }
-  return new Promise((resolve, reject) => {
-    acceptConsent.addEventListener('click', () => {
-      viewConsent.style.display = 'none'
-      resolve()
-    })
-    rejectConsent.addEventListener('click', () => {
-      viewConsent.style.display = 'none'
-      reject('Access denied')
-    })
-  })
 }
 
-const getAuthInput = () => {
-  viewMain.style.display = 'block'
-
-  return new Promise((resolve, reject) => {
-    const createAccount = async () => {
-      viewMain.style.display = 'none'
-      dispError.style.display = 'none'
-      viewCreate.style.display = 'block'
-
-      create2.addEventListener('click', async () => {
-        // TODO - validate input
-        // TODO - check if pw1 = pw2
-        const email = emailAddrCreate.value
-        const pass = pw1Create.value
-        viewCreate.style.display = 'none'
-        resolve({
-          type: 'create',
-          email,
-          pass
-        })
-      })
-    }
-    const authenticateAccount = () => {
-      viewMain.style.display = 'none'
-      dispError.style.display = 'none'
-      viewAuth.style.display = 'block'
-
-      auth2.addEventListener('click', async () => {
-        // TODO - validate input
-        const email = emailAddrAuth.value
-        const pass = pw1Auth.value
-        viewAuth.style.display = 'none'
-        resolve({
-          type: 'auth',
-          email,
-          pass
-        })
-      })
-    }
-    auth.addEventListener('click', authenticateAccount)
-    create.addEventListener('click', createAccount)
-    cancel.addEventListener('click', () => {
-      resolve({ type: 'cancel' })
-    })
-  })
-}
-
-const displayError = message => {
-  dispError.style.display = 'block'
-  dispError.innerHTML = message
-}
-
-const opts = { noPersist: true }
-const actions = {
-  getAuthInput,
-  getOriginConsent,
-  displayError
-}
-const account = new Account(actions, opts)
+expose('send', connectService.providerRelay, {postMessage: window.parent.postMessage.bind(window.parent)})
