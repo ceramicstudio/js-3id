@@ -1,6 +1,5 @@
 import { caller } from 'postmsg-rpc'
 
-
 class ThreeIdProviderProxy {
   constructor (postMessage) {
     this.postMessage = postMessage
@@ -12,9 +11,12 @@ class ThreeIdProviderProxy {
       callback = origin
       origin = null
     }
+    if (req.method != '3id_newAuthMethodPoll' && req.method != "3id_newLinkPoll") {
+      console.log('request')
+      console.log(req)
+    }
     const send = caller('send', {postMessage: this.postMessage})
     const res = await send(req)
-    console.log(res)
     // TODO
     callback(undefined, JSON.parse(res))
     return JSON.parse(res)
