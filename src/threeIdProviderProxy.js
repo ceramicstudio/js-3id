@@ -11,10 +11,10 @@ class ThreeIdProviderProxy {
       callback = origin
       origin = null
     }
-    if (req.method != '3id_newAuthMethodPoll' && req.method != "3id_newLinkPoll") {
-      console.log('request')
-      console.log(req)
-    }
+    // if (req.method != '3id_newAuthMethodPoll' && req.method != "3id_newLinkPoll") {
+    //   console.log('request')
+    //   console.log(req)
+    // }
     const send = caller('send', {postMessage: this.postMessage})
     const res = await send(req)
     // TODO

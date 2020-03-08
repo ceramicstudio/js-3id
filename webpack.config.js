@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './iframe/index.js',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'public'),
@@ -25,7 +25,23 @@ module.exports = {
             ]
           }
         }
-      }
+      },
+      {
+     test: /\.less$/,
+     use: [
+       {
+         loader: "css-loader",
+         options: {
+           sourceMap: true,
+           modules: true,
+           // localIdentName: "[local]___[hash:base64:5]"
+         }
+       },
+       {
+         loader: "less-loader"
+       }
+     ]
+    }
     ]
   },
   node: {
@@ -36,4 +52,3 @@ module.exports = {
     child_process: 'empty'
   }
 };
-
