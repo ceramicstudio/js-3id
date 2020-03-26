@@ -2,6 +2,8 @@ import { expose, caller } from 'postmsg-rpc'
 import { fakeIpfs } from '../../identity-wallet-js/lib/utils.js'
 const IdentityWallet = require('../../identity-wallet-js/lib/identity-wallet.js')
 const ThreeId = require('../../3box-js/lib/3id/index.js')
+import { createLink } from '3id-blockchain-utils'
+const Url = require('url-parse');
 
 class IdentityWalletService {
   constructor () {
@@ -11,26 +13,35 @@ class IdentityWalletService {
 
   async externalAuth({ address, spaces, type }) {
     let threeId
-    console.log(type)
-  	if (type === '3id-auth') {
+  	if (type === '3id_auth') {
   		// request signature with new 3ID auth message
   		// verify that signature was made from "address"
   		// return signature
-      return seed
+      // return seed
+      // TODO IMPLEMENT full migration
   	} else if (type === '3id_migration') {
   		// if (!spaces) {
   		// 	// we want to make a full migration
   		// 	// spaces = // get all spaces the user has from the 3box list spaces api
+      // TODO IMPELEMENT full migration
   		// }
-      // TODO verify that signature from same address
-      threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
-
+      threeId = await this.getThreedId(address)
       if (spaces.length > 0) {
         await threeId.authenticate(spaces)
       }
-
       return threeId.serializeState()
-  	}
+  	} else if (type === '3id_createLink' ) {
+      threeId = await this.getThreedId(address)
+      const proof = await createLink(threeId.DID, address, this.externalProvider)
+      return proof
+    }
+  }
+
+  async getThreedId (address) {
+    if(!this._threeId) {
+      this._threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
+    }
+    return this._threeId
   }
 
   async displayIframe() {
@@ -49,8 +60,8 @@ class IdentityWalletService {
   }
 
   async providerRelay(message) {
-    // TOOD origin
-    const res = await this.provider.send(message, 'localhost')
+    const domain = new Url(document.referrer).hostname
+    const res = await this.provider.send(message, domain)
     return JSON.stringify(res)
   }
 }
