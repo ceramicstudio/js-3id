@@ -1,4 +1,4 @@
-const style = require('style-loader!./style.less')
+const style = require('style-loader!./../style.less')
 
 const requestTemplate = (data) => `
   ${header(data)}

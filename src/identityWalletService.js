@@ -25,19 +25,17 @@ class IdentityWalletService {
   		// 	// spaces = // get all spaces the user has from the 3box list spaces api
       // TODO IMPELEMENT full migration
   		// }
-      threeId = await this.getThreedId(address)
+      threeId = await this.getThreeId(address)
       if (spaces.length > 0) {
         await threeId.authenticate(spaces)
       }
       return threeId.serializeState()
   	} else if (type === '3id_createLink' ) {
-      threeId = await this.getThreedId(address)
-      const proof = await createLink(threeId.DID, address, this.externalProvider)
-      return proof
+      return this.idWallet.linkAddress(address, this.externalProvider)
     }
   }
 
-  async getThreedId (address) {
+  async getThreeId (address) {
     if(!this._threeId) {
       this._threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
     }
@@ -52,14 +50,23 @@ class IdentityWalletService {
     return this.hide()
   }
 
-  start(getConsent, externalProvider) {
-    this.externalProvider = externalProvider
-    const idWallet = new IdentityWallet(getConsent, { externalAuth: this.externalAuth.bind(this) })
-    this.provider = idWallet.get3idProvider()
+  async connect() {
+    // Add support provider name list
+    const providerName = this.web3Modal.cachedProvider || await this.selectProvider()
+    this.externalProvider = await this.web3Modal.connectTo(providerName)
+  }
+
+  // TODO seperate start connect, throw ops, take web3modal or provider here
+  start(getConsent, selectProvider, web3Modal) {
+    this.selectProvider = selectProvider
+    this.web3Modal = web3Modal
+    this.idWallet = new IdentityWallet(getConsent, { externalAuth: this.externalAuth.bind(this) })
+    this.provider = this.idWallet.get3idProvider()
     expose('send', this.providerRelay.bind(this), {postMessage: window.parent.postMessage.bind(window.parent)})
   }
 
   async providerRelay(message) {
+    if (!this.externalProvider) await this.connect()
     const domain = new Url(document.referrer).hostname
     const res = await this.provider.send(message, domain)
     return JSON.stringify(res)
