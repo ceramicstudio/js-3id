@@ -47,5 +47,10 @@ const selectProvider = async () => {
   return result
 }
 
+// For testing
+// renderProviderSelect()
+// viewUpdate(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3box", "things"]}`))
+
 const idwService = new IdentityWalletService()
+window.hideIframe = idwService.hideIframe.bind(idwService)
 idwService.start(getConsent, selectProvider, web3Modal)

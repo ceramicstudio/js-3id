@@ -1,23 +1,30 @@
 const style = require('style-loader!./../style.less')
+const template = require('./template.js').default
 
-const requestTemplate = (data) => `
-  ${header(data)}
-  <div id='${style.requestBox}'>
-    <div id='${style.requestHeader}'>
-      <span> This allows ${data.request.origin} to read and write data to the following locations </span>
+const requestTemplate = (data) => template(data, request(data))
+
+const request = (data) => `
+  <div>
+    <div class='${style.promptHeader}'>
+      <div class='${style.promptText}'>
+        <div class='${style.primaryText}'> This will allow <span class='${style.primaryHighlight}'> ${data.request.origin} </span> to</div>
+        <div class='${style.subText}'> Temporarily see, edit, and delete data in the following locations </div>
+      </div>
+      <div class='${style.promptImage}'></div>
     </div>
-    <div id='${style.requestSpaces}'
-      ${spaces(data.request.spaces)}
+    <div class='${style.divider}'></div>
+    <div class='${style.providerBox}'>
+       ${spaces(data.request.spaces)}
     </div>
-    <div id='${style.buttonFooter}'>
-      <button id="accept" type="button" class="btn btn-primary">Yes</button>
-      <button id="decline" type="button" class="btn btn-primary">No</button>
-    </div>
+    <div class='${style.divider} ${style.marginTop25}'></div>
+    <div class='${style.buttonFooter}'>
+       <div id="decline" type="button" class="${style.btnDecline}">Cancel</div>
+       <button id="accept" type="button" class="btn ${style.btnAllow}">Allow</button>
+     </div>
   </div>
 `
 
 const spaces = (spaces) => {
-  console.log(spaces)
   return spaces.map(spaceLine).reduce((acc, val) => acc + val, ``)
 }
 
@@ -27,22 +34,9 @@ const spaceLine = (spaceName) => `
       ${spaceName}
     </div>
     <div class='${style.access}'>
-      <span> Allowed </span>
+      <span> Allow </span>
     </div>
   </div>
 `
-
-const header = (data) => `
-  <div id='${style.page}'>
-    <h3> Request </h3>
-    <div class='${style.requestOrigin}'>
-      ${data.request.origin}
-    </div>
-    </div class='${style.subHeader}'>
-      <span> wants to request access to your 3ID </span>
-    </div>
-  </div>
-`
-
 
 export default requestTemplate
