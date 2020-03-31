@@ -2,13 +2,24 @@ const requestTemplate = require('./html/request.js').default
 const providerTemplate = require('./html/providerSelect.js').default
 const IdentityWalletService = require('../src/IdentityWalletService.js').default
 const web3Modal = require('./provider').default
+const getProfile = require('../../3box-js/lib/api.js').getProfile
 
-const viewUpdate = (request) => {
-  root.innerHTML = requestTemplate({request})
+const profileLoad = async (address) => {
+  const profile = await getProfile(address)
+  const img = profile.image
+  const name = profile.name
+  const imgUrl = (img && img[0] && img[0].contentUrl) ? `https://ipfs.infura.io/ipfs/${img[0].contentUrl['/']}` : 'https://i.imgur.com/RXJO8FD.png'
+  return { name, imgUrl }
 }
 
-const renderProviderSelect = (request) => {
-  root.innerHTML = providerTemplate()
+const render = async (request) => {
+  let data = { request }
+  if (request.opts.address) {
+    // TODO should not block rendering, maybe remove for now, can also cache
+    const profile = await profileLoad(request.opts.address)
+    data = Object.assign(data, profile)
+  }
+  root.innerHTML = request.type === 'authenticate' ? requestTemplate(data) : providerTemplate(data)
 }
 
 
@@ -30,15 +41,14 @@ const getConsent = async (req) => {
   return result
 }
 
-const selectProvider = async () => {
+const selectProvider = async (address, origin) => {
 
   const result = new Promise((resolve, reject) => {
     window.providerNameFunc = providerNameFuncWrap(resolve)
   })
 
   await idwService.displayIframe()
-  console.log('select provdier!')
-  renderProviderSelect()
+  renderProviderSelect({ origin, opts: {address}})
 
   await result
 
@@ -47,9 +57,9 @@ const selectProvider = async () => {
   return result
 }
 
-// For testing
-// renderProviderSelect()
-// viewUpdate(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3box", "things"]}`))
+// For testing, uncomment one line to see each view static
+// render({ origin:"dashboard.3box.io", opts: { address:'0x9acb0539f2ea0c258ac43620dd03ef01f676a69b' }})
+// render(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3box", "things"], "opts": {"address":"0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
 
 const idwService = new IdentityWalletService()
 window.hideIframe = idwService.hideIframe.bind(idwService)

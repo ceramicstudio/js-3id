@@ -9,17 +9,21 @@ const template = (data, content) => `
     <div class='${style.header}'>
       <div class='${style.headerLogo}'></div>
       <div class='${style.headerText}'>
-        <div class='${style.primary}'> dashboard.3box.io </div>
+        <div class='${style.primary}'> ${data.request.origin} </div>
         <div class='${style.sub}'> wants to access your 3ID </div>
       </div>
-      <div class='${style.headerProfile}'>
-        <div class='${style.img}'> </div>
-        <div class='${style.name}'> Zach Ferland </div>
-      </div>
+      ${data.name ? profile(data) : ``}
     </div>
     <div class='${style.promptBox}'>
       ${content}
     </div>
+  </div>
+`
+
+const profile = (data) => `
+  <div class='${style.headerProfile}'>
+    <img class='${style.img}' src='${data.imgUrl}'> </img>
+    <div class='${style.name}'> ${data.name} </div>
   </div>
 `
 
