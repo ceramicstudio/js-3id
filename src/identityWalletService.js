@@ -52,7 +52,7 @@ class IdentityWalletService {
 
   async connect(address, domain) {
     // Add support provider name list
-    const providerName = this.web3Modal.cachedProvider || await this.selectProvider(address, origin)
+    const providerName = this.web3Modal.cachedProvider || await this.selectProvider(address, domain)
     this.externalProvider = await this.web3Modal.connectTo(providerName)
   }
 
@@ -67,7 +67,7 @@ class IdentityWalletService {
 
   async providerRelay(message) {
     const domain = new Url(document.referrer).hostname
-    if (!this.externalProvider) await this.connect(message.address. domain)
+    if (!this.externalProvider) await this.connect(message.params.address, domain)
     const res = await this.provider.send(message, domain)
     return JSON.stringify(res)
   }

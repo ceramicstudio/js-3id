@@ -4,10 +4,10 @@ import { expose } from 'postmsg-rpc'
 const IDENTITY_WALLET_IFRAME_URL = 'http://127.0.0.1:30001/'
 // TODO move all css in seperate templating
 const HIDE_IFRAME_STYLE = 'width:0; height:0; border:0; border:none !important'
-const DISPLAY_IFRAME_STYLE = 'position: fixed; border:none border:0; z-index: 999999; width: 100%; height: 100%; top: 0; left: 0;'
+const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 999999; position: fixed;'
 
 const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
-const display = (iframe) => () => iframe.style = DISPLAY_IFRAME_STYLE
+const display = (iframe) => (height = '100%', width = '100%', top = '0', left= '0') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; top: ${top}; left: ${left};`
 
 // Iframe logic may move if same used as data layer
 class IdentityWalletIframe {

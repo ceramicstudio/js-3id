@@ -19,6 +19,7 @@ const render = async (request) => {
     const profile = await profileLoad(request.opts.address)
     data = Object.assign(data, profile)
   }
+  if (request.type === 'authenticate' && request.spaces.length === 0) data.request.spaces = ['root']
   root.innerHTML = request.type === 'authenticate' ? requestTemplate(data) : providerTemplate(data)
 }
 
@@ -30,7 +31,7 @@ const providerNameFuncWrap = cb => str => {
 // hook into consent ui
 const getConsent = async (req) => {
   await idwService.displayIframe()
-  viewUpdate(req)
+  await render(req)
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => { resolve(true) })
@@ -48,7 +49,7 @@ const selectProvider = async (address, origin) => {
   })
 
   await idwService.displayIframe()
-  renderProviderSelect({ origin, opts: {address}})
+  render({ origin, opts: {address}})
 
   await result
 

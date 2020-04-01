@@ -1,4 +1,4 @@
-const style = require('style-loader!./../style.less')
+const style = require('style-loader!./../style.scss')
 const template = require('./template.js').default
 
 const providerTemplate = (data) => template(data, providerSelect())

@@ -27,21 +27,21 @@ module.exports = {
         }
       },
       {
-     test: /\.less$/,
-     use: [
-       {
-         loader: "css-loader",
-         options: {
-           sourceMap: true,
-           modules: true,
-           // localIdentName: "[local]___[hash:base64:5]"
+       test: /\.scss$/,
+       use: [
+         {
+           loader: "css-loader",
+           options: {
+             sourceMap: true,
+             modules: true,
+             // localIdentName: "[local]___[hash:base64:5]"
+           }
+         },
+         {
+           loader: "sass-loader"
          }
-       },
-       {
-         loader: "less-loader"
-       }
-     ]
-    }
+       ]
+      }
     ]
   },
   node: {

@@ -1,4 +1,4 @@
-const style = require('style-loader!./../style.less')
+const style = require('style-loader!./../style.scss')
 
 const template = (data, content) => `
   <div class=${style.controls}>
