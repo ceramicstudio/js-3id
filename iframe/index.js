@@ -10,11 +10,16 @@ const profileLoad = async (address) => {
   const img = profile.image
   const name = profile.name
   const imgUrl = (img && img[0] && img[0].contentUrl) ? `https://ipfs.infura.io/ipfs/${img[0].contentUrl['/']}` : 'https://i.imgur.com/RXJO8FD.png'
-  return { name, imgUrl }
+  return {
+    name,
+    imgUrl
+  }
 }
 
 const render = async (request) => {
-  let data = { request }
+  let data = {
+    request
+  }
   if (request.opts.address) {
     // TODO should not block rendering, maybe remove for now, can also cache
     const profile = await profileLoad(request.opts.address)
@@ -35,8 +40,12 @@ const getConsent = async (req) => {
   await render(req)
 
   const result = await new Promise((resolve, reject) => {
-    accept.addEventListener('click', () => { resolve(true) })
-    decline.addEventListener('click', () => { resolve(false )})
+    accept.addEventListener('click', () => {
+      resolve(true)
+    })
+    decline.addEventListener('click', () => {
+      resolve(false)
+    })
   })
 
   await idwService.hideIframe()
@@ -50,7 +59,12 @@ const selectProvider = async (address, origin) => {
   })
 
   await idwService.displayIframe()
-  render({ origin, opts: {address}})
+  render({
+    origin,
+    opts: {
+      address
+    }
+  })
 
   await result
 
@@ -60,10 +74,28 @@ const selectProvider = async (address, origin) => {
 }
 
 // For testing, uncomment one line to see each view static
-render({ origin:"dashboard.3box.io", opts: { address:'0x9acb0539f2ea0c258ac43620dd03ef01f676a69b' }})
+render({
+  origin: "dashboard.3box.io",
+  opts: {
+    address: '0x9acb0539f2ea0c258ac43620dd03ef01f676a69b'
+  }
+})
 // render(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3box", "things"], "opts": {"address":"0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
 
 
 const idwService = new IdentityWalletService()
 window.hideIframe = idwService.hideIframe.bind(idwService)
 idwService.start(getConsent, selectProvider, web3Modal)
+
+window.isOpen = false;
+const handleOpenWalletOptions = (isOpen) => {
+  if (window.isOpen) {
+    document.getElementById("walletOptions").style.display = "none";
+    document.getElementById("onClickOutside").style.display = "none";
+  } else {
+    document.getElementById("walletOptions").style.display = "inline-grid";
+    document.getElementById("onClickOutside").style.display = "flex";
+  }
+  window.isOpen = !window.isOpen
+}
+window.handleOpenWalletOptions = handleOpenWalletOptions;

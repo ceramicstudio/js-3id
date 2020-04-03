@@ -9,8 +9,7 @@ module.exports = {
     umdNamedDefine: true
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
@@ -27,20 +26,23 @@ module.exports = {
         }
       },
       {
-       test: /\.scss$/,
-       use: [
-         {
-           loader: "css-loader",
-           options: {
-             sourceMap: true,
-             modules: true,
-             // localIdentName: "[local]___[hash:base64:5]"
-           }
-         },
-         {
-           loader: "sass-loader"
-         }
-       ]
+        test: /\.scss$/,
+        use: [{
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              modules: true,
+              // localIdentName: "[local]___[hash:base64:5]"
+            }
+          },
+          {
+            loader: "sass-loader"
+          }
+        ]
+      },
+      {
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader'
       }
     ]
   },

@@ -1,5 +1,5 @@
 const style = require('style-loader!./../style.scss')
-const template = require('./template.js').default
+const template = require('./3IDConnect/template.js').default
 
 const requestTemplate = (data) => template(data, request(data))
 
