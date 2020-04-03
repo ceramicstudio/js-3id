@@ -1,0 +1,89 @@
+version: 2.1
+
+orbs:
+  aws-s3: circleci/aws-s3@1.0.15
+
+jobs:
+  test-and-build:
+    working_directory: ~/3box-account
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo npm i -g  codecov node-gyp
+            npm i
+
+      # - run:
+      #     name: test
+      #     command: npm test && codecov
+      #
+      # - run:
+      #     name: lint
+      #     command: npm run lint
+
+      - run:
+          name: build
+          command: npm run build
+
+      # - run:
+      #     name: code-coverage
+      #     command: bash <(curl -s https://codecov.io/bash)
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - public
+
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+  deploy-dev:
+    working_directory: ~/3box-account
+    docker:
+      - image: 'circleci/python:3.8'
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-s3/sync:
+          arguments: '--acl public-read --cache 604800'
+          from: public
+          overwrite: true
+          to: 's3://3id-account-develop'
+
+  deploy-prod:
+    working_directory: ~/3box-account
+    docker:
+      - image: 'circleci/python:3.8'
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-s3/sync:
+          arguments: '--acl public-read --cache 604800'
+          from: public
+          overwrite: true
+          to: 's3://3id-account-prod'
+
+workflows:
+  build-deploy:
+    jobs:
+      - test-and-build
+      - deploy-dev:
+          requires:
+            - test-and-build
+          # filters:
+          #   branches:
+          #     only: develop
+      - deploy-prod:
+          filters:
+            branches:
+              only: master

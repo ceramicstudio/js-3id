@@ -1,11 +1,12 @@
 const requestTemplate = require('./html/request.js').default
 const providerTemplate = require('./html/providerSelect.js').default
-const IdentityWalletService = require('../src/IdentityWalletService.js').default
+const IdentityWalletService = require('./../src/identityWalletService.js').default
 const web3Modal = require('./provider').default
-const getProfile = require('../../3box-js/lib/api.js').getProfile
+// const getProfile = require('../../3box-js/lib/api.js').getProfile
 
 const profileLoad = async (address) => {
-  const profile = await getProfile(address)
+  // const profile = await getProfile(address)
+  const profile = {}
   const img = profile.image
   const name = profile.name
   const imgUrl = (img && img[0] && img[0].contentUrl) ? `https://ipfs.infura.io/ipfs/${img[0].contentUrl['/']}` : 'https://i.imgur.com/RXJO8FD.png'
@@ -59,8 +60,9 @@ const selectProvider = async (address, origin) => {
 }
 
 // For testing, uncomment one line to see each view static
-// render({ origin:"dashboard.3box.io", opts: { address:'0x9acb0539f2ea0c258ac43620dd03ef01f676a69b' }})
+render({ origin:"dashboard.3box.io", opts: { address:'0x9acb0539f2ea0c258ac43620dd03ef01f676a69b' }})
 // render(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3box", "things"], "opts": {"address":"0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
+
 
 const idwService = new IdentityWalletService()
 window.hideIframe = idwService.hideIframe.bind(idwService)

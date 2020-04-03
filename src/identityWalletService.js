@@ -1,7 +1,10 @@
 import { expose, caller } from 'postmsg-rpc'
-import { fakeIpfs } from '../../identity-wallet-js/lib/utils.js'
-const IdentityWallet = require('../../identity-wallet-js/lib/identity-wallet.js')
-const ThreeId = require('../../3box-js/lib/3id/index.js')
+// import { fakeIpfs } from '../../identity-wallet-js/lib/utils.js'
+import { fakeIpfs } from 'identity-wallet/lib/utils'
+// const IdentityWallet = require('../../identity-wallet-js/lib/identity-wallet.js')
+const IdentityWallet = require('identity-wallet')
+// const ThreeId = require('../../3box-js/lib/3id/index.js')
+const ThreeId = require('3box/lib/3id/index')
 import { createLink } from '3id-blockchain-utils'
 const Url = require('url-parse');
 
@@ -43,7 +46,7 @@ class IdentityWalletService {
   }
 
   async displayIframe() {
-    return this.display()
+    return this.display('90%', '90%', '5%', '5%')
   }
 
   async hideIframe() {
