@@ -1,12 +1,13 @@
 import { expose, caller } from 'postmsg-rpc'
-// import { fakeIpfs } from '../../identity-wallet-js/lib/utils.js'
-import { fakeIpfs } from 'identity-wallet/lib/utils'
-// const IdentityWallet = require('../../identity-wallet-js/lib/identity-wallet.js')
-const IdentityWallet = require('identity-wallet')
-// const ThreeId = require('../../3box-js/lib/3id/index.js')
-const ThreeId = require('3box/lib/3id/index')
+import { fakeIpfs } from '../../identity-wallet-js/lib/utils.js'
+// import { fakeIpfs } from 'identity-wallet/lib/utils'
+const IdentityWallet = require('../../identity-wallet-js/lib/identity-wallet.js')
+// const IdentityWallet = require('identity-wallet')
+const ThreeId = require('../../3box-js/lib/3id/index.js')
+// const ThreeId = require('3box/lib/3id/index')
 import { createLink } from '3id-blockchain-utils'
-const Url = require('url-parse');
+const Url = require('url-parse')
+const store = require('store')
 
 class IdentityWalletService {
   constructor () {
@@ -39,6 +40,7 @@ class IdentityWalletService {
   }
 
   async getThreeId (address) {
+    if (!this.externalProvider) await this.connect(address)
     if(!this._threeId) {
       this._threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
     }
@@ -46,7 +48,7 @@ class IdentityWalletService {
   }
 
   async displayIframe() {
-    return this.display('90%', '90%', '5%', '5%')
+    return this.display()
   }
 
   async hideIframe() {
@@ -54,14 +56,13 @@ class IdentityWalletService {
   }
 
   async connect(address, domain) {
-    // Add support provider name list
-    const providerName = this.web3Modal.cachedProvider || await this.selectProvider(address, domain)
+    const providerName = store.get(`provider_${address}`)
+    if (!providerName) throw new Error('Must select provider')
     this.externalProvider = await this.web3Modal.connectTo(providerName)
   }
 
   // TODO seperate start connect, throw ops, take web3modal or provider here
-  start(getConsent, selectProvider, web3Modal) {
-    this.selectProvider = selectProvider
+  start(getConsent, web3Modal) {
     this.web3Modal = web3Modal
     this.idWallet = new IdentityWallet(getConsent, { externalAuth: this.externalAuth.bind(this) })
     this.provider = this.idWallet.get3idProvider()
@@ -70,7 +71,6 @@ class IdentityWalletService {
 
   async providerRelay(message) {
     const domain = new Url(document.referrer).hostname
-    if (!this.externalProvider) await this.connect(message.params.address, domain)
     const res = await this.provider.send(message, domain)
     return JSON.stringify(res)
   }

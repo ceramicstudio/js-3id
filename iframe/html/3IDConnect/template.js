@@ -1,6 +1,7 @@
 const style = require('style-loader!../../style.scss')
 
 const capitalizeFirst = string => string.charAt(0).toUpperCase() + string.slice(1)
+const spaceString = (spaces) =>  spaces.join(', ')
 
 const template = (data, content) => `
   <div class=${style.card}>
@@ -17,8 +18,8 @@ const template = (data, content) => `
       <div class='${style.header}'>
         <div class='${style.headerLogo}'></div>
         <div class='${style.headerText}'>
-          <div class='${style.primary}'> 
-            ${data.request.origin} 
+          <div class='${style.primary}'>
+            ${data.request.origin}
           </div>
           <p class='${style.sub}'> wants to access your data </p>
         </div>
@@ -26,8 +27,8 @@ const template = (data, content) => `
         <div class='${style.promptText}'>
           <div class='${style.subText}'>
             <p>
-            <span>${capitalizeFirst(data.request.origin)}</span> uses 3ID to give you privacy and control over your data.  
-            This app wants to access: 3Box, Gitcoin, MyFollowing, DappHero, WeirdSpace, SpaceInvaders, MyNotes.
+            <span>${capitalizeFirst(data.request.origin)}</span> uses 3ID to give you privacy and control over your data.
+            This app wants to access: ${spaceString(data.request.spaces)}.
             </p>
           </div>
         </div>
@@ -39,14 +40,4 @@ const template = (data, content) => `
   </div>
   <div class='${style.onClickOutside}' id='onClickOutside' onClick="handleOpenWalletOptions()"></div>
 `
-
-// ${data.name ? profile(data) : ``}
-
-const profile = (data) => `
-  <div class='${style.headerProfile}'>
-    <img class='${style.img}' src='${data.imgUrl}'> </img>
-    <div class='${style.name}'> ${data.name} </div>
-  </div>
-`
-
 export default template
