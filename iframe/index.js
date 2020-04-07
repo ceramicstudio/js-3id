@@ -34,7 +34,6 @@ const getConsent = async (req) => {
     })
   })
 
-  await idwService.hideIframe()
   return result
 }
 

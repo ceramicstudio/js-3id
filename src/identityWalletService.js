@@ -29,6 +29,9 @@ class IdentityWalletService {
   		// 	// spaces = // get all spaces the user has from the 3box list spaces api
       // TODO IMPELEMENT full migration
   		// }
+
+
+
       threeId = await this.getThreeId(address)
       if (spaces.length > 0) {
         await threeId.authenticate(spaces)
@@ -72,6 +75,7 @@ class IdentityWalletService {
   async providerRelay(message) {
     const domain = new Url(document.referrer).hostname
     const res = await this.provider.send(message, domain)
+    if (message.method === `3id_authenticate`) this.hideIframe()
     return JSON.stringify(res)
   }
 }
