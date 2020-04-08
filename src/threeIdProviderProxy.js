@@ -1,5 +1,13 @@
 import { caller } from 'postmsg-rpc'
 
+const callbackOrThrow = (callback, errMsg) => {
+  if (callback) {
+    callback(errMsg)
+  } else {
+    throw errMsg instanceof Error ? errMsg : new Error(errMsg)
+  }
+}
+
 class ThreeIdProviderProxy {
   constructor (postMessage) {
     this.postMessage = postMessage
@@ -13,10 +21,15 @@ class ThreeIdProviderProxy {
       origin = null
     }
 
-    const res = await this.sendRPC(req)
-
-    callback(undefined, JSON.parse(res))
-    return JSON.parse(res)
+    // Catches rpc errors, method errors are relayed in response for client to handle
+    try {
+      const res = JSON.parse(await this.sendRPC(req))
+      if (callback) callback(undefined, res)
+      return res
+    } catch (err) {
+      callbackOrThrow(callback, err)
+      return
+    }
   }
 }
 

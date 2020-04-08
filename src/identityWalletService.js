@@ -9,6 +9,10 @@ import { createLink } from '3id-blockchain-utils'
 const Url = require('url-parse')
 const store = require('store')
 
+
+const consentKey = (address, domain, space) => `3id_consent_${address}_${domain}_${space}`
+const serializedKey = (address) => `serialized3id_${address}`
+
 class IdentityWalletService {
   constructor () {
     this._registerDisplayListeners()
@@ -22,17 +26,12 @@ class IdentityWalletService {
   async externalAuth({ address, spaces, type }) {
     let threeId
   	if (type === '3id_auth') {
-  		// request signature with new 3ID auth message
-  		// verify that signature was made from "address"
-  		// return signature
-      // return seed
       // TODO IMPLEMENT full migration
   	} else if (type === '3id_migration') {
-  		// if (!spaces) {
-  		// 	// we want to make a full migration
-  		// 	// spaces = // get all spaces the user has from the 3box list spaces api
+  		// if (!spaces) { // or will be flag
       // TODO IMPELEMENT full migration
   		// }
+      // throw new Error('FAILED')
 
       threeId = await this.getThreeId(address)
       if (spaces.length > 0) {
@@ -61,13 +60,25 @@ class IdentityWalletService {
     return this.hide()
   }
 
+  _removeConsents(message, domain) {
+    const spaces = [...message.params.spaces]
+    const rootKeys = store.get(serializedKey(message.params.address))
+    //TODO current root 'space', name
+    if (!rootKeys) spaces.push('undefined')
+    spaces.forEach(space => {
+      const key = consentKey(message.params.address, domain, space)
+      console.log(key)
+      store.remove(key)
+    })
+  }
+
   async connect(address, domain) {
     const providerName = store.get(`provider_${address}`)
     if (!providerName) throw new Error('Must select provider')
     this.externalProvider = await this.web3Modal.connectTo(providerName)
   }
 
-  // TODO seperate start connect, throw ops, take web3modal or provider here
+  // TODO could consume web3modal or
   start(web3Modal, getConsent, errorCb, cancel) {
     this.cancel = cancel
     this.web3Modal = web3Modal
@@ -103,10 +114,8 @@ class IdentityWalletService {
             resolve(res)
             loop = false
           } catch (e) {
-            // TODO on error, need to clear consent cache for this req,
-            // example
-            store.remove('3id_consent_0xd980cd52aa9d7132706105c06d0c0d0f0a3c31ca_localhost_undefined')
             this.errorCb(e, 'Try again. Use the same account you used for this app.')
+            this._removeConsents(message, domain)
           }
         }
       } else {

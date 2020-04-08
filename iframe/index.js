@@ -22,6 +22,8 @@ const render = async (request) => {
    return store.get(`provider_${address}`)
  }
 
+store.remove('error')
+
 
 const getConsent = async (req) => {
   await idwService.displayIframe()
