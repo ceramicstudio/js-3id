@@ -9,7 +9,8 @@ const providerSelect = (data) => `
           <div id='selectedWallet'> ${getProvider(data.request.opts.address) || 'Choose wallet'} </div>
         </h5>
       </div>
-      <p class='${style.walletSelect_error}'>Try again. Use the same account you used for this app.</p>
+      ${data.error ? error(data) : ``}
+
     </div>
 
     <div class='${style.providerBox}' id='walletOptions' onClick="handleOpenWalletOptions()">
@@ -43,10 +44,14 @@ const providerSelect = (data) => `
       Continue
     </button>
 
-    <button id='decline' class='${style.secondaryButton}'>
+    <button id='decline' class='${style.secondaryButton}' onClick="hideIframe()">
       Cancel
     </button>
   </div>
+`
+
+const error = (data) => `
+  <p class='${style.walletSelect_error}'>${data.error}</p>
 `
 
 export default providerSelect

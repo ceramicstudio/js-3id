@@ -4,6 +4,7 @@ class ThreeIdProviderProxy {
   constructor (postMessage) {
     this.postMessage = postMessage
     this.is3idProvider = true
+    this.sendRPC = caller('send', {postMessage: this.postMessage})
   }
 
   async send (req, origin, callback) {
@@ -11,13 +12,9 @@ class ThreeIdProviderProxy {
       callback = origin
       origin = null
     }
-    // if (req.method != '3id_newAuthMethodPoll' && req.method != "3id_newLinkPoll") {
-    //   console.log('request')
-    //   console.log(req)
-    // }
-    const send = caller('send', {postMessage: this.postMessage})
-    const res = await send(req)
-    // TODO
+
+    const res = await this.sendRPC(req)
+
     callback(undefined, JSON.parse(res))
     return JSON.parse(res)
   }

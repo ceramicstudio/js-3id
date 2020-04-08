@@ -4,9 +4,11 @@ const web3Modal = require('./provider').default
 const store = require('store')
 
 const render = async (request) => {
+  const errorMessage = store.get('error')
   let data = {
     request
   }
+  if (errorMessage) data.error = errorMessage
   if (request.type === 'authenticate' && request.spaces.length === 0) data.request.spaces = ['3Box']
   root.innerHTML = requestCard(data)
 }
@@ -37,13 +39,32 @@ const getConsent = async (req) => {
   return result
 }
 
+const errorCb = (err, msg) => {
+  if (!msg) msg = err.toString()
+  console.log(err)
+  store.set('error', msg)
+}
+
 // For testing, uncomment one line to see each view static
 render(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
 
 
 const idwService = new IdentityWalletService()
-window.hideIframe = idwService.hideIframe.bind(idwService)
-idwService.start(getConsent, web3Modal)
+
+
+let closecallback
+
+window.hideIframe = () => {
+  idwService.hideIframe()
+  if (closecallback) closecallback()
+}
+
+const closing = (cb) => {
+  closecallback = cb
+}
+
+idwService.start(web3Modal, getConsent, errorCb, closing)
+
 
 window.isOpen = false;
 const handleOpenWalletOptions = (isOpen) => {
