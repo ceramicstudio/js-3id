@@ -9,20 +9,44 @@ import { createLink } from '3id-blockchain-utils'
 const Url = require('url-parse')
 const store = require('store')
 
-
 const consentKey = (address, domain, space) => `3id_consent_${address}_${domain}_${space}`
 const serializedKey = (address) => `serialized3id_${address}`
 
+// TODO ui/iframe needs number of hooks, events may be a better interface
+// TODO could still refactor to make parts less visual/flow implementation specific
+
+/**
+ *  IdentityWalletService runs an identity wallet instance and rpc server with
+ *  bindings to receive and relay rpc messages to identity wallet
+ */
 class IdentityWalletService {
+
+  /**
+    * Create IdentityWalletService
+    */
   constructor () {
     this._registerDisplayListeners()
   }
 
+  /**
+   * Registers rpc call function for display and hiding iframe (Note: reverse of
+   * idw rpc calls, this is rpc client, sending messages to parent window)
+   * @private
+   */
   _registerDisplayListeners () {
     this.display = caller('display', {postMessage: window.parent.postMessage.bind(window.parent)})
     this.hide = caller('hide', {postMessage: window.parent.postMessage.bind(window.parent)})
   }
 
+  /**
+    *  External Authencation method for IDW
+    *
+    * @param     {Object}    params
+    * @param     {String}    params.address     An ethereum address
+    * @param     {Array}     params.spaces      Array of space strings
+    * @param     {String}    params.type        Type of external auth request
+    * @return    {Object}                       Response depends on type of request
+  */
   async externalAuth({ address, spaces, type }) {
     let threeId
   	if (type === '3id_auth') {
@@ -33,7 +57,7 @@ class IdentityWalletService {
   		// }
       // throw new Error('FAILED')
 
-      threeId = await this.getThreeId(address)
+      threeId = await this._getThreeId(address)
       if (spaces.length > 0) {
         await threeId.authenticate(spaces)
       }
@@ -43,23 +67,46 @@ class IdentityWalletService {
     }
   }
 
-  async getThreeId (address) {
-    if (!this.externalProvider) await this.connect(address)
+  /**
+    *  Returns ThreeId instance, used for migration of legacy 3boxjs accounts
+    *  to create same logic in iframe
+    *
+    * @private
+    * @param     {String}    address     An ethereum address
+    * @return    {ThreeId}
+    */
+  async _getThreeId (address) {
+    if (!this.externalProvider) await this._connect(address)
     if(!this._threeId) {
       this._threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
     }
     return this._threeId
   }
 
+  /**
+    *  Tells parent window to display iframe
+    */
   async displayIframe() {
     return this.display()
   }
 
+  /**
+    *  Tells parent window to hide iframe
+    */
   async hideIframe() {
     store.remove('error') //TODO move, so specific to iframe implementation
     return this.hide()
   }
 
+  /**
+    *  Removes cache consents. For partial migration in instance consent function
+    *  returns, but external auth to support consents fails. Refactored in future.
+    *
+    * @private
+    * @param     {Object}    message    IDW rpc request message
+    * @param     {String}    domain     Origin of caller/request
+    * @return    {ThreeId}
+    */
   _removeConsents(message, domain) {
     const spaces = [...message.params.spaces]
     const rootKeys = store.get(serializedKey(message.params.address))
@@ -72,13 +119,29 @@ class IdentityWalletService {
     })
   }
 
-  async connect(address, domain) {
-    const providerName = store.get(`provider_${address}`)
+  /**
+    *  Connect web3modal to get external provider
+    *
+    * @private
+    * @param     {String}    address    Ethereum address of request
+    * @param     {String}    domain     Origin of caller/request
+    * @return    {ThreeId}
+    */
+  async _connect(address, domain) {
+    const providerName = store.get(`provider_${address}`) //TODO ref to move this to iframe implementation specific
     if (!providerName) throw new Error('Must select provider')
     this.externalProvider = await this.web3Modal.connectTo(providerName)
   }
 
-  // TODO could consume web3modal or
+  // TODO could consume web3modal or a provider already
+  /**
+    *  Start identity wallet service. Once returns ready to receive rpc requests
+    *
+    * @param     {Web3Modal}   web3Modal    configured instance of web3modal
+    * @param     {Function}    getConsent   get consent function, reference IDW
+    * @param     {Function}    erroCB       Function to handle errors, function consumes error string (err) => {...}, called on errors
+    * @param     {Function}    cancel       Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
+    */
   start(web3Modal, getConsent, errorCb, cancel) {
     this.cancel = cancel
     this.web3Modal = web3Modal
@@ -88,6 +151,13 @@ class IdentityWalletService {
     expose('send', this.providerRelay.bind(this), {postMessage: window.parent.postMessage.bind(window.parent)})
   }
 
+  /**
+    *  Consumes IDW RPC request message and relays to IDW instance. Also handles
+    *  logic to retry requests and cancel requests.
+    *
+    * @param     {Object}      message    IDW RPC request message
+    * @return    {String}                 response message string
+    */
   async providerRelay(message) {
     const domain = new Url(document.referrer).hostname
     let loop = true

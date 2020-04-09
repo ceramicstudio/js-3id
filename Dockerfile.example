@@ -10,4 +10,4 @@ COPY public ./public
 
 EXPOSE 30001
 
-CMD npm run example:start
+CMD npm run start

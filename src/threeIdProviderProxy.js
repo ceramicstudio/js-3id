@@ -8,6 +8,10 @@ const callbackOrThrow = (callback, errMsg) => {
   }
 }
 
+/**
+ *  A 3ID provider proxy, 3ID provider interface that acts as rpc client, to
+ *  relay request to iframe (rpc server)
+ */
 class ThreeIdProviderProxy {
   constructor (postMessage) {
     this.postMessage = postMessage
