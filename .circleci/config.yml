@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   test-and-build:
-    working_directory: ~/3box-account
+    working_directory: ~/3id-connect
     docker:
       - image: circleci/node:10
     steps:
@@ -48,7 +48,7 @@ jobs:
           paths:
             - ./node_modules
   deploy-dev:
-    working_directory: ~/3box-account
+    working_directory: ~/3id-connect
     docker:
       - image: 'circleci/python:3.8'
     steps:
@@ -61,7 +61,7 @@ jobs:
           to: 's3://3id-account-develop'
 
   deploy-prod:
-    working_directory: ~/3box-account
+    working_directory: ~/3id-connect
     docker:
       - image: 'circleci/python:3.8'
     steps:

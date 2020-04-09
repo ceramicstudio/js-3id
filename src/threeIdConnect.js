@@ -11,21 +11,21 @@ const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
 const display = (iframe) => (height = '100%', width = '100%', top = '0', left= '0') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; top: ${top}; left: ${left};`
 
 /**
- *  IdentityWalletIframe provides interface for loading and instantiating IDW iframe,
+ *  ThreeIdConnect provides interface for loading and instantiating IDW iframe,
  *  and provides a 3ID provider interface to send requests to iframe. Acts like
  *  rpc client.
  */
-class IdentityWalletIframe {
+class ThreeIdConnect {
 
   /**
-    *  Creates IdentityWalletIframe. Create and loads iframe. Should be instantiated
+    *  Creates ThreeIdConnect. Create and loads iframe. Should be instantiated
     *  on page load.
     *
     * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
     */
   constructor (iframeUrl) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
-      throw new Error('IdentityWalletIframe not supported in this enviroment')
+      throw new Error('ThreeIdConnect not supported in this enviroment')
     }
 
     this.iframe = document.createElement('iframe')
@@ -63,4 +63,4 @@ class IdentityWalletIframe {
   }
 }
 
-export default IdentityWalletIframe
+export default ThreeIdConnect

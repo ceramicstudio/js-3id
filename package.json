@@ -1,5 +1,5 @@
 {
-  "name": "3box-account",
+  "name": "3id-connect",
   "version": "0.0.1",
   "description": "Account management for 3Box",
   "scripts": {
@@ -22,14 +22,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/3box/3box-account.git"
+    "url": "git+https://github.com/3box/3id-connect.git"
   },
   "author": "3box <team@3box.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/3box/3box-account/issues"
+    "url": "https://github.com/3box/3id-connect/issues"
   },
-  "homepage": "https://github.com/3box/3box-account#readme",
+  "homepage": "https://github.com/3box/3id-connect#readme",
   "dependencies": {
     "3box": "^1.17.1",
     "@babel/runtime": "^7.1.2",
@@ -37,7 +37,7 @@
     "@walletconnect/web3-provider": "^1.0.0-beta.47",
     "authereum": "0.0.4-beta.129",
     "fortmatic": "^2.0.5",
-    "identity-wallet": "github:3box/identity-wallet-js#feat/partial-migration-externalauth",
+    "identity-wallet": "github:3box/identity-wallet-js#develop",
     "postmsg-rpc": "^2.4.0",
     "store": "^2.0.12",
     "url-parse": "^1.4.7",

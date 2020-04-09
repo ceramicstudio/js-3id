@@ -16,6 +16,8 @@ class ThreeIdProviderProxy {
   constructor (postMessage) {
     this.postMessage = postMessage
     this.is3idProvider = true
+    this.threeIdConnect = true 
+    this.migration = true
     this.sendRPC = caller('send', {postMessage: this.postMessage})
   }
 

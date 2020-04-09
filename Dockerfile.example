@@ -1,6 +1,6 @@
 FROM node:10
 
-WORKDIR /3box-account
+WORKDIR /3id-connect
 
 COPY package.json package-lock.json ./
 

@@ -10,8 +10,8 @@ Right now you authenticate and link ethereum accounts to mange your 3ID, in the 
 ## <a name="structure"></a> Structure
 
 * **/src** - Core logic and consumable interfaces for clients and iframe
-  *  **/identityWalletIframe.js** -  Application interface (RPC client) to load iframe and return 3ID provider.
-  *  **/identityWalletService.js** - Identity wallet instance and RPC 'server' to handle requests
+  *  **/threeIdConnect.js** -  Application interface (RPC client) to load iframe and return 3ID provider.
+  *  **/threeIdConnectService.js** - Identity wallet instance and RPC 'server' to handle requests
   *  **/threeIdProviderProxy.js** -  3ID provider interface that relays request through RPC layer
 * **/iframe** - all html, css, js, design assets for iframe and flow
 * **/public** - build assets deployed for iframe

@@ -1,5 +1,5 @@
 const requestCard = require('./html/3IDConnect/requestCard.js').default
-const IdentityWalletService = require('./../src/identityWalletService.js').default
+const ThreeIdConnectService = require('./../src/threeIdConnectService.js').default
 const web3Modal = require('./provider').default
 const store = require('store')
 
@@ -45,7 +45,7 @@ const render = async (request) => {
  *  Identity Wallet Service configuration and start
  */
 
-const idwService = new IdentityWalletService()
+const idwService = new ThreeIdConnectService()
 
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
 const getConsent = async (req) => {
