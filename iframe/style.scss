@@ -65,9 +65,25 @@ button {
   background-color: white;
 }
 
+.cardMobile {
+  width: 100vw !important;
+  height: 100vh !important;
+  border: none !important;
+  justify-content: flex-start !important;
+}
+
 .content {
   width: 100%;
   padding-top: 45px;
+}
+
+.contentMobile {
+  width: 100% !important;
+  height: 80% !important;
+  padding-top: 125px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
 }
 
 .controls {
@@ -227,6 +243,10 @@ button {
   padding: 6px;
 }
 
+.walletSelectMobile {
+  margin-bottom: 86px;
+}
+
 .walletSelect_content {
   margin-left: 8px;
   width: 100%;
@@ -360,6 +380,10 @@ button {
   }
 }
 
+.providerBoxMobile {
+  top: -110px !important;
+}
+
 .providerImage {
   display: flex;
   justify-content: center;
@@ -438,28 +462,28 @@ button {
 
 #requestHeader {}
 
-@media only screen and (max-width: 600px) {
-  .card {
-    width: 100vw;
-    height: 100vh;
-    border: none;
-    justify-content: flex-start;
-  }
+// @media only screen and (max-width: 600px) {
+//   // .card {
+//   //   width: 100vw;
+//   //   height: 100vh;
+//   //   border: none;
+//   //   justify-content: flex-start;
+//   // }
 
-  .providerBox {
-    top: -110px;
-  }
+//   // .providerBox {
+//   //   top: -110px;
+//   // }
 
-  .content {
-    width: 100%;
-    height: 80%;
-    padding-top: 125px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+//   // .content {
+//   //   width: 100%;
+//   //   height: 80%;
+//   //   padding-top: 125px;
+//   //   display: flex;
+//   //   flex-direction: column;
+//   //   justify-content: space-between;
+//   // }
 
-  .walletSelect {
-    margin-bottom: 86px;
-  }
-}
+//   // .walletSelect {
+//   //   margin-bottom: 86px;
+//   // }
+// }

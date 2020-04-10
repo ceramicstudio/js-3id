@@ -4,6 +4,7 @@ const web3Modal = require('./provider').default
 const store = require('store')
 
 const assets = require('./html/3IDConnect/assets/assets.js')
+const style = require('style-loader!./style.scss')
 
 store.remove('error')
 
@@ -50,6 +51,17 @@ window.handleBrokenImage = (image) => {
   document.getElementById("siteFavicon").style.display = 'none';
 }
 
+const checkIsMobile = () => {
+  let isMobile;
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    isMobile = true;
+  } else {
+    isMobile = false;
+  }
+  console.log('isMobile', isMobile)
+  return isMobile;
+};
+
 // Given a request will render UI module templates
 const render = async (request) => {
   const errorMessage = store.get('error')
@@ -58,7 +70,7 @@ const render = async (request) => {
   }
   if (errorMessage) data.error = errorMessage
   if (request.type === 'authenticate' && request.spaces.length === 0) data.request.spaces = ['3Box']
-  root.innerHTML = requestCard(data)
+  root.innerHTML = requestCard(data, checkIsMobile())
 }
 
 /**

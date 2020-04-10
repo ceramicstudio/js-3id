@@ -58,7 +58,7 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-account-develop'
+          to: 's3://3id-connect-dev'
 
   deploy-prod:
     working_directory: ~/3id-connect
@@ -71,7 +71,7 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-account-prod'
+          to: 's3://3id-connect-prod'
 
 workflows:
   build-deploy:
@@ -84,6 +84,8 @@ workflows:
           #   branches:
           #     only: develop
       - deploy-prod:
+          requires:
+            - test-and-build
           filters:
             branches:
               only: master

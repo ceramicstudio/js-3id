@@ -4,8 +4,8 @@ const assets = require('./assets/assets.js')
 const capitalizeFirst = string => string.charAt(0).toUpperCase() + string.slice(1)
 const spaceString = (spaces) => spaces.join(', ')
 
-const template = (data, content) => `
-  <div class=${style.card}>
+const template = (data, content, isMobile) => `
+  <div class='${style.card} ${isMobile ? style.cardMobile : ''}'>
     <div class=${style.controls}>
       <a 
       href="https://3box.io"
@@ -22,7 +22,7 @@ const template = (data, content) => `
       </div>
     </div>
 
-    <div class='${style.content}'>
+    <div class='${style.content} ${isMobile ? style.contentMobile : ''}' id='content' >
       <div class='${style.header}'>
         <img 
           src='${`https://${data.request.origin}/favicon.ico`}' 

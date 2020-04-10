@@ -1,9 +1,9 @@
 const style = require('style-loader!../../style.scss')
 const assets = require('./assets/assets.js')
 
-const providerSelect = (data) => `
+const providerSelect = (data, isMobile) => `
   <div class='${style.actions}'>
-    <div class='${style.walletSelect}' onClick="handleOpenWalletOptions()">
+    <div class='${style.walletSelect} ${isMobile ? style.walletSelectMobile : ''}' onClick="handleOpenWalletOptions()" id="walletSelect">
       <div class='${style.walletSelect_content}'>
         <div class='${style.providerImage}' id='chosenWallet'>
           ${getProviderDisplayImage(data.request.opts.address)}
@@ -15,7 +15,7 @@ const providerSelect = (data) => `
       </div>
     </div>
 
-    <div class='${style.providerBox}' id='walletOptions' onClick="handleOpenWalletOptions()">
+    <div class='${style.providerBox} ${isMobile ? style.providerBoxMobile : ''}' id='walletOptions' onClick="handleOpenWalletOptions()">
       <div class='${style.provider}' onClick="providerNameFunc('injected', '${data.request.opts.address}', 'MetaMask')">
         <div class='${style.providerImage}'>
           ${assets.MetaMask}
