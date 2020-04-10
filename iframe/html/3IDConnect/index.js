@@ -14,22 +14,22 @@ const providerSelect = () => `
 <div class='${style.divider}'></div>
 <div class='${style.providerBox}'>
   <div class='${style.providerRow}'>
-    <div class='${style.provider}' onClick="providerNameFunc('injected')">
+    <div class='${style.provider}' onClick="providerNameFunc('injected', null, 'MetaMask')">
       <div class='${style.providerImage}'> </div>
       <div class='${style.providerText}'> Metamask </div>
     </div>
-    <div class='${style.provider}' onClick="providerNameFunc('fortmatic')">
+    <div class='${style.provider}' onClick="providerNameFunc('fortmatic', null, 'Fortmatic')">
     <div class='${style.providerImage}'> </div>
       <div class='${style.providerText}'> Fortmatic </div>
     </div>
   </div>
-  <div class='${style.providerRow}' onClick="providerNameFunc('portis')">
+  <div class='${style.providerRow}' onClick="providerNameFunc('portis', null, 'Portis')">
     <div class='${style.provider}'>
       <div class='${style.providerImage}'> </div>
       <div class='${style.providerText}'> Portis </div>
     </div>
     <div class='${style.provider}'>
-      <div class='${style.providerImage}' onClick="providerNameFunc('authereum')"> </div>
+      <div class='${style.providerImage}' onClick="providerNameFunc('authereum', null, 'Authereum')"> </div>
       <div class='${style.providerText}'> Authereum </div>
     </div>
   </div>

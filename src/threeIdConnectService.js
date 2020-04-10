@@ -181,7 +181,7 @@ class ThreeIdConnectService {
             resolve(res)
             loop = false
           } catch (e) {
-            this.errorCb(e, 'Try again. Use the same account you used for this app.')
+            this.errorCb(e, 'There was an error. Use the same account you used for this app.')
             this._removeConsents(message, domain)
           }
         }

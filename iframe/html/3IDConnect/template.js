@@ -1,12 +1,20 @@
 const style = require('style-loader!../../style.scss')
+const assets = require('./assets/assets.js')
 
 const capitalizeFirst = string => string.charAt(0).toUpperCase() + string.slice(1)
-const spaceString = (spaces) =>  spaces.join(', ')
+const spaceString = (spaces) => spaces.join(', ')
 
 const template = (data, content) => `
   <div class=${style.card}>
     <div class=${style.controls}>
-      <img src='https://i.imgur.com/uRCbJMP.png' class='${style.controls_logo}' />
+      <a 
+      href="https://3box.io"
+      rel="noopener noreferrer"
+      target="_blank"
+      class=${style.controls_logo}
+      >
+        ${assets.Logo}
+      </a>
 
       <div class='${style.close}' onClick="hideIframe()">
         <div class='${style.close_line} ${style.flip}'></div>
@@ -16,7 +24,13 @@ const template = (data, content) => `
 
     <div class='${style.content}'>
       <div class='${style.header}'>
-        <div class='${style.headerLogo}'></div>
+        <img 
+          src='${`https://${data.request.origin}/favicon.ico`}' 
+          class='${style.headerLogo}' 
+          onError='handleBrokenImage(this)'
+          id='siteFavicon'
+        />
+
         <div class='${style.headerText}'>
           <div class='${style.primary}'>
             ${data.request.origin}
@@ -30,6 +44,7 @@ const template = (data, content) => `
             <span>${capitalizeFirst(data.request.origin)}</span> uses 3ID to give you privacy and control over your data.
             This app wants to access: ${spaceString(data.request.spaces)}.
             </p>
+            ${data.error ? error(data) : ``}
           </div>
         </div>
       </div>
@@ -41,3 +56,7 @@ const template = (data, content) => `
   <div class='${style.onClickOutside}' id='onClickOutside' onClick="handleOpenWalletOptions()"></div>
 `
 export default template
+
+const error = (data) => `
+  <p class='${style.walletSelect_error}'>${data.error}</p>
+`

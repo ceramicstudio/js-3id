@@ -3,6 +3,8 @@ const ThreeIdConnectService = require('./../src/threeIdConnectService.js').defau
 const web3Modal = require('./provider').default
 const store = require('store')
 
+const assets = require('./html/3IDConnect/assets/assets.js')
+
 store.remove('error')
 
 /**
@@ -21,13 +23,31 @@ const handleOpenWalletOptions = (isOpen) => {
 }
 window.handleOpenWalletOptions = handleOpenWalletOptions;
 
-window.providerNameFunc = (provider, address) => {
-  selectedWallet.innerHTML = provider
+window.providerNameFunc = (provider, address, displayName) => {
+  selectedWallet.innerHTML = displayName
+  chosenWallet.innerHTML = assets[displayName];
+
   store.set(`provider_${address}`, provider)
+  store.set(`providerName_${address}`, displayName)
+}
+
+window.getProviderDisplayImage = (address) => {
+  const imageToRender = store.get(`providerName_${address}`);
+  const image = imageToRender ? assets[imageToRender] : assets.Wallet;
+  return image;
+}
+
+window.getProviderDisplayName = (address) => {
+  return store.get(`providerName_${address}`)
 }
 
 window.getProvider = (address) => {
- return store.get(`provider_${address}`)
+  return store.get(`provider_${address}`)
+}
+
+window.handleBrokenImage = (image) => {
+  image.onerror = "";
+  document.getElementById("siteFavicon").style.display = 'none';
 }
 
 // Given a request will render UI module templates
@@ -54,6 +74,8 @@ const getConsent = async (req) => {
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
+      accept.innerHTML = `Approve in wallet ${assets.Loading}`;
+      document.getElementById("accept").style.opacity = .5;
       resolve(true)
     })
     decline.addEventListener('click', () => {
@@ -80,9 +102,11 @@ window.hideIframe = () => {
   if (closecallback) closecallback()
 }
 
-const closing = (cb) => { closecallback = cb }
+const closing = (cb) => {
+  closecallback = cb
+}
 
 idwService.start(web3Modal, getConsent, errorCb, closing)
 
 // For testing, uncomment one line to see static view
-render(JSON.parse(`{"type":"authenticate","origin":"dashboard.3box.io","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
+render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
