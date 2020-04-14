@@ -1,8 +1,7 @@
 const ThreeIdProviderProxy = require('./threeIdProviderProxy.js').default
 import { expose } from 'postmsg-rpc'
 
-// TODO CHANGE
-const IDENTITY_WALLET_IFRAME_URL = 'http://127.0.0.1:30001/'
+const IDENTITY_WALLET_IFRAME_URL = 'https://connect.3box.io/'
 
 const HIDE_IFRAME_STYLE = 'width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 999999; position: fixed;'

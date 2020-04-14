@@ -59,6 +59,9 @@ jobs:
           from: public
           overwrite: true
           to: 's3://3id-connect-dev'
+      - run:
+          name: "Invalidate CloudFront Cache"
+          command: aws cloudfront create-invalidation --distribution-id E3SV2UNQUEOU2O --paths /*
 
   deploy-prod:
     working_directory: ~/3id-connect
@@ -72,6 +75,9 @@ jobs:
           from: public
           overwrite: true
           to: 's3://3id-connect-prod'
+      - run:
+          name: "Invalidate CloudFront Cache"
+          command: aws cloudfront create-invalidation --distribution-id E1CFVBE8FYHOZ0 --paths /*
 
 workflows:
   build-deploy:
