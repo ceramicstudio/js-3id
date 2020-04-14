@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './iframe/index.js',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'public'),
@@ -9,8 +9,7 @@ module.exports = {
     umdNamedDefine: true
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
@@ -25,7 +24,30 @@ module.exports = {
             ]
           }
         }
-      }
+      },
+      {
+        test: /\.scss$/,
+        use: [{
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              modules: true,
+              // localIdentName: "[local]___[hash:base64:5]"
+            }
+          },
+          {
+            loader: "sass-loader"
+          }
+        ]
+      },
+      {
+        test: /\.(png|woff|woff2|eot|ttf)$/,
+        loader: 'url-loader'
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+      },
     ]
   },
   node: {
@@ -36,4 +58,3 @@ module.exports = {
     child_process: 'empty'
   }
 };
-

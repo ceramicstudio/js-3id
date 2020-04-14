@@ -1,48 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>3Box account</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  </head>
-  <body>
-    <div align="center" id="dispError" style="color: red;"></div>
-    <div id="viewMain" align="center" style="display: none; margin-top: 25px;">
-      <button id="auth" class="btn btn-primary">Log in</button>
-      </br>
-      <button id="create" class="btn btn-primary">Create Account</button>
-      </br>
-      <button id="cancel" class="btn btn-primary">Cancel</button>
-    </div>
-    <div id="viewCreate" align="center" style="display: none; margin-top: 25px;">
-      <input type="text" id="emailAddrCreate" placeholder="Email Address" />
-      </br>
-      <input type="password" id="pw1Create" placeholder="Password" />
-      </br>
-      <input type="password" id="pw2Create" placeholder="Repeat Password" />
-      </br>
-      <button id="create2" class="btn btn-primary">Create Account</button>
-    </div>
-    <div id="viewAuth" align="center" style="display: none; margin-top: 25px;">
-      <input type="text" id="emailAddrAuth" placeholder="Email Address" />
-      </br>
-      <input type="password" id="pw1Auth" placeholder="Password" />
-      </br>
-      <button id="auth2" class="btn btn-primary">Log in</button>
-    </div>
-    <div id="viewConsent" align="center" style="display: none; margin-top: 25px;">
-      </br>
-      <p id="consentText" style="font-weight: bold;"></p>
-      </br>
-      </br>
-      <button id="acceptConsent" class="btn btn-primary">Accept</button>
-      <button id="rejectConsent" class="btn btn-primary">Reject</button>
-    </div>
-    <div align="center" id="displaySeed"></div>
-  </body>
-  <script type="text/javascript" src="index.js"></script>
-</html>
 
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>3Box Account</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f7f7f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+<script type="text/javascript" src="index.js"></script>
+
+</html>
