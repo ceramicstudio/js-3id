@@ -33,7 +33,7 @@ window.providerNameFunc = (provider, address, displayName) => {
 
 window.getProviderDisplayImage = (address) => {
   const imageToRender = store.get(`providerName_${address}`);
-  const image = imageToRender ? assets[imageToRender] : assets.Wallet;
+  const image = !imageToRender || imageToRender == 'Default Wallet' ? assets.Wallet : assets[imageToRender];
   return image;
 }
 
@@ -81,6 +81,9 @@ const idwService = new ThreeIdConnectService()
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
 const getConsent = async (req) => {
   await idwService.displayIframe()
+  // TODO can handle ui for injected providers better, but for now metamask and not metamask ui
+  if (window.ethereum) req.injectedMetamask = window.ethereum.isMetaMask
+
   await render(req)
 
   const result = await new Promise((resolve, reject) => {

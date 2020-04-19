@@ -9,18 +9,18 @@ const providerSelect = (data, isMobile) => `
           ${getProviderDisplayImage(data.request.opts.address)}
         </div>
 
-        <h5 id='selectedWallet' class='${style.providerImageText}'> 
-          ${getProviderDisplayName(data.request.opts.address) || `Choose wallet`} 
+        <h5 id='selectedWallet' class='${style.providerImageText}'>
+          ${getProviderDisplayName(data.request.opts.address) || `Choose wallet`}
         </h5>
       </div>
     </div>
 
     <div class='${style.providerBox} ${isMobile ? style.providerBoxMobile : ''}' id='walletOptions' onClick="handleOpenWalletOptions()">
-      <div class='${style.provider}' onClick="providerNameFunc('injected', '${data.request.opts.address}', 'MetaMask')">
+      <div class='${style.provider}' onClick="providerNameFunc('injected', '${data.request.opts.address}', '${data.request.injectedMetamask ? 'MetaMask' : 'Default Wallet'}')">
         <div class='${style.providerImage}'>
-          ${assets.MetaMask}
+          ${data.request.injectedMetamask ? assets.MetaMask : assets.Wallet}
         </div>
-        <div class='${style.providerText}'> Metamask </div>
+        <div class='${style.providerText}'> ${data.request.injectedMetamask ? 'MetaMask' : 'Default Wallet'} </div>
       </div>
 
       <div class='${style.provider}' onClick="providerNameFunc('fortmatic', '${data.request.opts.address}', 'Fortmatic')">
