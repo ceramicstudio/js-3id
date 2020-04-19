@@ -57,7 +57,7 @@ const checkIsMobile = () => {
   } else {
     isMobile = false;
   }
-  console.log('isMobile', isMobile)
+  // console.log('isMobile', isMobile)
   return isMobile;
 };
 

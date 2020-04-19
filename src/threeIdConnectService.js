@@ -60,7 +60,14 @@ class ThreeIdConnectService {
       }
       return threeId.serializeState()
   	} else if (type === '3id_createLink' ) {
-      return this.idWallet.linkAddress(address, this.externalProvider)
+      // TODO could use disply hook for a link request specific card, will show consent screen again right now
+      this.displayIframe()
+      try {
+        await this.idWallet.linkAddress(address, this.externalProvider)
+      } catch(e) {
+        console.log(e)
+      }
+      this.hideIframe()
     }
   }
 
@@ -172,9 +179,14 @@ class ThreeIdConnectService {
         loop = false
       })
 
+      // Should not be neccessary, but sets bounds on any uncaught errors, so
+      // we dont have infinite loop and freeze
+      let tries = 0
+
       if (message.method === '3id_authenticate') {
         // Try until response valid, or canceled above
         while (loop) {
+          tries++
           try {
             const res = await this.provider.send(message, domain)
             if (message.method === `3id_authenticate`) this.hideIframe()
@@ -184,6 +196,7 @@ class ThreeIdConnectService {
             this.errorCb(e, 'There was an error. Use the same account you used for this app.')
             this._removeConsents(message, domain)
           }
+          if (tries >= 10) loop = false
         }
       } else {
         const res = await this.provider.send(message, domain)
