@@ -86,9 +86,9 @@ workflows:
       - deploy-dev:
           requires:
             - test-and-build
-          # filters:
-          #   branches:
-          #     only: develop
+          filters:
+            branches:
+              only: develop
       - deploy-prod:
           requires:
             - test-and-build
