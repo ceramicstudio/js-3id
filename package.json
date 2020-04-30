@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/3box/3id-connect#readme",
   "dependencies": {
-    "3box": "^1.17.1",
+    "3box": "^1.19.0-rc.1",
     "@babel/runtime": "^7.1.2",
     "@portis/web3": "^2.0.0-beta.54",
     "@walletconnect/web3-provider": "^1.0.0-beta.47",
