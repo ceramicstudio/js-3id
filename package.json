@@ -38,15 +38,10 @@
   "dependencies": {
     "3box": "^1.19.0-rc.1",
     "@babel/runtime": "^7.1.2",
-    "@portis/web3": "^2.0.0-beta.54",
-    "@walletconnect/web3-provider": "^1.0.0-beta.47",
-    "authereum": "0.0.4-beta.129",
-    "fortmatic": "^2.0.5",
-    "identity-wallet": "^1.2.0",
+    "identity-wallet": "github:3box/identity-wallet-js#feat/3id-connect-v2",
     "postmsg-rpc": "^2.4.0",
     "store": "^2.0.12",
-    "url-parse": "^1.4.7",
-    "web3modal": "^1.1.0"
+    "url-parse": "^1.4.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",

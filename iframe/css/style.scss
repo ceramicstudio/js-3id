@@ -55,7 +55,7 @@ button {
 
 .card {
   width: 420px;
-  height: 565px;
+  // height: 565px;
   border: 1px solid $borderColor;
   border-radius: $radius;
   display: flex;
@@ -74,7 +74,7 @@ button {
 
 .content {
   width: 100%;
-  padding-top: 45px;
+  padding-top: 20px;
 }
 
 .contentMobile {
@@ -163,6 +163,7 @@ button {
   border-radius: $radius;
   background-color: transparent;
   box-shadow: $dropShadow;
+  margin-top: 25px;
 }
 
 .headerLogo_empty {
@@ -274,6 +275,7 @@ button {
   justify-content: flex-start;
   width: 344px;
   position: relative;
+  padding-bottom: 20px;
 }
 
 .promptBox {

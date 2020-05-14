@@ -1,7 +1,7 @@
 import { expose, caller } from 'postmsg-rpc'
 import { fakeIpfs } from 'identity-wallet/lib/utils'
 const IdentityWallet = require('identity-wallet')
-const ThreeId = require('3box/lib/3id/index')
+const API = require('3box/lib/api.js')
 import { createLink } from '3id-blockchain-utils'
 const Url = require('url-parse')
 const store = require('store')
@@ -9,8 +9,13 @@ const store = require('store')
 const consentKey = (address, domain, space) => `3id_consent_${address}_${domain}_${space}`
 const serializedKey = (address) => `serialized3id_${address}`
 
-// TODO ui/iframe needs number of hooks, events may be a better interface
-// TODO could still refactor to make parts less visual/flow implementation specific
+async function getLinkedData(address) {
+  try {
+    return API.getRootStoreAddress(address)
+  } catch (err) {
+    return null
+  }
+}
 
 /**
  *  ThreeIdConnectService runs an identity wallet instance and rpc server with
@@ -23,6 +28,7 @@ class ThreeIdConnectService {
     */
   constructor () {
     this._registerDisplayListeners()
+    this._registerExternalAuthListeners()
   }
 
   /**
@@ -35,6 +41,18 @@ class ThreeIdConnectService {
     this.hide = caller('hide', {postMessage: window.parent.postMessage.bind(window.parent)})
   }
 
+
+  /**
+   * Registers rpc call functions for handling external auth calls needed for IDW to parent window
+   * @private
+   */
+  _registerExternalAuthListeners () {
+    this.migration = caller('migration', {postMessage: window.parent.postMessage.bind(window.parent)})
+    this.authenticate = caller('authenticate', {postMessage: window.parent.postMessage.bind(window.parent)})
+    this.createLink = caller('createLink', {postMessage: window.parent.postMessage.bind(window.parent)})
+  }
+
+
   /**
     *  External Authencation method for IDW
     *
@@ -44,47 +62,63 @@ class ThreeIdConnectService {
     * @param     {String}    params.type        Type of external auth request
     * @return    {Object}                       Response depends on type of request
   */
-  async externalAuth({ address, spaces, type }) {
+  async externalAuth({ address, spaces, type, did }) {
     let threeId
   	if (type === '3id_auth') {
       // TODO IMPLEMENT full migration
+      return this.authenticate(spaces, address)
   	} else if (type === '3id_migration') {
-  		// if (!spaces) { // or will be flag
-      // TODO IMPELEMENT full migration
-  		// }
-      // throw new Error('FAILED')
+      let new3id
 
-      threeId = await this._getThreeId(address)
-      if (spaces.length > 0) {
-        await threeId.authenticate(spaces)
+      const cached3id = this._get3idState(address)
+
+      if (!cached3id) {
+        this.linkPromise = getLinkedData(address)
       }
-      return threeId.serializeState()
+
+      const diffSpaces = this._diff3idState(cached3id, address, spaces)
+
+      let migration3id
+      if (diffSpaces) {
+        migration3id = await this.migration(diffSpaces, address)
+        new3id = this._merge3idState(cached3id, JSON.parse(migration3id))
+      } else {
+        new3id = cached3id
+      }
+      const new3idSerialized = JSON.stringify(new3id)
+      this._write3idState(new3idSerialized, address)
+      return new3idSerialized
   	} else if (type === '3id_createLink' ) {
-      // TODO could use disply hook for a link request specific card, will show consent screen again right now
-      this.displayIframe()
-      try {
-        await this.idWallet.linkAddress(address, this.externalProvider)
-      } catch(e) {
-        console.log(e)
+      if (this.linkPromise) {
+        const link = await this.linkPromise
+        if (!link) {
+          return this.createLink(did, address)
+        }
       }
-      this.hideIframe()
     }
   }
 
-  /**
-    *  Returns ThreeId instance, used for migration of legacy 3boxjs accounts
-    *  to create same logic in iframe
-    *
-    * @private
-    * @param     {String}    address     An ethereum address
-    * @return    {ThreeId}
-    */
-  async _getThreeId (address) {
-    if (!this.externalProvider) await this._connect(address)
-    if(!this._threeId) {
-      this._threeId = await ThreeId.getIdFromEthAddress(address, this.externalProvider, fakeIpfs, undefined, {})
-    }
-    return this._threeId
+  _write3idState(state, address) {
+    store.set(serializedKey(address), state)
+  }
+
+  _get3idState(address) {
+    const cached3id = store.get(serializedKey(address))
+    return cached3id ? JSON.parse(cached3id) : null
+  }
+
+  _merge3idState (target, apply) {
+    if (!target) return apply
+    const res = Object.assign({}, target)
+    res.spaceSeeds = Object.assign(target.spaceSeeds, apply.spaceSeeds || {})
+    return res
+  }
+
+  _diff3idState (cached3id, address, spaces) {
+    if (!cached3id) return spaces
+    const cacheSpaces = Object.keys(cached3id.spaceSeeds)
+    const diff = spaces.filter(x => !cacheSpaces.includes(x))
+    return diff.length === 0 ? null : diff
   }
 
   /**
@@ -118,26 +152,10 @@ class ThreeIdConnectService {
     if (!rootKeys) spaces.push('undefined')
     spaces.forEach(space => {
       const key = consentKey(message.params.address, domain, space)
-      console.log(key)
       store.remove(key)
     })
   }
 
-  /**
-    *  Connect web3modal to get external provider
-    *
-    * @private
-    * @param     {String}    address    Ethereum address of request
-    * @param     {String}    domain     Origin of caller/request
-    * @return    {ThreeId}
-    */
-  async _connect(address, domain) {
-    const providerName = store.get(`provider_${address}`) //TODO ref to move this to iframe implementation specific
-    if (!providerName) throw new Error('Must select provider')
-    this.externalProvider = await this.web3Modal.connectTo(providerName)
-  }
-
-  // TODO could consume web3modal or a provider already
   /**
     *  Start identity wallet service. Once returns ready to receive rpc requests
     *
@@ -146,9 +164,8 @@ class ThreeIdConnectService {
     * @param     {Function}    erroCB       Function to handle errors, function consumes error string (err) => {...}, called on errors
     * @param     {Function}    cancel       Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
     */
-  start(web3Modal, getConsent, errorCb, cancel) {
+  start(getConsent, errorCb, cancel) {
     this.cancel = cancel
-    this.web3Modal = web3Modal
     this.errorCb = errorCb
     this.idWallet = new IdentityWallet(getConsent, { externalAuth: this.externalAuth.bind(this) })
     this.provider = this.idWallet.get3idProvider()

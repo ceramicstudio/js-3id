@@ -1,13 +1,17 @@
 import ThreeIdProviderProxy from './threeIdProviderProxy.js'
 import { expose } from 'postmsg-rpc'
+import EthereumAuthProvider from './authProvider/ethereumAuthProvider.js'
+import { fakeIpfs } from 'identity-wallet/lib/utils'
 
-const IDENTITY_WALLET_IFRAME_URL = 'https://connect.3box.io/'
+// TODO
+const IDENTITY_WALLET_IFRAME_URL = ' http://127.0.0.1:30001'
 
-const HIDE_IFRAME_STYLE = 'width:0; height:0; border:0; border:none !important'
-const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 999999; position: fixed;'
+const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
+const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed;'
 
 const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
 const display = (iframe) => (height = '100%', width = '100%', top = '0', left= '0') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; top: ${top}; left: ${left};`
+// TODO maybe have some more ui options here, because these can change after iframe loads
 
 /**
  *  ThreeIdConnect provides interface for loading and instantiating IDW iframe,
@@ -22,13 +26,13 @@ class ThreeIdConnect {
     *
     * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
     */
-  constructor (iframeUrl) {
+  constructor (provider, iframeUrl, threeId) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       throw new Error('ThreeIdConnect not supported in this enviroment')
     }
 
     this.iframe = document.createElement('iframe')
-    this.iframe.src = iframeUrl || IDENTITY_WALLET_IFRAME_URL
+    this.iframe.src = ' http://127.0.0.1:30001' || IDENTITY_WALLET_IFRAME_URL
     this.iframe.style = HIDE_IFRAME_STYLE
     this.iframe.frameBorder = 0
 
@@ -37,6 +41,15 @@ class ThreeIdConnect {
     })
 
     document.body.appendChild(this.iframe)
+  }
+
+  // Just passing ref to threeId and address during migration
+  async connect (provider, ThreeId) {
+    // assumes eth provider during migration
+    this.provider = provider
+    this.ThreeId = ThreeId
+    // after migration, can detect different provdier to create authProvider
+    this.authProvider = new EthereumAuthProvider(provider)
   }
 
   /**
@@ -50,6 +63,47 @@ class ThreeIdConnect {
   }
 
   /**
+    *  Handlers to consume messages for authProvider
+    *
+    * @private
+    */
+  _registerAuthHandlers () {
+    expose('authenticate', this.authenticate.bind(this), {postMessage: this.postMessage})
+    expose('migration', this.migration.bind(this), {postMessage: this.postMessage})
+    expose('createLink', this.createLink.bind(this), {postMessage: this.postMessage})
+  }
+
+  /**
+    *  Returns ThreeId instance, used for migration of legacy 3boxjs accounts
+    *
+    * @private
+    * @param     {String}    address     An ethereum address
+    * @return    {ThreeId}
+    */
+  async _getThreeId (address) {
+    if(!this._threeId) {
+      this._threeId = await this.ThreeId.getIdFromEthAddress(address, this.provider, fakeIpfs, undefined, {})
+    }
+    return this._threeId
+  }
+
+  async authenticate(address) {
+    // TODO message and move
+    const message = 'Add this account as a 3ID authentication method'
+    return this.authProvider.authenticate(message, address)
+  }
+
+  async migration(spaces, address) {
+    const threeId = await this._getThreeId(address)
+    await threeId.authenticate(spaces)
+    return threeId.serializeState()
+  }
+
+  async createLink(did, address) {
+    return this.authProvider.createLink(did, address)
+  }
+
+  /**
     *  Returns a 3ID provider, which can send and receive 3ID messages from iframe
     *
     * @return    {ThreeIdProviderProxy}     A 3ID provider
@@ -58,6 +112,7 @@ class ThreeIdConnect {
     await this.iframeLoadedPromise
     this.postMessage = this.iframe.contentWindow.postMessage.bind(this.iframe.contentWindow)
     this._registerDisplayHandlers()
+    this._registerAuthHandlers()
     return new ThreeIdProviderProxy(this.postMessage)
   }
 }
