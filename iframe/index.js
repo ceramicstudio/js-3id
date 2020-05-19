@@ -24,7 +24,6 @@ const render = async (request) => {
     request
   }
   if (errorMessage) data.error = errorMessage
-  if (request.type === 'authenticate' && request.spaces.length === 0) data.request.spaces = ['3Box']
   root.innerHTML = template(data, checkIsMobile())
 }
 
@@ -44,9 +43,6 @@ const getConsent = async (req) => {
       accept.innerHTML = `Approve in wallet ${assets.Loading}`;
       document.getElementById("accept").style.opacity = .5;
       resolve(true)
-    })
-    decline.addEventListener('click', () => {
-      resolve(false)
     })
   })
 

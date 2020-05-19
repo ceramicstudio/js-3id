@@ -9,6 +9,9 @@ const store = require('store')
 const consentKey = (address, domain, space) => `3id_consent_${address}_${domain}_${space}`
 const serializedKey = (address) => `serialized3id_${address}`
 
+const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
+
 async function getLinkedData(address) {
   try {
     return API.getRootStoreAddress(address)
@@ -125,7 +128,7 @@ class ThreeIdConnectService {
     *  Tells parent window to display iframe
     */
   async displayIframe() {
-    return this.display()
+    return this.display(checkIsMobile())
   }
 
   /**

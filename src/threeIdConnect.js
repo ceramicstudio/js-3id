@@ -8,9 +8,11 @@ const IDENTITY_WALLET_IFRAME_URL = ' http://127.0.0.1:30001'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed;'
+const IFRAME_TOP = `top: 10px; right: 10px`
+const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
 const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
-const display = (iframe) => (height = '100%', width = '100%', top = '0', left= '0') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; top: ${top}; left: ${left};`
+const display = (iframe) => (mobile = false, height = '210px', width = '440px') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${mobile ? IFRAME_BOTTOM: IFRAME_TOP}`
 // TODO maybe have some more ui options here, because these can change after iframe loads
 
 /**
@@ -34,6 +36,7 @@ class ThreeIdConnect {
     this.iframe = document.createElement('iframe')
     this.iframe.src = ' http://127.0.0.1:30001' || IDENTITY_WALLET_IFRAME_URL
     this.iframe.style = HIDE_IFRAME_STYLE
+    this.iframe.allowTransparency = true
     this.iframe.frameBorder = 0
 
     this.iframeLoadedPromise = new Promise((resolve, reject) => {
