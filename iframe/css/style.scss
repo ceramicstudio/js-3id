@@ -16,7 +16,8 @@ h3,
 h4,
 h5,
 h6,
-button {
+button,
+p, {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -31,9 +32,9 @@ p {
   margin: 0;
 }
 
-p, span {
-  font-family: 'JetBrains';
-}
+// p, span {
+//   font-family: 'JetBrains';
+// }
 
 button {
   width: 100%;
@@ -43,6 +44,18 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
+  box-shadow: 2px 3px 8px 0px #00000025;
+}
+
+.button:active:focus {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.button:focus {
+  outline: none !important;
+  box-shadow: none;
 }
 
 button {
@@ -87,7 +100,7 @@ button {
 
 .controls {
   width: 100%;
-  height: 52px;
+  height: 55px;
   // border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
@@ -108,9 +121,8 @@ button {
     align-items: center;
 
     svg {
-      height: 24px;
-      width: 24px;
-      opacity: .3;
+      height: 30px;
+      width: 30px;
       cursor: pointer;
       // transition: $transition;
 
@@ -121,14 +133,14 @@ button {
 
     span {
       margin-left: 15px;
-      font-weight: 400;
-      color: #b9bbbc;
-      font-size: 13px;
+      font-weight: 600;
+      color: $textColor;
+      font-size: 14px;
     }
   }
 
   .close {
-    padding: 10px;
+    padding: 0 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -143,7 +155,7 @@ button {
 
     .close_line {
       width: 2px;
-      height: 20px;
+      height: 16px;
       background-color: $symbolGrey;
       transform: rotate(45deg);
     }
@@ -182,11 +194,10 @@ button {
 
 .walletSelect_error {
   color: $threeBoxRed;
-  position: absolute;
-  left: 0;
-  bottom: -38px;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  height: 40px;
+  padding-top: 11px;
 }
 
 .headerText {
@@ -279,9 +290,9 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 344px;
+  width: 100%;
+  padding: 0 30px 0px 30px;
   position: relative;
-  padding-bottom: 20px;
 }
 
 .promptBox {
@@ -314,7 +325,7 @@ button {
 }
 
 .promptText {
-  padding: 15px 45px 35px 45px;
+  padding: 15px 30px 25px 30px;
 
   .primaryText {
     color: #63686d;
@@ -328,7 +339,7 @@ button {
 
   .subText {
     font-weight: 400;
-    color: #b9bbbc;
+    color: $textColor;
     font-size: 13px;
   }
 }
@@ -426,6 +437,13 @@ button {
     color: #2a4afe;
     font-weight: 500;
   }
+}
+
+.footerText {
+  font-size: 9px;
+  padding: 25px 30px 20px 30px;
+  color: #817972a6;
+  text-align: center;
 }
 
 .buttonFooter {

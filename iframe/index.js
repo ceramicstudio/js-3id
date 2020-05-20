@@ -40,8 +40,8 @@ const getConsent = async (req) => {
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
-      accept.innerHTML = `Approve in wallet ${assets.Loading}`;
-      document.getElementById("accept").style.opacity = .5;
+      accept.innerHTML = `Confirm in your wallet ${assets.Loading}`;
+      document.getElementById("accept").style.boxShadow = 'none';
       resolve(true)
     })
   })
@@ -52,7 +52,7 @@ const getConsent = async (req) => {
 // Service calls on error, renders error to UI
 const errorCb = (err, msg) => {
   if (!msg) msg = err.toString()
-  if (err.toString().includes('Must select provider')) msg = 'Must select a wallet to continue.'
+  msg = 'Error: Unable to connect'
   console.log(err)
   store.set('error', msg)
 }

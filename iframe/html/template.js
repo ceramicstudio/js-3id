@@ -30,16 +30,19 @@ const template = (data,isMobile) => `
         <div class='${style.promptText}'>
           <div class='${style.subText}'>
             <p>
-            This site wants to access your profile${data.request.spaces.length === 0 ? '. ' : ' and ' + data.request.spaces.length + 'data sources.'}
+            This site wants to access your profile${data.request.spaces.length === 0 ? '. ' : ' and ' + data.request.spaces.length + ' data sources.'}
             </p>
-            ${data.error ? error(data) : ``}
           </div>
         </div>
         <div class='${style.actions}'>
-          <button id='accept' class='${style.primaryButton}'>
+          <button id='accept' class='${style.primaryButton}' ${data.error ? 'style="display:none;"' : ''} >
             Continue
           </button>
+          ${data.error ? error(data) :''}
         </div>
+      </div>
+      <div class='${style.footerText}'>
+        <p> This site uses 3ID to give you more control of your data. <span> What is this? </span></p>
       </div>
     </div>
   </div>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>Group 6</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="17.2398852%" y1="19.4378547%" x2="81.0763855%" y2="80.336965%" id="linearGradient-1">
+            <stop stop-color="#F68D2E" offset="0%"></stop>
+            <stop stop-color="#F74040" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-6">
+            <rect id="Rectangle" fill="url(#linearGradient-1)" x="0" y="0" width="200" height="200" rx="30"></rect>
+            <g id="Group" transform="translate(30.000000, 40.000000)" fill="#FFFFFF">
+                <path d="M87.6375,54.449941 L87.6375,121.8375 C87.6375,125.96928 84.2880303,129.31875 80.15625,129.31875 L7.48125,129.31875 C3.34946972,129.31875 4.94688925e-15,125.96928 0,121.8375 L0,100.924476 C-5.0599715e-16,96.7926955 3.34946972,93.4432258 7.48125,93.4432258 L42.058509,93.4432258 C45.0535737,93.4432258 47.4815534,91.0152461 47.4815534,88.0201815 C47.4815534,85.0251168 45.0535737,82.5971371 42.058509,82.5971371 L7.48125,82.5971371 C3.34946972,82.5971371 2.34087619e-15,79.2476674 0,75.1158871 L0,54.2028629 C-5.0599715e-16,50.0710826 3.34946972,46.7216129 7.48125,46.7216129 L47.4532925,46.7216129 C47.472133,46.7216129 47.4909735,46.7216841 47.5098134,46.7218264 L80.2127709,46.9689045 C84.3223781,46.9999535 87.6375,50.3402165 87.6375,54.449941 Z" id="Rectangle"></path>
+                <rect id="Rectangle" x="101.53125" y="45.95625" width="36.3375" height="83.3625" rx="7.48125"></rect>
+                <rect id="Rectangle" x="0" y="0" width="137.86875" height="35.26875" rx="7.48125"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

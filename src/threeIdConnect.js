@@ -12,7 +12,7 @@ const IFRAME_TOP = `top: 10px; right: 10px`
 const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
 const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
-const display = (iframe) => (mobile = false, height = '210px', width = '440px') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${mobile ? IFRAME_BOTTOM: IFRAME_TOP}`
+const display = (iframe) => (mobile = false, height = '240px', width = '440px') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${mobile ? IFRAME_BOTTOM: IFRAME_TOP}`
 // TODO maybe have some more ui options here, because these can change after iframe loads
 
 /**
