@@ -5,7 +5,7 @@ const capitalizeFirst = string => string.charAt(0).toUpperCase() + string.slice(
 const spaceString = (spaces) => spaces.join(', ')
 
 const template = (data,isMobile) => `
-  <div class='${style.card} ${isMobile ? style.cardMobile : ''}'>
+  <div class='${style.card} ${isMobile ? style.cardMobile : ''} ${isMobile && !data.error ? style.slideBottom : !data.error ? style.slideLeft : ''}'>
     <div class=${style.controls}>
       <div class=${style.controls_logo}>
         <a

@@ -3,11 +3,10 @@ import { expose } from 'postmsg-rpc'
 import EthereumAuthProvider from './authProvider/ethereumAuthProvider.js'
 import { fakeIpfs } from 'identity-wallet/lib/utils'
 
-// TODO
-const IDENTITY_WALLET_IFRAME_URL = ' http://127.0.0.1:30001'
+const IDENTITY_WALLET_IFRAME_URL = 'https://connect.3box.io'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
-const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed;'
+const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
 const IFRAME_TOP = `top: 10px; right: 10px`
 const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
@@ -28,13 +27,13 @@ class ThreeIdConnect {
     *
     * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
     */
-  constructor (provider, iframeUrl, threeId) {
+  constructor (iframeUrl) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       throw new Error('ThreeIdConnect not supported in this enviroment')
     }
 
     this.iframe = document.createElement('iframe')
-    this.iframe.src = ' http://127.0.0.1:30001' || IDENTITY_WALLET_IFRAME_URL
+    this.iframe.src = iframeUrl || IDENTITY_WALLET_IFRAME_URL
     this.iframe.style = HIDE_IFRAME_STYLE
     this.iframe.allowTransparency = true
     this.iframe.frameBorder = 0

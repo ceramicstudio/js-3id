@@ -37,6 +37,7 @@
   "homepage": "https://github.com/3box/3id-connect#readme",
   "dependencies": {
     "3box": "^1.19.0-rc.1",
+    "3id-blockchain-utils": "github:ceramicnetwork/js-3id-blockchain-utils#feat/ethereum-auth-function",
     "@babel/runtime": "^7.1.2",
     "identity-wallet": "github:3box/identity-wallet-js#feat/3id-connect-v2",
     "postmsg-rpc": "^2.4.0",

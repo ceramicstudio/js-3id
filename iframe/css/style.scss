@@ -66,6 +66,26 @@ button {
   }
 }
 
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
 .card {
   width: 420px;
   border: 1px solid $borderColor;
@@ -77,13 +97,32 @@ button {
   box-shadow: 0px 4px 10px 1px #00000025;
   margin-top: 10px;
   margin-left: 10px;
+  position: absolute;
 }
 
+@mixin slide {
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+}
+
+.slideLeft {
+  @include slide;
+  animation-name: slideInFromLeft;
+}
+
+.slideBottom {
+  @include slide;
+  animation-name: slideInFromBottom;
+}
+
+
 .cardMobile {
-  width: 85vw !important;
+  width: 100vw !important;
   height: 100vh !important;
   justify-content: flex-start !important;
-  margin-top: 0px !important;
+  margin-top: 20px !important;
   margin-left: 0px !important;
 }
 

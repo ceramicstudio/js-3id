@@ -1,4 +1,4 @@
-import ethUtils from './../../../js-3id-blockchain-utils/src/blockchains/ethereum' //TODO
+import { createLink, authenticate } from '3id-blockchain-utils/src/index' //TODO
 import AbstractAuthProvider from './abstractAuthProvider'
 
 /**
@@ -12,11 +12,11 @@ class EthereumAuthProvider extends AbstractAuthProvider {
   }
 
   async authenticate(message, accountId) {
-    return ethUtils.authenticate(message, accountId, this.provider)
+    return authenticate.ethereum(message, accountId, this.provider)
   }
 
   async createLink(did, accountId) {
-    return ethUtils.createLink(did, accountId, 'ethereum-eoa', this.provider)
+    return createLink(did, accountId, this.provider, { type: 'ethereum-eoa' })
   }
 }
 

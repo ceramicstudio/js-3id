@@ -9,11 +9,6 @@ store.remove('error')
  *  UI Window Functions
  */
 
-window.handleBrokenImage = (image) => {
-  image.onerror = "";
-  document.getElementById("siteFavicon").style.display = 'none';
-}
-
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
 

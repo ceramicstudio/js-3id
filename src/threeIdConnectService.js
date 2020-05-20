@@ -2,7 +2,6 @@ import { expose, caller } from 'postmsg-rpc'
 import { fakeIpfs } from 'identity-wallet/lib/utils'
 const IdentityWallet = require('identity-wallet')
 const API = require('3box/lib/api.js')
-import { createLink } from '3id-blockchain-utils'
 const Url = require('url-parse')
 const store = require('store')
 
