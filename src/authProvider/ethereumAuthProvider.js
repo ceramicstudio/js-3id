@@ -1,4 +1,4 @@
-import { createLink, authenticate } from '3id-blockchain-utils/src/index' //TODO
+import { createLink, authenticate } from '3id-blockchain-utils'
 import AbstractAuthProvider from './abstractAuthProvider'
 
 /**

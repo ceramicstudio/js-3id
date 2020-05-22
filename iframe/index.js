@@ -57,6 +57,7 @@ let closecallback
 
 window.hideIframe = () => {
   idwService.hideIframe()
+  root.innerHTML = ``
   if (closecallback) closecallback()
 }
 

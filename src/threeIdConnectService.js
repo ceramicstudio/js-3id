@@ -135,6 +135,7 @@ class ThreeIdConnectService {
     */
   async hideIframe() {
     store.remove('error') //TODO move, so specific to iframe implementation
+    root.innerHTML = ``
     return this.hide()
   }
 
@@ -182,7 +183,7 @@ class ThreeIdConnectService {
     * @return    {String}                 response message string
     */
   async providerRelay(message) {
-    const domain = new Url(document.referrer).hostname
+    const domain = new Url(document.referrer).host
     let loop = true
 
     const responsePromise = new Promise(async (resolve, reject) => {

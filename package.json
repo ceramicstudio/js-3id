@@ -15,6 +15,7 @@
     "build:dist:prod": "./node_modules/.bin/webpack --config webpack.config.js --mode=production --output-filename index.js",
     "build": "npm run build:dist:prod; npm run build:es5;",
     "prepublishOnly": "npm run build:es5",
+    "prepare": "npm run build:es5",
     "server:start": "http-server -c-1 -p 30001 public",
     "start": "npm run build:dist:watch & npm run server:start"
   },
