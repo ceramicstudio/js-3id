@@ -46,16 +46,30 @@ button {
   align-items: center;
   border: none;
   box-shadow: 2px 3px 8px 0px #00000025;
+
+  &:active:focus {
+    outline: none !important;
+    border: none;
+    box-shadow: inset 1px 1px 4px #0000001a;
+  }
+
+  &:active {
+    outline: none !important;
+    border: none;
+    box-shadow: 2px 3px 8px 0px #00000025;
+  }
+
+  &:focus {
+    outline: none !important;
+    border: none;
+    box-shadow: 2px 3px 8px 0px #00000025;
+  }
 }
 
-.button:active:focus {
-  outline: none !important;
-  box-shadow: none;
-}
-
-.button:focus {
-  outline: none !important;
-  box-shadow: none;
+.primaryButton {
+  color: $threeBoxBlue;
+  background-color: white;
+  border: none;
 }
 
 button {
@@ -483,6 +497,14 @@ button {
   padding: 25px 30px 20px 30px;
   color: #817972a6;
   text-align: center;
+
+  a {
+    color: #817972a6;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
 }
 
 .buttonFooter {
@@ -511,12 +533,6 @@ button {
 
 .marginTop25 {
   margin-top: 25px;
-}
-
-.primaryButton {
-  color: $threeIdOrange;
-  background-color: white;
-  border: none;
 }
 
 .secondaryButton {

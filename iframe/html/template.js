@@ -42,7 +42,11 @@ const template = (data,isMobile) => `
         </div>
       </div>
       <div class='${style.footerText}'>
-        <p> This site uses 3ID to give you more control of your data. <span> What is this? </span></p>
+        <p> This site uses 3Box and 3ID to give you control of your data.
+          <a href="https://3box.io" rel="noopener noreferrer" target="_blank">
+            What is this?
+          </a>
+        </p>
       </div>
     </div>
   </div>
