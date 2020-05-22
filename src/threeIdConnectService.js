@@ -134,8 +134,8 @@ class ThreeIdConnectService {
     *  Tells parent window to hide iframe
     */
   async hideIframe() {
-    store.remove('error') //TODO move, so specific to iframe implementation
-    root.innerHTML = ``
+    const root = document.getElementById('root')
+    if (root) root.innerHTML = ``
     return this.hide()
   }
 
@@ -184,7 +184,6 @@ class ThreeIdConnectService {
     */
   async providerRelay(message) {
     const domain = new Url(document.referrer).host
-    let loop = true
 
     const responsePromise = new Promise(async (resolve, reject) => {
       // Register request cancel calback
@@ -196,27 +195,16 @@ class ThreeIdConnectService {
           error: "3id-connect: Request not authorized"
         }
         resolve(res)
-        loop = false
       })
 
-      // Should not be neccessary, but sets bounds on any uncaught errors, so
-      // we dont have infinite loop and freeze
-      let tries = 0
-
       if (message.method === '3id_authenticate') {
-        // Try until response valid, or canceled above
-        while (loop) {
-          tries++
-          try {
-            const res = await this.provider.send(message, domain)
-            if (message.method === `3id_authenticate`) this.hideIframe()
-            resolve(res)
-            loop = false
-          } catch (e) {
-            this.errorCb(e, 'There was an error. Use the same account you used for this app.')
-            this._removeConsents(message, domain)
-          }
-          if (tries >= 10) loop = false
+        try {
+          const res = await this.provider.send(message, domain)
+          this.hideIframe()
+          resolve(res)
+        } catch (e) {
+          this.errorCb(e, 'Error: Unable to connect')
+          this._removeConsents(message, domain)
         }
       } else {
         const res = await this.provider.send(message, domain)

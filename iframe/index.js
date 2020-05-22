@@ -3,8 +3,6 @@ import ThreeIdConnectService from './../src/threeIdConnectService.js'
 const store = require('store')
 const assets = require('./assets/assets.js')
 
-store.remove('error')
-
 /**
  *  UI Window Functions
  */
@@ -12,14 +10,13 @@ store.remove('error')
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
 
+const error = (error) => `
+  <p class='walletSelect_error'>${error}</p>
+`
+
 // Given a request will render UI module templates
 const render = async (request) => {
-  const errorMessage = store.get('error')
-  let data = {
-    request
-  }
-  if (errorMessage) data.error = errorMessage
-  root.innerHTML = template(data, checkIsMobile())
+  document.getElementById('root').innerHTML = template({request}, checkIsMobile())
 }
 
 /**
@@ -32,11 +29,12 @@ const idwService = new ThreeIdConnectService()
 const getConsent = async (req) => {
   await idwService.displayIframe()
   await render(req)
+  const accept = document.getElementById('accept')
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
       accept.innerHTML = `Confirm in your wallet ${assets.Loading}`;
-      document.getElementById("accept").style.boxShadow = 'none';
+      accept.style.boxShadow = 'none';
       resolve(true)
     })
   })
@@ -45,11 +43,11 @@ const getConsent = async (req) => {
 }
 
 // Service calls on error, renders error to UI
-const errorCb = (err, msg) => {
+const errorCb = (err, msg, req) => {
   if (!msg) msg = err.toString()
   msg = 'Error: Unable to connect'
   console.log(err)
-  store.set('error', msg)
+  document.getElementById('action').innerHTML = error(msg)
 }
 
 // Closure to pass cancel state to IDW iframe service
@@ -57,7 +55,8 @@ let closecallback
 
 window.hideIframe = () => {
   idwService.hideIframe()
-  root.innerHTML = ``
+  const root = document.getElementById('root')
+  if (root) root.innerHTML = ``
   if (closecallback) closecallback()
 }
 

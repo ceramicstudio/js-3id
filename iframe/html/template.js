@@ -34,7 +34,7 @@ const template = (data,isMobile) => `
             </p>
           </div>
         </div>
-        <div class='${style.actions}'>
+        <div class='${style.actions}' id='action'>
           <button id='accept' class='${style.primaryButton}' ${data.error ? 'style="display:none;"' : ''} >
             Continue
           </button>
