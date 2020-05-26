@@ -68,7 +68,8 @@ class ThreeIdConnectService {
     let threeId
   	if (type === '3id_auth') {
       // TODO IMPLEMENT full migration
-      return this.authenticate(spaces, address)
+      const message = 'Add this account as a 3ID authentication method'
+      return this.authenticate(message, address)
   	} else if (type === '3id_migration') {
       let new3id
 
