@@ -1,23 +1,15 @@
 import { expose, caller } from 'postmsg-rpc'
 import { fakeIpfs } from 'identity-wallet/lib/utils'
 const IdentityWallet = require('identity-wallet')
-const API = require('3box/lib/api.js')
 const Url = require('url-parse')
 const store = require('store')
+const { isLinked } = require('./utils')
 
 const consentKey = (address, domain, space) => `3id_consent_${address}_${domain}_${space}`
 const serializedKey = (address) => `serialized3id_${address}`
 
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
-
-async function getLinkedData(address) {
-  try {
-    return API.getRootStoreAddress(address)
-  } catch (err) {
-    return null
-  }
-}
 
 /**
  *  ThreeIdConnectService runs an identity wallet instance and rpc server with
@@ -76,7 +68,7 @@ class ThreeIdConnectService {
       const cached3id = this._get3idState(address)
 
       if (!cached3id) {
-        this.linkPromise = getLinkedData(address)
+        this.linkPromise = isLinked(address)
       }
 
       const diffSpaces = this._diff3idState(cached3id, address, spaces)
