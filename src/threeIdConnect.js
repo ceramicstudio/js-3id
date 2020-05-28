@@ -45,11 +45,12 @@ class ThreeIdConnect {
     document.body.appendChild(this.iframe)
   }
 
-  // Just passing ref to threeId and address during migration
-  async connect (provider, ThreeId) {
+  // Just passing ref to threeId and ipfs during migration
+  async connect (provider, ThreeId, ipfs) {
     // assumes eth provider during migration
     this.provider = provider
     this.ThreeId = ThreeId
+    this.ipfs = ipfs
     // after migration, can detect different provdier to create authProvider
     this.authProvider = new EthereumAuthProvider(provider)
   }
@@ -84,7 +85,7 @@ class ThreeIdConnect {
     */
   async _getThreeId (address) {
     if(!this._threeId) {
-      this._threeId = await this.ThreeId.getIdFromEthAddress(address, this.provider, fakeIpfs, undefined, {})
+      this._threeId = await this.ThreeId.getIdFromEthAddress(address, this.provider, this.ipfs, undefined, {})
     }
     return this._threeId
   }
