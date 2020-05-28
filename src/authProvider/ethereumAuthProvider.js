@@ -12,7 +12,7 @@ class EthereumAuthProvider extends AbstractAuthProvider {
   }
 
   async authenticate(message, accountId) {
-    return authenticate.ethereum(message, accountId, this.provider)
+    return authenticate(message, accountId, this.provider)
   }
 
   async createLink(did, accountId) {
