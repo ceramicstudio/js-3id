@@ -16,7 +16,8 @@ h3,
 h4,
 h5,
 h6,
-button {
+button,
+p, {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -31,9 +32,9 @@ p {
   margin: 0;
 }
 
-p {
-  font-family: 'JetBrains';
-}
+// p, span {
+//   font-family: 'JetBrains';
+// }
 
 button {
   width: 100%;
@@ -43,6 +44,32 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
+  box-shadow: 2px 3px 8px 0px #00000025;
+
+  &:active:focus {
+    outline: none !important;
+    border: none;
+    box-shadow: inset 1px 1px 4px #0000001a;
+  }
+
+  &:active {
+    outline: none !important;
+    border: none;
+    box-shadow: 2px 3px 8px 0px #00000025;
+  }
+
+  &:focus {
+    outline: none !important;
+    border: none;
+    box-shadow: 2px 3px 8px 0px #00000025;
+  }
+}
+
+.primaryButton {
+  color: $threeBoxBlue;
+  background-color: white;
+  border: none;
 }
 
 button {
@@ -53,34 +80,72 @@ button {
   }
 }
 
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
 .card {
   width: 420px;
-  height: 565px;
   border: 1px solid $borderColor;
   border-radius: $radius;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
   background-color: white;
+  box-shadow: 0px 4px 10px 1px #00000025;
+  margin-top: 10px;
+  margin-left: 10px;
+  position: absolute;
 }
+
+@mixin slide {
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+}
+
+.slideLeft {
+  @include slide;
+  animation-name: slideInFromLeft;
+}
+
+.slideBottom {
+  @include slide;
+  animation-name: slideInFromBottom;
+}
+
 
 .cardMobile {
   width: 100vw !important;
   height: 100vh !important;
-  border: none !important;
   justify-content: flex-start !important;
+  margin-top: 20px !important;
+  margin-left: 0px !important;
 }
 
 .content {
   width: 100%;
-  padding-top: 45px;
+  padding-top: 5px;
 }
 
 .contentMobile {
-  width: 100% !important;
-  height: 80% !important;
-  padding-top: 125px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
@@ -88,8 +153,8 @@ button {
 
 .controls {
   width: 100%;
-  height: 52px;
-  border-bottom: 1px solid $borderColor;
+  height: 55px;
+  // border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -109,9 +174,8 @@ button {
     align-items: center;
 
     svg {
-      height: 24px;
-      width: 24px;
-      opacity: .3;
+      height: 30px;
+      width: 30px;
       cursor: pointer;
       // transition: $transition;
 
@@ -119,10 +183,17 @@ button {
         opacity: 1;
       }
     }
+
+    span {
+      margin-left: 15px;
+      font-weight: 600;
+      color: $textColor;
+      font-size: 14px;
+    }
   }
 
   .close {
-    padding: 10px;
+    padding: 0 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -137,7 +208,7 @@ button {
 
     .close_line {
       width: 2px;
-      height: 20px;
+      height: 16px;
       background-color: $symbolGrey;
       transform: rotate(45deg);
     }
@@ -163,6 +234,7 @@ button {
   border-radius: $radius;
   background-color: transparent;
   box-shadow: $dropShadow;
+  margin-top: 25px;
 }
 
 .headerLogo_empty {
@@ -175,11 +247,10 @@ button {
 
 .walletSelect_error {
   color: $threeBoxRed;
-  position: absolute;
-  left: 0;
-  bottom: -38px;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  height: 40px;
+  padding-top: 11px;
 }
 
 .headerText {
@@ -272,7 +343,8 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 344px;
+  width: 100%;
+  padding: 0 30px 0px 30px;
   position: relative;
 }
 
@@ -306,7 +378,7 @@ button {
 }
 
 .promptText {
-  padding: 15px 45px 35px 45px;
+  padding: 15px 30px 30px 30px;
 
   .primaryText {
     color: #63686d;
@@ -320,7 +392,7 @@ button {
 
   .subText {
     font-weight: 400;
-    color: #b9bbbc;
+    color: $textColor;
     font-size: 13px;
   }
 }
@@ -420,6 +492,21 @@ button {
   }
 }
 
+.footerText {
+  font-size: 9px;
+  padding: 25px 30px 20px 30px;
+  color: #817972a6;
+  text-align: center;
+
+  a {
+    color: #817972a6;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
 .buttonFooter {
   width: 100%;
   float: left;
@@ -446,11 +533,6 @@ button {
 
 .marginTop25 {
   margin-top: 25px;
-}
-
-.primaryButton {
-  background-color: $threeBoxBlue;
-  color: white;
 }
 
 .secondaryButton {
