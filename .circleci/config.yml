@@ -58,7 +58,7 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-connect-dev'
+          to: 's3://3id-connect-dev/v1'
       - run:
           name: "Invalidate CloudFront Cache"
           command: aws cloudfront create-invalidation --distribution-id E3SV2UNQUEOU2O --paths /*
@@ -74,7 +74,7 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-connect-prod'
+          to: 's3://3id-connect-prod/v1'
       - run:
           name: "Invalidate CloudFront Cache"
           command: aws cloudfront create-invalidation --distribution-id E1CFVBE8FYHOZ0 --paths /*
@@ -86,9 +86,9 @@ workflows:
       - deploy-dev:
           requires:
             - test-and-build
-          filters:
-            branches:
-              only: develop
+          # filters:
+          #   branches:
+          #     only: develop
       - deploy-prod:
           requires:
             - test-and-build

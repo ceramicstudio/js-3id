@@ -1,6 +1,6 @@
 {
   "name": "3id-connect",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Account management for 3Box",
   "main": "lib/index.js",
   "directories": {
@@ -15,6 +15,7 @@
     "build:dist:prod": "./node_modules/.bin/webpack --config webpack.config.js --mode=production --output-filename index.js",
     "build": "npm run build:dist:prod; npm run build:es5;",
     "prepublishOnly": "npm run build:es5",
+    "prepare": "npm run build:es5",
     "server:start": "http-server -c-1 -p 30001 public",
     "start": "npm run build:dist:watch & npm run server:start"
   },
@@ -36,17 +37,12 @@
   },
   "homepage": "https://github.com/3box/3id-connect#readme",
   "dependencies": {
-    "3box": "^1.17.1",
+    "3id-blockchain-utils": "^0.4.0",
     "@babel/runtime": "^7.1.2",
-    "@portis/web3": "^2.0.0-beta.54",
-    "@walletconnect/web3-provider": "^1.0.0-beta.47",
-    "authereum": "0.0.4-beta.129",
-    "fortmatic": "^2.0.5",
-    "identity-wallet": "^1.2.0",
+    "identity-wallet": "^1.3.0",
     "postmsg-rpc": "^2.4.0",
     "store": "^2.0.12",
-    "url-parse": "^1.4.7",
-    "web3modal": "^1.1.0"
+    "url-parse": "^1.4.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",

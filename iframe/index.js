@@ -1,75 +1,22 @@
-import requestCard from './html/3IDConnect/requestCard.js'
+import template from './html/template.js'
 import ThreeIdConnectService from './../src/threeIdConnectService.js'
-import web3Modal from './provider'
 const store = require('store')
-const assets = require('./html/3IDConnect/assets/assets.js')
-const style = require('style-loader!./style.scss')
-
-store.remove('error')
+const assets = require('./assets/assets.js')
 
 /**
  *  UI Window Functions
  */
-window.isOpen = false;
-const handleOpenWalletOptions = (isOpen) => {
-  if (window.isOpen) {
-    document.getElementById("walletOptions").style.display = "none";
-    document.getElementById("onClickOutside").style.display = "none";
-  } else {
-    document.getElementById("walletOptions").style.display = "inline-grid";
-    document.getElementById("onClickOutside").style.display = "flex";
-  }
-  window.isOpen = !window.isOpen
-}
-window.handleOpenWalletOptions = handleOpenWalletOptions;
 
-window.providerNameFunc = (provider, address, displayName) => {
-  selectedWallet.innerHTML = displayName
-  chosenWallet.innerHTML = assets[displayName];
+const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
 
-  store.set(`provider_${address}`, provider)
-  store.set(`providerName_${address}`, displayName)
-}
-
-window.getProviderDisplayImage = (address) => {
-  const imageToRender = store.get(`providerName_${address}`);
-  const image = !imageToRender || imageToRender == 'Default Wallet' ? assets.Wallet : assets[imageToRender];
-  return image;
-}
-
-window.getProviderDisplayName = (address) => {
-  return store.get(`providerName_${address}`)
-}
-
-window.getProvider = (address) => {
-  return store.get(`provider_${address}`)
-}
-
-window.handleBrokenImage = (image) => {
-  image.onerror = "";
-  document.getElementById("siteFavicon").style.display = 'none';
-}
-
-const checkIsMobile = () => {
-  let isMobile;
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    isMobile = true;
-  } else {
-    isMobile = false;
-  }
-  // console.log('isMobile', isMobile)
-  return isMobile;
-};
+const error = (error) => `
+  <p class='walletSelect_error'>${error}</p>
+`
 
 // Given a request will render UI module templates
 const render = async (request) => {
-  const errorMessage = store.get('error')
-  let data = {
-    request
-  }
-  if (errorMessage) data.error = errorMessage
-  if (request.type === 'authenticate' && request.spaces.length === 0) data.request.spaces = ['3Box']
-  root.innerHTML = requestCard(data, checkIsMobile())
+  document.getElementById('root').innerHTML = template({request}, checkIsMobile())
 }
 
 /**
@@ -81,19 +28,14 @@ const idwService = new ThreeIdConnectService()
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
 const getConsent = async (req) => {
   await idwService.displayIframe()
-  // TODO can handle ui for injected providers better, but for now metamask and not metamask ui
-  if (window.ethereum) req.injectedMetamask = window.ethereum.isMetaMask
-
   await render(req)
+  const accept = document.getElementById('accept')
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
-      accept.innerHTML = `Approve in wallet ${assets.Loading}`;
-      document.getElementById("accept").style.opacity = .5;
+      accept.innerHTML = `Confirm in your wallet ${assets.Loading}`;
+      accept.style.boxShadow = 'none';
       resolve(true)
-    })
-    decline.addEventListener('click', () => {
-      resolve(false)
     })
   })
 
@@ -101,11 +43,11 @@ const getConsent = async (req) => {
 }
 
 // Service calls on error, renders error to UI
-const errorCb = (err, msg) => {
+const errorCb = (err, msg, req) => {
   if (!msg) msg = err.toString()
-  if (err.toString().includes('Must select provider')) msg = 'Must select a wallet to continue.'
+  msg = 'Error: Unable to connect'
   console.log(err)
-  store.set('error', msg)
+  document.getElementById('action').innerHTML = error(msg)
 }
 
 // Closure to pass cancel state to IDW iframe service
@@ -113,6 +55,8 @@ let closecallback
 
 window.hideIframe = () => {
   idwService.hideIframe()
+  const root = document.getElementById('root')
+  if (root) root.innerHTML = ``
   if (closecallback) closecallback()
 }
 
@@ -120,7 +64,7 @@ const closing = (cb) => {
   closecallback = cb
 }
 
-idwService.start(web3Modal, getConsent, errorCb, closing)
+idwService.start(getConsent, errorCb, closing)
 
 // For testing, uncomment one line to see static view
 // render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
