@@ -35,3 +35,6 @@ $ npm run start
 ```
 $ npm run build
 ```
+
+## Maintainers
+[@zachferland](https://github.com/zachferland)
