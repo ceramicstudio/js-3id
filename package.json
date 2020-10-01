@@ -1,7 +1,7 @@
 {
   "name": "3id-connect",
   "version": "0.1.0",
-  "description": "Account management for 3Box",
+  "description": "Account management for 3ID",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib"
