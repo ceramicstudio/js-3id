@@ -15,7 +15,7 @@ const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
  *  ThreeIdConnectService runs an identity wallet instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-class ThreeIdConnectService {
+class ConnectLegacyService {
 
   /**
     * Create ThreeIdConnectService
@@ -209,4 +209,4 @@ class ThreeIdConnectService {
   }
 }
 
-export default ThreeIdConnectService
+export default ConnectLegacyService

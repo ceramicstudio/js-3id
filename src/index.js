@@ -1,9 +1,13 @@
-import ThreeIdProviderProxy from './threeIdProviderProxy.js'
-import ThreeIdConnectService from './threeIdConnectService.js'
+import DidProviderProxy from './didProviderProxy.js'
+import ConnectLegacyService from './connectLegacyService.js'
+import ConnectService from './connectService.js'
 import ThreeIdConnect from './threeIdConnect.js'
+import EthereumAuthProvider from './authProvider/ethereumAuthProvider'
 
 export {
   ThreeIdConnect,
-  ThreeIdConnectService,
-  ThreeIdProviderProxy
+  ConnectLegacyService,
+  ConnectService,
+  DidProviderProxy,
+  EthereumAuthProvider
 }

@@ -1,5 +1,6 @@
 node_modules
 public/index.js
 lib
+example/build.js
 
 .idea

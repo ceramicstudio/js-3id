@@ -1,5 +1,6 @@
 import template from './html/template.js'
-import ThreeIdConnectService from './../src/threeIdConnectService.js'
+import ConnectLegacyService from './../src/connectLegacyService.js'
+import ConnectService from './../src/connectService.js'
 const store = require('store')
 const assets = require('./assets/assets.js')
 
@@ -23,13 +24,21 @@ const render = async (request) => {
  *  Identity Wallet Service configuration and start
  */
 
-const idwService = new ThreeIdConnectService()
+//  TODO RUN BOTH SERVICES HERE 
+// const connectService = new ThreeIdConnectService()
+const connectService = new ConnectService()
+
 
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
-const getConsent = async (req) => {
-  await idwService.displayIframe()
+// TODO handle accoutn selection 
+// TODODO HANDLE both paths and spaces 
+const requestHandler = async (req) => {
+  console.log(req)
+  await connectService.displayIframe()
   await render(req)
   const accept = document.getElementById('accept')
+
+  // TODO render legacy space reqs to another template
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
@@ -54,7 +63,7 @@ const errorCb = (err, msg, req) => {
 let closecallback
 
 window.hideIframe = () => {
-  idwService.hideIframe()
+  connectService.hideIframe()
   const root = document.getElementById('root')
   if (root) root.innerHTML = ``
   if (closecallback) closecallback()
@@ -64,7 +73,7 @@ const closing = (cb) => {
   closecallback = cb
 }
 
-idwService.start(getConsent, errorCb, closing)
+connectService.start(requestHandler, errorCb, closing)
 
 // For testing, uncomment one line to see static view
 // render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))

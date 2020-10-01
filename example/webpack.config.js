@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './iframe/index.js',
+  entry: './example/app.js',
   output: {
-    filename: 'index.js',
-    path: path.resolve(__dirname, 'public'),
+    filename: 'build.js',
+    path: path.resolve(__dirname, './'),
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -24,29 +24,6 @@ module.exports = {
             ]
           }
         }
-      },
-      {
-        test: /\.scss$/,
-        use: [{
-            loader: "css-loader",
-            options: {
-              sourceMap: true,
-              modules: true,
-              localIdentName: "[local]"
-            }
-          },
-          {
-            loader: "sass-loader"
-          }
-        ]
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf)$/,
-        loader: 'url-loader'
-      },
-      {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader'
       },
     ]
   },
