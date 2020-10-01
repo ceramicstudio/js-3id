@@ -30,7 +30,7 @@ const template = (data,isMobile) => `
         <div class='${style.promptText}'>
           <div class='${style.subText}'>
             <p>
-            This site wants to access your profile${data.request.spaces.length === 0 ? '. ' : ' and ' + data.request.spaces.length + ' data source'}${data.request.spaces.length > 1 ? 's. ' : '.'}
+           
             </p>
           </div>
         </div>
@@ -56,3 +56,6 @@ export default template
 const error = (data) => `
   <p class='${style.walletSelect_error}'>${data.error}</p>
 `
+
+
+//  This site wants to access your profile${data.request.spaces.length === 0 ? '. ' : ' and ' + data.request.spaces.length + ' data source'}${data.request.spaces.length > 1 ? 's. ' : '.'}
