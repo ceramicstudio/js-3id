@@ -1,15 +1,12 @@
 const style = require('style-loader!../css/style.scss')
 const assets = require('./../assets/assets.js')
 
-const capitalizeFirst = string => string.charAt(0).toUpperCase() + string.slice(1)
-const spaceString = (spaces) => spaces.join(', ')
-
 const template = (data,isMobile) => `
   <div class='${style.card} ${isMobile ? style.cardMobile : ''} ${isMobile && !data.error ? style.slideBottom : !data.error ? style.slideLeft : ''}'>
     <div class=${style.controls}>
       <div class=${style.controls_logo}>
         <a
-        href="https://3box.io"
+        href="https://ceramic.network"
         rel="noopener noreferrer"
         target="_blank"
         class=${style.controls_logo}
@@ -30,20 +27,18 @@ const template = (data,isMobile) => `
         <div class='${style.promptText}'>
           <div class='${style.subText}'>
             <p>
-           
+              ${content(data)}
             </p>
           </div>
         </div>
         <div class='${style.actions}' id='action'>
-          <button id='accept' class='${style.primaryButton}' ${data.error ? 'style="display:none;"' : ''} >
-            Continue
-          </button>
+          ${actions(data)}
           ${data.error ? error(data) :''}
         </div>
       </div>
       <div class='${style.footerText}'>
-        <p> This site uses 3Box and 3ID to give you control of your data.
-          <a href="https://3box.io" rel="noopener noreferrer" target="_blank">
+        <p> This site uses Ceramic and 3ID to give you control of your data.
+          <a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
             What is this?
           </a>
         </p>
@@ -51,6 +46,38 @@ const template = (data,isMobile) => `
     </div>
   </div>
 `
+
+const content = (data) => {
+  if (data.request.type === 'authenticate') {
+    return `This site wants to access your profile${data.request.paths.length === 0 ? '' : ' and ' + data.request.paths.length + ' data source'}${data.request.paths.length > 1 ? 's. ' : '.'}`
+  }
+  if (data.request.type === 'account') {
+    return `You have not used this account with 3id, do you want to link this account?`
+  }
+}
+
+const actions = (data) => {
+  if (data.request.type === 'authenticate') {
+    return `
+      <button id='accept' class='${style.primaryButton}' ${data.error ? 'style="display:none;"' : ''} >
+        Continue
+      </button>
+    `
+  }
+  if (data.request.type === 'account') {
+    return `
+      <button id='accept' style='margin-right:8%;' class='${style.primaryButtonHalf}' ${data.error ? 'style="display:none;"' : ''} >
+        Yes
+      </button>
+      <button id='decline' class='${style.primaryButtonHalf}' ${data.error ? 'style="display:none;"' : ''} >
+        No
+      </button>
+    `
+  }
+}
+
+
+
 export default template
 
 const error = (data) => `
