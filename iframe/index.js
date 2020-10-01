@@ -30,15 +30,11 @@ const connectService = new ConnectService()
 
 
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
-// TODO handle accoutn selection 
-// TODODO HANDLE both paths and spaces 
 const requestHandler = async (req) => {
-  console.log(req)
   await connectService.displayIframe()
+  if (req.spaces) req.paths = req.spaces
   await render(req)
   const accept = document.getElementById('accept')
-
-  // TODO render legacy space reqs to another template
 
   const result = await new Promise((resolve, reject) => {
     accept.addEventListener('click', () => {
@@ -46,6 +42,11 @@ const requestHandler = async (req) => {
       accept.style.boxShadow = 'none';
       resolve(true)
     })
+    if (req.type === 'account') {
+      decline.addEventListener('click', () => {
+        resolve(false)
+      })
+    }
   })
 
   return result

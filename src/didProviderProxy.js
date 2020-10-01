@@ -1,13 +1,4 @@
 import { caller } from 'postmsg-rpc'
-// import {
-//   HandlerMethods,
-//   RequestHandler,
-//   RPCConnection,
-//   RPCError,
-//   RPCRequest,
-//   RPCResponse,
-//   createHandler,
-// } from 'rpc-utils'
 
 /**
  *  A DID provider proxy, DID provider interface that acts as rpc client, to

@@ -6,15 +6,16 @@ const sha256 = require('js-sha256').sha256
 import { publishedDefinitions, publishedSchemas } from '@ceramicstudio/idx-tools'
 import { IDX } from '@ceramicstudio/idx'
 import IframeService from './iframeService.js'
+import { RPCError } from 'rpc-utils'
 
 const CERAMIC_API = 'https://ceramic.3boxlabs.com'
-const accountsKey = 'accounts'
+const ACCOUNT_KEY = 'accounts'
 
-const rpcError = (id) => ({
-  'id': id,
-  'json-rpc': '2.0',
-  error: "3id-connect: Request not authorized"
-})
+// TODO didprovider, auth failed codes?
+const rpcError = (id) => {
+  const rpcError = new RPCError(-32401, `3id-connect: Request not authorized`)
+  return Object.assign(rpcError.toObject(), {id})
+} 
 
 /**
  *  ConnectService runs an identity wallet instance and rpc server with
@@ -66,9 +67,13 @@ class ConnectService extends IframeService {
 
     if (otherAccountsExist) {
       // ui to select account, for now only option to link to existing account or not, no multi account, accounts would be 3id acounts after
-      authId = await this.userRequestHandler({ type: "account", accounts }) 
-      authSecret = this.getStoredAccount(authId)
-      authSecretAdd = this.authCreate(accountId)
+      // Returns true or false for now, and just get any existing account, but could return actual dids
+      const linkHuh = await this.userRequestHandler({ type: "account", accounts }) 
+      if (linkHuh) {
+        authId = accounts[0]
+        authSecret = this.getStoredAccount(authId)
+        authSecretAdd = await this.authCreate(accountId)
+      }
     }
 
     // Same request relayed before idw handles it, if request reaches idw, then permission given
@@ -179,18 +184,18 @@ class ConnectService extends IframeService {
   }
 
   storeAccount (accountId, authSecretHex) {
-    const accounts = store.get(accountsKey) || {}
+    const accounts = store.get(ACCOUNT_KEY) || {}
     accounts[accountId] =  authSecretHex
-    store.set(accountsKey, accounts)
+    store.set(ACCOUNT_KEY, accounts)
   }
 
   getStoredAccount (accountId) {
-    const accounts = store.get(accountsKey) || {}
+    const accounts = store.get(ACCOUNT_KEY) || {}
     return accounts[accountId] ? Uint8Array.from(Buffer.from(accounts[accountId], 'hex')) : null
   }
 
   getStoredAccountList() {
-    const val = store.get(accountsKey)
+    const val = store.get(ACCOUNT_KEY)
     return val ? Object.keys(val) : null
   }
 
@@ -203,7 +208,7 @@ class ConnectService extends IframeService {
     return {
       type: 'authenticate',
       origin,
-      payload: req.params.paths ? { paths: req.params.paths } : {},
+      paths: req.params.paths || [],
     }
   }
 }
