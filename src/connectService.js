@@ -17,7 +17,7 @@ const rpcError = (id) => ({
 })
 
 /**
- *  ThreeIdConnectService runs an identity wallet instance and rpc server with
+ *  ConnectService runs an identity wallet instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
 class ConnectService extends IframeService {
@@ -42,21 +42,31 @@ class ConnectService extends IframeService {
     super.start(this.requestHandler.bind(this))
   }
 
-  // TOOD refactor into more clear paths, too much implicit
-  async init(accountId, authReq, domain) {
+  // Simplified Assumptions
+  // loads from given auth secret if given no other, idw handles if new or existing account
+  // can only add accounts to existing in iframe, no way to lookup other accounts or add then link
+  // only one 3id account in iframe, single option to link to existing account or not and continue
+  // linking means add auth method and public link right now, but can unbundle
 
+  async init(accountId, authReq, domain) {
     let authSecret = this.getStoredAccount(accountId)
-    let authId = accountId
-    let authSecretAdd = null 
     const accounts = this.getStoredAccountList()
 
-    if (!accounts) {
-      const userReq = this._mapToUserRequest(authReq, domain)
-      const userPersmission = userReq ?  await this.userRequestHandler(userReq) : null
-      if (!userPersmission) throw new Error('3id-connect: Request not authorized')
+    const accountAlreadyExist = Boolean(authSecret)
+    const firstAccount = !Boolean(accounts)
+    const otherAccountsExist = !Boolean(authSecret) && Boolean(accounts)
+
+    let authId = accountId
+    let authSecretAdd = null
+    
+    if (firstAccount) {
+      await this.userPermissionRequest(authReq, domain)
       authSecret = await this.authCreate(accountId)
-    } else if (!authSecret) {
-      authId = await this.userRequestHandler({ type: "account", accounts }) // ui to select account, for now only option to link to existing account or not, no multi account
+    }
+
+    if (otherAccountsExist) {
+      // ui to select account, for now only option to link to existing account or not, no multi account, accounts would be 3id acounts after
+      authId = await this.userRequestHandler({ type: "account", accounts }) 
       authSecret = this.getStoredAccount(authId)
       authSecretAdd = this.authCreate(accountId)
     }
@@ -64,32 +74,29 @@ class ConnectService extends IframeService {
     // Same request relayed before idw handles it, if request reaches idw, then permission given
     const getPermission = () => true
 
-    const config = {
-      getPermission,
-      ceramic: this.ceramic,
-      authSecret, 
-      authId
-    }
-
-    this.idWallet = await IdentityWallet.create(config)
-    this.provider = this.idWallet.getDidProvider()
+    this.idw = await IdentityWallet.create({ getPermission, ceramic: this.ceramic, authSecret, authId })
+    this.provider = this.idw.getDidProvider()
     await this.ceramic.setDIDProvider(this.provider)
     this.idx =  new IDX({ ceramic: this.ceramic, definitions: publishedDefinitions, schemas: publishedSchemas })
 
-    if (authSecretAdd) {
+    if (otherAccountsExist && authSecretAdd) {
       await this.idw.keychain.add(accountId, authSecretAdd)
       await this.idw.keychain.commit()
     }
 
-    const links = await this.idx.get('cryptoAccountLinks')
-    if (!(links && links[accountId])) await this.createLinkDoc(accountId) 
-
-    if (accounts) {
-      const userReq = this._mapToUserRequest(authReq, domain)
-      if (!userReq) return
-      const userPersmission = userReq ?  await this.userRequestHandler(userReq) : null
-      if (!userPersmission) throw new Error('3id-connect: Request not authorized')
+    if (firstAccount || authSecretAdd || accountAlreadyExist) {
+      const links = await this.idx.get('cryptoAccountLinks')
+      if (!(links && links[accountId])) await this.createLinkDoc(accountId) 
     }
+
+    if (!firstAccount) await this.userPermissionRequest(authReq, domain)
+  }
+
+  async userPermissionRequest(authReq, domain) {
+    const userReq = this._createUserRequest(authReq, domain)
+    if (!userReq) return
+    const userPersmission = userReq ?  await this.userRequestHandler(userReq) : null
+    if (!userPersmission) throw new Error('3id-connect: Request not authorized')
   }
 
   /**
@@ -109,7 +116,7 @@ class ConnectService extends IframeService {
   *  Creates a publicly verifiable link between crypto account and 3id
   */
   async createLinkDoc (accountId) {
-    const linkProofPromise = this.createLink(this.idWallet.id)
+    const linkProofPromise = this.createLink(this.idw.id)
 
     const linkDoc = await this.ceramic.createDocument(
       'account-link',
@@ -123,52 +130,52 @@ class ConnectService extends IframeService {
   }
 
   /**
-    *  Consumes IDW RPC request message and relays to IDW instance. Also handles
+    *  Consumes DID RPC request message and relays to IDW didprovider instance. Also handles
     *  logic to retry requests and cancel requests.
     *
-    * @param     {Object}      message    IDW RPC request message
+    * @param     {Object}      message    DID RPC request message
     * @return    {String}                 response message string
     */
 
-    // TODO refactor dispatcher, andn move some out 
   async requestHandler(message) {
     const domain = new Url(document.referrer).host
 
-    const responsePromise = new Promise(async (resolve, reject) => {
+    const responsePromise = new Promise(async (resolve) => {
       // Register request cancel calback
       this.cancel(() => resolve(rpcError(message.id)))
 
       if (message.method === 'did_authenticate') {
-
-        if (!this.provider) {
-          const accountId = message.params.accountId
-          try {
-            await this.init(accountId, message, domain)
-          } catch(e) {
-            if (e.toString().includes('authorized')) {
-              this.hideIframe()
-              resolve(rpcError(message.id))
-              return
-            } 
-            this.errorCb(e, 'Error: Unable to connect')
-            return
-          }
-        }
-
-        try {
-          const res = await this.provider.send(message, domain)
-          this.hideIframe()
-          resolve(res)
-        } catch (e) {
-          this.errorCb(e, 'Error: Unable to connect')
-        }
+        const res = await this._didAuthReq(message, domain)
+        if (res) resolve(res)
       } else {
-        const res = await this.provider.send(message, domain)
-        resolve(res)
+        const res = await this._relayDidReq(message, domain)
+        if (res) resolve(res)
       }
     })
 
     return JSON.stringify(await responsePromise)
+  }
+
+  async _didAuthReq (message, domain) {
+    try {
+      if (!this.provider) {
+        const accountId = message.params.accountId
+        await this.init(accountId, message, domain)
+      }
+      const res = await this.provider.send(message, domain)
+      this.hideIframe()
+      return res
+    } catch (e) {
+      if (e.toString().includes('authorized')) {
+        this.hideIframe()
+        return rpcError(message.id)
+      } 
+      this.errorCb(e, 'Error: Unable to connect')
+    }
+  }
+
+  async _relayDidReq (message, domain) {
+    return this.provider.send(message, domain)
   }
 
   storeAccount (accountId, authSecretHex) {
@@ -187,8 +194,8 @@ class ConnectService extends IframeService {
     return val ? Object.keys(val) : null
   }
 
-  _mapToUserRequest (req, origin) {
-    if (this.idWallet) {
+  _createUserRequest (req, origin) {
+    if (this.idw) {
       const has = req.params.paths ? this.idw.permissions.has(origin, req.params.paths) : true
       if (has) return null
     }
