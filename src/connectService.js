@@ -1,17 +1,11 @@
-import { expose, caller } from 'postmsg-rpc'
 const IdentityWallet = require('identity-wallet').default
 const Url = require('url-parse')
 const store = require('store')
 import CeramicClient from '@ceramicnetwork/ceramic-http-client'
 const sha256 = require('js-sha256').sha256
-const authSecretKey = (accountId) => `authSecret_${accountId}`
-
-const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
-
 import { publishedDefinitions, publishedSchemas } from '@ceramicstudio/idx-tools'
 import { IDX } from '@ceramicstudio/idx'
-
+import IframeService from './iframeService.js'
 
 const CERAMIC_API = 'https://ceramic.3boxlabs.com'
 const accountsKey = 'accounts'
@@ -26,86 +20,26 @@ const rpcError = (id) => ({
  *  ThreeIdConnectService runs an identity wallet instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-class ConnectService {
+class ConnectService extends IframeService {
 
-  /**
-    * Create ThreeIdConnectService
-    */
   constructor () {
-    this._registerDisplayListeners()
-    this._registerExternalAuthListeners()
-  }
-  //   TODO SHARED
-  /**
-   * Registers rpc call function for display and hiding iframe (Note: reverse of
-   * idw rpc calls, this is rpc client, sending messages to parent window)
-   * @private
-   */
-  _registerDisplayListeners () {
-    this.display = caller('display', {postMessage: window.parent.postMessage.bind(window.parent)})
-    this.hide = caller('hide', {postMessage: window.parent.postMessage.bind(window.parent)})
-  }
-
-  //   TODO SHARED
-  /**
-   * Registers rpc call functions for handling external auth calls needed for IDW to parent window
-   * @private
-   */
-  _registerExternalAuthListeners () {
-    this.authenticate = caller('authenticate', {postMessage: window.parent.postMessage.bind(window.parent)})
-    this.createLink = caller('createLink', {postMessage: window.parent.postMessage.bind(window.parent)})
-  }
-  //   TODO SHARED
-  /**
-    *  Tells parent window to display iframe
-    */
-  async displayIframe() {
-    return this.display(checkIsMobile())
-  }
-
-  // TODO SHARED
-  /**
-    *  Tells parent window to hide iframe
-    */
-  async hideIframe() {
-    const root = document.getElementById('root')
-    if (root) root.innerHTML = ``
-    return this.hide()
-  }
-
-  async createLinkDoc (accountId) {
-
-    const linkProofPromise = this.createLink(this.idWallet.id)
-
-    const linkDoc = await this.ceramic.createDocument(
-      'account-link',
-      { metadata: { owners: [accountId] } },
-      { applyOnly: true }
-    )
-    const linkProof = await linkProofPromise
-    await linkDoc.change({ content: linkProof })
-    await this.ceramic.pin.add(linkDoc.id)
-    await this.idx.set('cryptoAccountLinks', { [accountId]: linkDoc.id })
-    console.log('idx set')
+    super()
   }
 
   /**
-    *  Start identity wallet service. Once returns ready to receive rpc requests
-    *
-    * @param     {Function}    getConsent   get consent function, reference IDW
-    * @param     {Function}    errorCB       Function to handle errors, function consumes error string (err) => {...}, called on errors
-    * @param     {Function}    cancel       Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
-    */
+  *  Start connect service. Once returns ready to receive rpc requests
+  *
+  * @param     {Function}    userRequestHandler   Function to handle request for user (in user interface/modal)
+  * @param     {Function}    errorCB              Function to handle errors, function consumes error string (err) => {...}, called on errors
+  * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
+  */
 
-  // TODO THIS NOT AWAITED in iframe, may fail
   async start(userRequestHandler, errorCb, cancel) {
     this.cancel = cancel
     this.errorCb = errorCb
-
     this.userRequestHandler = userRequestHandler
     this.ceramic = new CeramicClient(CERAMIC_API)
-
-    expose('send', this.providerRelay.bind(this), {postMessage: window.parent.postMessage.bind(window.parent)})
+    super.start(this.requestHandler.bind(this))
   }
 
   // TOOD refactor into more clear paths, too much implicit
@@ -158,6 +92,9 @@ class ConnectService {
     }
   }
 
+  /**
+  *  Creates an authSecret to add auth method 3ID
+  */
   async authCreate (accountId) {
     const message = 'Add this account as a Ceramic authentication method'
     const authSecret = await this.authenticate(message)
@@ -168,34 +105,21 @@ class ConnectService {
     return Uint8Array.from(Buffer.from(entropy, 'hex'))
   }
 
-  storeAccount (accountId, authSecretHex) {
-    const accounts = store.get(accountsKey) || {}
-    accounts[accountId] =  authSecretHex
-    store.set(accountsKey, accounts)
-  }
+  /**
+  *  Creates a publicly verifiable link between crypto account and 3id
+  */
+  async createLinkDoc (accountId) {
+    const linkProofPromise = this.createLink(this.idWallet.id)
 
-  getStoredAccount (accountId) {
-    console.log(store.get(accountsKey))
-    const accounts = store.get(accountsKey) || {}
-    return accounts[accountId] ? Uint8Array.from(Buffer.from(accounts[accountId], 'hex')) : null
-  }
-
-  getStoredAccountList() {
-    const val = store.get(accountsKey)
-    return val ? Object.keys(val) : null
-  }
-
-  _mapToUserRequest (req, origin) {
-    if (this.idWallet) {
-      const has = req.params.paths ? this.idw.permissions.has(origin, req.params.paths) : true
-      if (has) return null
-    }
-
-    return {
-      type: 'authenticate',
-      origin,
-      payload: req.params.paths ? { paths: req.params.paths } : {},
-    }
+    const linkDoc = await this.ceramic.createDocument(
+      'account-link',
+      { metadata: { owners: [accountId] } },
+      { applyOnly: true }
+    )
+    const linkProof = await linkProofPromise
+    await linkDoc.change({ content: linkProof })
+    await this.ceramic.pin.add(linkDoc.id)
+    await this.idx.set('cryptoAccountLinks', { [accountId]: linkDoc.id })
   }
 
   /**
@@ -207,7 +131,7 @@ class ConnectService {
     */
 
     // TODO refactor dispatcher, andn move some out 
-  async providerRelay(message) {
+  async requestHandler(message) {
     const domain = new Url(document.referrer).host
 
     const responsePromise = new Promise(async (resolve, reject) => {
@@ -245,6 +169,35 @@ class ConnectService {
     })
 
     return JSON.stringify(await responsePromise)
+  }
+
+  storeAccount (accountId, authSecretHex) {
+    const accounts = store.get(accountsKey) || {}
+    accounts[accountId] =  authSecretHex
+    store.set(accountsKey, accounts)
+  }
+
+  getStoredAccount (accountId) {
+    const accounts = store.get(accountsKey) || {}
+    return accounts[accountId] ? Uint8Array.from(Buffer.from(accounts[accountId], 'hex')) : null
+  }
+
+  getStoredAccountList() {
+    const val = store.get(accountsKey)
+    return val ? Object.keys(val) : null
+  }
+
+  _mapToUserRequest (req, origin) {
+    if (this.idWallet) {
+      const has = req.params.paths ? this.idw.permissions.has(origin, req.params.paths) : true
+      if (has) return null
+    }
+
+    return {
+      type: 'authenticate',
+      origin,
+      payload: req.params.paths ? { paths: req.params.paths } : {},
+    }
   }
 }
 
