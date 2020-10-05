@@ -2,6 +2,7 @@ import { createLink, authenticate } from '3id-blockchain-utils'
 import AbstractAuthProvider from './abstractAuthProvider'
 import { AccountID } from "caip"
 
+// TODO get network from provider
 const chainId = "eip155:1"
 
 /**

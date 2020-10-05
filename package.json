@@ -45,7 +45,7 @@
     "@ceramicnetwork/ceramic-core": "^0.5.11",
     "@ceramicnetwork/ceramic-http-client": "^0.5.14",
     "@ceramicstudio/idx": "^0.1.0",
-    "@ceramicstudio/idx-tools": "^0.1.1",
+    "@ceramicstudio/idx-constants": "^0.1.0",
     "@ethersproject/hdnode": "^5.0.3",
     "@portis/web3": "^2.0.0-beta.57",
     "@walletconnect/web3-provider": "^1.2.1",
