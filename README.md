@@ -36,5 +36,9 @@ $ npm run start
 $ npm run build
 ```
 
+# <a name="intro-ceramic"></a> 3ID-Connect Ceramic
+
+The next verion of 3ID-Connect is being developed on [Ceramic](https://ceramic.network) and [identity-wallet-js V2](https://github.com/3box/identity-wallet-js). It is being developed in parallel with the current version. You can find 3ID-Connect with Ceramic support on the following branches `ceramic-develop` and `ceramic-master`. It is released at 3id-connect@next and available at 3idconnect.org.
+
 ## Maintainers
 [@zachferland](https://github.com/zachferland)
