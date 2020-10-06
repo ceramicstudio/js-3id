@@ -1,7 +1,7 @@
 {
   "name": "3id-connect",
-  "version": "0.1.0",
-  "description": "Account management for 3Box",
+  "version": "1.0.0-alpha.0",
+  "description": "Account management for 3ID",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib"
@@ -12,12 +12,15 @@
     "build:es5": "rm -rf ./lib; ./node_modules/.bin/babel src --out-dir lib",
     "build:dist": "./node_modules/.bin/webpack --config webpack.config.js --mode=development",
     "build:dist:watch": "./node_modules/.bin/webpack --config webpack.config.js --mode=development --watch",
+    "build:example:dist:watch": "./node_modules/.bin/webpack --config ./example/webpack.config.js --mode=development --watch",
     "build:dist:prod": "./node_modules/.bin/webpack --config webpack.config.js --mode=production --output-filename index.js",
     "build": "npm run build:dist:prod; npm run build:es5;",
     "prepublishOnly": "npm run build:es5",
     "prepare": "npm run build:es5",
     "server:start": "http-server -c-1 -p 30001 public",
-    "start": "npm run build:dist:watch & npm run server:start"
+    "server:example:start": "http-server -c-1 -p 30000 example",
+    "start": "npm run build:dist:watch & npm run server:start",
+    "start:example": "npm run start & npm run build:example:dist:watch & npm run server:example:start"
   },
   "jest": {
     "testEnvironment": "node",
@@ -37,12 +40,31 @@
   },
   "homepage": "https://github.com/3box/3id-connect#readme",
   "dependencies": {
-    "3id-blockchain-utils": "^0.4.0",
+    "3id-blockchain-utils": "^1.0.0",
     "@babel/runtime": "^7.1.2",
-    "identity-wallet": "^1.3.0",
+    "@ceramicnetwork/ceramic-core": "^0.5.11",
+    "@ceramicnetwork/ceramic-http-client": "^0.5.14",
+    "@ceramicstudio/idx": "^0.1.0",
+    "@ceramicstudio/idx-constants": "^0.1.0",
+    "@ethersproject/hdnode": "^5.0.3",
+    "@portis/web3": "^2.0.0-beta.57",
+    "@walletconnect/web3-provider": "^1.2.1",
+    "authereum": "0.0.4-beta.186",
+    "caip": "^0.9.2",
+    "dag-jose": "^0.2.0",
+    "dids": "^0.6.3",
+    "fortmatic": "^2.2.1",
+    "identity-wallet": "^2.0.0-alpha.10",
+    "install": "^0.13.0",
+    "ipfs": "^0.50.2",
+    "ipfs-http-client": "^47.0.1",
+    "multiformats": "^3.0.3",
+    "npm": "^6.14.8",
     "postmsg-rpc": "^2.4.0",
+    "rpc-utils": "^0.1.3",
     "store": "^2.0.12",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.4.7",
+    "web3modal": "^1.9.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
