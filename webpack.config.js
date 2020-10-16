@@ -1,5 +1,12 @@
 const path = require('path');
 
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+
+const plugins = []
+if (process.env.ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin())
+}
+
 module.exports = {
   entry: './iframe/index.js',
   output: {
@@ -50,6 +57,7 @@ module.exports = {
       },
     ]
   },
+  plugins,
   node: {
     console: false,
     fs: 'empty',
