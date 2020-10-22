@@ -1,8 +1,8 @@
 import DIDProviderProxy from './didProviderProxy.js'
 import { expose } from 'postmsg-rpc'
 
-// TODO anyway to have default ceramic 
-const IDENTITY_WALLET_IFRAME_URL = 'https://3idconnect.org'
+// TODO anyway to have default ceramic
+const IDENTITY_WALLET_IFRAME_URL = 'https://3idconnect.org/index.html'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
@@ -45,7 +45,7 @@ class ThreeIdConnect {
 
   async connect (provider) {
       // TODO DETECTION ON CAP10,  consume auth provider or other providers
-      // just consume any providers and then create auth provider here, at very least has to support 3box 
+      // just consume any providers and then create auth provider here, at very least has to support 3box
     this.authProvider = provider
     this.accountId = this.authProvider.accountId
     await this.iframeLoadedPromise
