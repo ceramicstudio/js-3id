@@ -72,6 +72,13 @@ button {
   border: none;
 }
 
+.primaryButtonHalf {
+  color: $threeBoxBlue;
+  background-color: white;
+  border: none;
+  width: 46%;
+}
+
 button {
   svg {
     width: 24px;
@@ -340,7 +347,7 @@ button {
 
 .actions {
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   width: 100%;

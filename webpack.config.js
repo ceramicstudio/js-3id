@@ -1,5 +1,12 @@
 const path = require('path');
 
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+
+const plugins = []
+if (process.env.ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin())
+}
+
 module.exports = {
   entry: './iframe/index.js',
   output: {
@@ -15,7 +22,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env'],
+            presets: ['@babel/preset-env', "@babel/preset-react"],
             plugins: [
               ['@babel/plugin-transform-runtime', {
                 'regenerator': true
@@ -50,6 +57,7 @@ module.exports = {
       },
     ]
   },
+  plugins,
   node: {
     console: false,
     fs: 'empty',
