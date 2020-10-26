@@ -1,11 +1,11 @@
 {
   "name": "3id-connect",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.2",
   "description": "Account management for 3ID",
   "main": "lib/index.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "lint": "standard --verbose src/**",
     "test": "jest --detectOpenHandles --coverage",
