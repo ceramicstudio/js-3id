@@ -10,6 +10,7 @@ import { RPCError } from 'rpc-utils'
 
 const CERAMIC_API = 'https://ceramic.3boxlabs.com'
 const ACCOUNT_KEY = 'accounts'
+const ACTIVE_ACCOUNT_KEY = 'active_account'
 
 // TODO didprovider, auth failed codes?
 const rpcError = (id) => {
@@ -41,13 +42,14 @@ class ConnectService extends IframeService {
     this.userRequestHandler = userRequestHandler
     this.ceramic = new CeramicClient(CERAMIC_API)
     super.start(this.requestHandler.bind(this))
+    this.activeAccount = null
   }
 
   // Simplified Assumptions
-  // loads from given auth secret if given no other, idw handles if new or existing account
-  // can only add accounts to existing in iframe, no way to lookup other accounts or add then link
-  // only one 3id account in iframe, single option to link to existing account or not and continue
-  // linking means add auth method and public link right now, but can unbundle
+  // always asks for authsecret if not available locally, ie two accounts linked, first one already auth, will not look up link for second to see if same did, will ask for an authsecret again
+  // when account hasnt seen, two options, link to "active account" or create new, 
+  // linking means add auth method and public link right now, but can unbundle, code currently assumes in places
+  // better manage state for race conditions, two window active
 
   async init(accountId, authReq, domain) {
     let authSecret = this.getStoredAccount(accountId)
@@ -57,22 +59,30 @@ class ConnectService extends IframeService {
     const firstAccount = !Boolean(accounts)
     const otherAccountsExist = !Boolean(authSecret) && Boolean(accounts)
 
+    let existInNetworkOnly 
+    if (!accountAlreadyExist) {
+      // todo dont block visual modal with this
+      existInNetworkOnly  = Boolean(await this._resolveLink(accountId))
+    }
+
     let authId = accountId
     let authSecretAdd = null
     
-    if (firstAccount) {
+    if (firstAccount || existInNetworkOnly ) {
       await this.userPermissionRequest(authReq, domain)
       authSecret = await this.authCreate(accountId)
     }
 
-    if (otherAccountsExist) {
-      // ui to select account, for now only option to link to existing account or not, no multi account, accounts would be 3id acounts after
-      // Returns true or false for now, and just get any existing account, but could return actual dids
-      const linkHuh = await this.userRequestHandler({ type: "account", accounts }) 
+    if (otherAccountsExist && !authSecret) {
+      // change request type, for now will link to "active account" (true) or create new, pass single account not array
+      const activeAccount = this.getActiveAccount() || accounts[0]
+      const linkHuh = await this.userRequestHandler({ type: "account", accounts: [activeAccount]})
       if (linkHuh) {
-        authId = accounts[0]
+        authId = activeAccount
         authSecret = this.getStoredAccount(authId)
         authSecretAdd = await this.authCreate(accountId)
+      } else {
+        authSecret = await this.authCreate(accountId)
       }
     }
 
@@ -89,12 +99,13 @@ class ConnectService extends IframeService {
       await this.idw.keychain.commit()
     }
 
-    if (firstAccount || authSecretAdd || accountAlreadyExist) {
+    if (firstAccount || authSecretAdd || accountAlreadyExist || !existInNetworkOnly) {
       const links = await this.idx.get('cryptoAccountLinks')
       if (!(links && links[accountId])) await this.createLinkDoc(accountId) 
     }
 
-    if (!firstAccount) await this.userPermissionRequest(authReq, domain)
+    if (!firstAccount && !existInNetworkOnly) await this.userPermissionRequest(authReq, domain)
+    this.setActiveAccount(accountId)
   }
 
   async userPermissionRequest(authReq, domain) {
@@ -163,8 +174,8 @@ class ConnectService extends IframeService {
 
   async _didAuthReq (message, domain) {
     try {
-      if (!this.provider) {
-        const accountId = message.params.accountId
+      const accountId = message.params.accountId
+      if (this.activeAccount !== accountId) {
         await this.init(accountId, message, domain)
       }
       const res = await this.provider.send(message, domain)
@@ -183,10 +194,31 @@ class ConnectService extends IframeService {
     return this.provider.send(message, domain)
   }
 
+  /**
+  *  Looks up if accountId is linked to did
+  */
+ async _resolveLink (accountId) {
+    const doctype = 'account-link'
+    const content =  { metadata: { controllers: [accountId] } }
+    const doc = await this.ceramic.createDocument(doctype, content, { applyOnly: true })
+    const linkDoc = await this.ceramic.loadDocument(doc.id)
+    return linkDoc.content
+  }
+
   storeAccount (accountId, authSecretHex) {
     const accounts = store.get(ACCOUNT_KEY) || {}
     accounts[accountId] =  authSecretHex
     store.set(ACCOUNT_KEY, accounts)
+  }
+
+  // TODO any storage state should handle multiple windows, could cause problems here
+  setActiveAccount(accountId) {
+    this.activeAccount = accountId
+    store.set(ACTIVE_ACCOUNT_KEY, accountId)
+  }
+
+  getActiveAccount() {
+    return store.get(ACTIVE_ACCOUNT_KEY)
   }
 
   getStoredAccount (accountId) {
