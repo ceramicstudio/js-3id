@@ -3,7 +3,7 @@ const Url = require('url-parse')
 const store = require('store')
 import CeramicClient from '@ceramicnetwork/ceramic-http-client'
 const sha256 = require('js-sha256').sha256
-import { definitions, schemas } from '@ceramicstudio/idx-constants'
+import { definitions } from '@ceramicstudio/idx-constants'
 import { IDX } from '@ceramicstudio/idx'
 import IframeService from './iframeService.js'
 import { RPCError } from 'rpc-utils'
@@ -82,7 +82,7 @@ class ConnectService extends IframeService {
     this.idw = await IdentityWallet.create({ getPermission, ceramic: this.ceramic, authSecret, authId })
     this.provider = this.idw.getDidProvider()
     await this.ceramic.setDIDProvider(this.provider)
-    this.idx =  new IDX({ ceramic: this.ceramic, definitions, schemas })
+    this.idx =  new IDX({ ceramic: this.ceramic, definitions })
 
     if (otherAccountsExist && authSecretAdd) {
       await this.idw.keychain.add(accountId, authSecretAdd)
@@ -125,13 +125,13 @@ class ConnectService extends IframeService {
 
     const linkDoc = await this.ceramic.createDocument(
       'account-link',
-      { metadata: { owners: [accountId] } },
+      { metadata: { controllers: [accountId] } },
       { applyOnly: true }
     )
     const linkProof = await linkProofPromise
     await linkDoc.change({ content: linkProof })
     await this.ceramic.pin.add(linkDoc.id)
-    await this.idx.set('cryptoAccountLinks', { [accountId]: linkDoc.id })
+    await this.idx.set('cryptoAccountLinks', { [accountId]: linkDoc.id.toUrl('base36') })
   }
 
   /**
