@@ -54,17 +54,23 @@ const content = (data) => {
   if (data.request.type === 'account') {
     return `You have not used this account with 3id, do you want to link this account?`
   }
+  if (data.request.type === 'create') {
+    return `Do you want to create a new account?`
+  }
+  if (data.request.type === 'link') {
+    return `Do you want to link this account to ${data.request.baseDid.substring(0,18)}... ?`
+  }
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate') {
+  if (data.request.type === 'authenticate' || data.request.type === 'create') {
     return `
       <button id='accept' class='${style.primaryButton}' ${data.error ? 'style="display:none;"' : ''} >
         Continue
       </button>
     `
   }
-  if (data.request.type === 'account') {
+  if (data.request.type === 'account' || data.request.type === 'link') {
     return `
       <button id='accept' style='margin-right:8%;' class='${style.primaryButtonHalf}' ${data.error ? 'style="display:none;"' : ''} >
         Yes

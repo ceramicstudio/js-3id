@@ -10,6 +10,7 @@ import { RPCError } from 'rpc-utils'
 
 const CERAMIC_API = 'https://ceramic.3boxlabs.com'
 const ACCOUNT_KEY = 'accounts'
+const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
 
 // TODO didprovider, auth failed codes?
@@ -51,6 +52,7 @@ class ConnectService extends IframeService {
   // linking means add auth method and public link right now, but can unbundle, code currently assumes in places
   // better manage state for race conditions, two window active
 
+  // TODO handle link state better, stores links now, but does not sync with network before lookup
   async init(accountId, authReq, domain) {
     let authSecret = this.getStoredAccount(accountId)
     const accounts = this.getStoredAccountList()
@@ -86,32 +88,53 @@ class ConnectService extends IframeService {
       }
     }
 
-    // Same request relayed before idw handles it, if request reaches idw, then permission given
-    const getPermission = () => true
-
-    this.idw = await IdentityWallet.create({ getPermission, ceramic: this.ceramic, authSecret, authId })
-    this.provider = this.idw.getDidProvider()
-    await this.ceramic.setDIDProvider(this.provider)
-    this.idx =  new IDX({ ceramic: this.ceramic, definitions })
+    await this.initIdentity(authSecret, authId)
 
     if (otherAccountsExist && authSecretAdd) {
-      await this.idw.keychain.add(accountId, authSecretAdd)
-      await this.idw.keychain.commit()
+      await this.addAuth(accountId, authSecretAdd)
     }
 
     if (firstAccount || authSecretAdd || accountAlreadyExist || !existInNetworkOnly) {
-      const links = await this.idx.get('cryptoAccountLinks')
-      if (!(links && links[accountId])) await this.createLinkDoc(accountId) 
+      await this.tryCreateLink(accountId)
     }
 
-    if (!firstAccount && !existInNetworkOnly) await this.userPermissionRequest(authReq, domain)
+    if (!firstAccount && !existInNetworkOnly) {
+      await this.userPermissionRequest(authReq, domain)
+    }
+
     this.setActiveAccount(accountId)
+  }
+
+  async initIdentity(authSecret, authId) {
+     // Same request relayed before idw handles it, if request reaches idw, then permission given
+     const getPermission = () => true
+
+     this.idw = await IdentityWallet.create({ getPermission, ceramic: this.ceramic, authSecret, authId })
+     this.provider = this.idw.getDidProvider()
+     await this.ceramic.setDIDProvider(this.provider)
+     this.idx =  new IDX({ ceramic: this.ceramic, definitions })
+  }
+
+  async tryCreateLink(accountId) {
+    const links = await this.idx.get('cryptoAccountLinks')
+    if (links) this.storeDIDLinks(this.idw.id, Object.keys(links))
+    if (!(links && links[accountId])) await this.createLinkDoc(accountId) 
+  }
+
+  async addAuth (accountId, authSecretAdd) {
+    await this.idw.keychain.add(accountId, authSecretAdd)
+    await this.idw.keychain.commit()
   }
 
   async userPermissionRequest(authReq, domain) {
     const userReq = this._createUserRequest(authReq, domain)
     if (!userReq) return
     const userPersmission = userReq ?  await this.userRequestHandler(userReq) : null
+    if (!userPersmission) throw new Error('3id-connect: Request not authorized')
+  }
+
+  async userPermissionRequest3id(req, domain) {
+    const userPersmission = req ?  await this.userRequestHandler(req) : null
     if (!userPersmission) throw new Error('3id-connect: Request not authorized')
   }
 
@@ -142,7 +165,34 @@ class ConnectService extends IframeService {
     const linkProof = await linkProofPromise
     await linkDoc.change({ content: linkProof })
     await this.ceramic.pin.add(linkDoc.id)
-    await this.idx.set('cryptoAccountLinks', { [accountId]: linkDoc.id.toUrl('base36') })
+
+    const existingLinks = await this.idx.get('cryptoAccountLinks') || {}
+    const links = Object.assign(existingLinks, { [accountId]: linkDoc.id.toUrl('base36') })
+    await this.idx.set('cryptoAccountLinks', links)
+    this.storeDIDLinks(this.idw.id, [accountId])
+  }
+
+  async requestHandler(message) {
+    const domain = new Url(document.referrer).host
+
+    const responsePromise = new Promise(async (resolve) => {
+      // Register request cancel calback
+      this.cancel(() => resolve(rpcError(message.id)))
+
+      if(message.method.startsWith('did')) {
+        const res = await this.requestHandlerDid(message, domain)
+        return resolve(res)
+      }
+
+      if(message.method.startsWith('3id')) {
+        const res = await this.requestHandler3id(message, domain)
+        return resolve(res)
+      }
+
+      // else error
+    })
+
+    return JSON.stringify(await responsePromise)
   }
 
   /**
@@ -153,23 +203,73 @@ class ConnectService extends IframeService {
     * @return    {String}                 response message string
     */
 
-  async requestHandler(message) {
-    const domain = new Url(document.referrer).host
+  async requestHandlerDid(message, domain) {
+    if (message.method === 'did_authenticate') {
+      return this._didAuthReq(message, domain)
+    } else {
+      return  this._relayDidReq(message, domain)
+    }
+  }
 
-    const responsePromise = new Promise(async (resolve) => {
-      // Register request cancel calback
-      this.cancel(() => resolve(rpcError(message.id)))
+  async requestHandler3id(message) {
+    //TODO throw if not selfid or localhost
+    let res
 
-      if (message.method === 'did_authenticate') {
-        const res = await this._didAuthReq(message, domain)
-        if (res) resolve(res)
-      } else {
-        const res = await this._relayDidReq(message, domain)
-        if (res) resolve(res)
-      }
-    })
+    if (message.method === '3id_accounts') {
+      res = await this._listAccounts(message)
+    } else if (message.method === '3id_createAccount') {
+      res = await this._createAccount(message)
+    } else if (message.method === '3id_addAuthAndLink') {
+      res = await this._addAuthAndLink(message)
+    }
 
-    return JSON.stringify(await responsePromise)
+    // else error
+    this.hideIframe()
+    return res
+  }
+
+
+  async _listAccounts() {
+    // TODO ask user for permission in future
+    const accounts = this.getDIDLinksList()
+    return { result: accounts }
+  }
+
+  async _createAccount(message, domain) {
+    const req = {
+      type: 'create'
+    }
+    const accountId = message.params.accountId
+    await this.userPermissionRequest3id(req, domain)
+    // TODO throw if account already exist
+    
+    const authSecret = await this.authCreate(accountId)
+    await this.initIdentity(authSecret, accountId)
+    await this.tryCreateLink(accountId)
+
+    return { result: true }
+  }
+
+  // TODO change name
+  async _addAuthAndLink(message, domain) {
+    const accountId = message.params.accountId
+    const baseDid = message.params.baseDid
+
+    const req = {
+      type: 'link',
+      baseDid,
+      accountId
+    }
+
+    await this.userPermissionRequest3id(req, domain)
+
+    const authSecret = this.getStoredAccountByDid(baseDid)
+    const authSecretAdd = await this.authCreate(accountId)
+    await this.initIdentity(authSecret, accountId)
+    await this.tryCreateLink(accountId)
+    await this.addAuth(accountId, authSecretAdd)
+    
+    return { result: true }
   }
 
   async _didAuthReq (message, domain) {
@@ -226,8 +326,46 @@ class ConnectService extends IframeService {
     return accounts[accountId] ? Uint8Array.from(Buffer.from(accounts[accountId], 'hex')) : null
   }
 
+  getStoredAccounts (accountId) {
+    return store.get(ACCOUNT_KEY) || {}
+  }
+
+  getStoredAccountByDid (did) {
+    const links = this.getDIDLinks(did) || []
+    console.log(links)
+    const accounts = this.getStoredAccounts()
+    console.log(accounts)
+    if (links.length == 0 ) throw new Error('Account does not exist')
+    const accountId = links.find(e => Boolean(accounts[e]))
+    console.log(accountId)
+    return Uint8Array.from(Buffer.from(accounts[accountId], 'hex'))
+  }
+
+
   getStoredAccountList() {
     const val = store.get(ACCOUNT_KEY)
+    return val ? Object.keys(val) : null
+  }
+
+  storeDIDLinks(did, linkArray = []) {
+    const dids = store.get(LINK_KEY) || {}
+    const didsArr = dids[did] || []
+    const arr = didsArr.concat(linkArray.filter(i => didsArr.indexOf(i) < 0))
+    dids[did] = arr
+    store.set(LINK_KEY, dids)
+  }
+
+  getDIDLinks(did) {
+    const dids = store.get(LINK_KEY) || {}
+    return dids[did]
+  }
+
+  getDIDLinksList() {
+    return store.get(LINK_KEY) || {}
+  }
+
+  getDIDs() {
+    const val = store.get(LINK_KEY)
     return val ? Object.keys(val) : null
   }
 
