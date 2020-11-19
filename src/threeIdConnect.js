@@ -1,5 +1,6 @@
 import DIDProviderProxy from './didProviderProxy.js'
-import { expose } from 'postmsg-rpc'
+import { expose, caller } from 'postmsg-rpc'
+import { RPCClient, RPCConnection } from 'rpc-utils'
 
 // TODO anyway to have default ceramic
 const IDENTITY_WALLET_IFRAME_URL = 'https://3idconnect.org/index.html'
@@ -11,6 +12,14 @@ const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
 const hide = (iframe) => () => iframe.style = HIDE_IFRAME_STYLE
 const display = (iframe) => (mobile = false, height = '245px', width = '440px') => iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${mobile ? IFRAME_BOTTOM: IFRAME_TOP}`
+
+
+const RPCProvider = (postMessage) => {
+  const sendRPC = caller('send', { postMessage})
+  return {
+    send: async (req) => JSON.parse(await sendRPC(req))
+  }
+}
 
 /**
  *  ThreeIdConnect provides interface for loading and instantiating IDW iframe,
@@ -41,17 +50,32 @@ class ThreeIdConnect {
     })
 
     document.body.appendChild(this.iframe)
+
+    this._connected = false
   }
 
   async connect (provider) {
       // TODO DETECTION ON CAP10,  consume auth provider or other providers
       // just consume any providers and then create auth provider here, at very least has to support 3box
-    this.authProvider = provider
-    this.accountId = this.authProvider.accountId
+    if (provider) {
+      this.setAuthProvider(provider)
+    }
     await this.iframeLoadedPromise
     this.postMessage = this.iframe.contentWindow.postMessage.bind(this.iframe.contentWindow)
     this._registerDisplayHandlers()
     this._registerAuthHandlers()
+    this.RPCProvider = RPCProvider(this.postMessage)
+    this.RPCClient = new RPCClient(this.RPCProvider)
+    this._connected = true
+  }
+
+  setAuthProvider (authProvider) {
+    this.authProvider = authProvider
+    this.accountId = this.authProvider.accountId
+  }
+
+  get connected () {
+    return this._connected
   }
 
   /**
@@ -70,16 +94,40 @@ class ThreeIdConnect {
     * @private
     */
   _registerAuthHandlers () {
-    expose('authenticate', this.authenticate.bind(this), {postMessage: this.postMessage})
-    expose('createLink', this.createLink.bind(this), {postMessage: this.postMessage})
+    expose('authenticate', this._authenticate.bind(this), {postMessage: this.postMessage})
+    expose('createLink', this._createLink.bind(this), {postMessage: this.postMessage})
   }
 
-  async authenticate(message, accountId) {
+  async _authenticate(message, accountId) {
     return this.authProvider.authenticate(message, accountId)
   }
 
-  async createLink(did, accountId) {
+  async _createLink(did, accountId) {
     return this.authProvider.createLink(did, accountId)
+  }
+
+  async accounts () {
+    return this.RPCClient.request('3id_accounts')
+  }
+
+  async createAccount() {
+    if (!this.authProvider) throw new Error('setAuthProvder required')
+    const params = {
+      accountId: this.accountId
+    }
+
+    return this.RPCClient.request('3id_createAccount', params)
+  }
+
+  // support priv links in future, auth link, link auth
+  async addAuthAndLink(baseDid) {
+    if (!this.authProvider) throw new Error('setAuthProvder required')
+    const params = {
+      baseDid,
+      accountId: this.accountId
+    }
+
+    return this.RPCClient.request('3id_addAuthAndLink', params)
   }
 
   /**
@@ -88,7 +136,8 @@ class ThreeIdConnect {
     * @return    {DIDProviderProxy}     A DID provider
     */
   async getDidProvider() {
-    return new DIDProviderProxy(this.postMessage, this.authProvider.accountId)
+    if (!this.authProvider) throw new Error('setAuthProvder required')
+    return new DIDProviderProxy(this.RPCProvider, this.authProvider.accountId)
   }
 }
 

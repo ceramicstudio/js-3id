@@ -5,9 +5,8 @@ import { caller } from 'postmsg-rpc'
  *  relay request to iframe (rpc server)
  */
 class DidProviderProxy {
-  constructor (postMessage, accountId) {
-    this.postMessage = postMessage
-    this.sendRPC = caller('send', {postMessage: this.postMessage})
+  constructor (provider, accountId) {
+    this.provider = provider
     this.accountId = accountId
   }
 
@@ -17,8 +16,7 @@ class DidProviderProxy {
 
   async send (msg, origin) {
     msg.params = Object.assign({}, msg.params, { accountId: this.accountId })
-    const res = await this.sendRPC(msg)
-    return JSON.parse(res)
+    return this.provider.send(msg)
   }
 }
 
