@@ -1,6 +1,7 @@
-import Logo from "./logo.svg";
+import Logo from './logo.svg'
+export { Logo }
 
-const Loading = `<svg class="lds-spin" width="90px"  height="90px"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style="background: none;"><g transform="translate(80,50)">
+export const Loading = `<svg class="lds-spin" width="90px"  height="90px"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style="background: none;"><g transform="translate(80,50)">
 <g transform="rotate(0)">
 <circle cx="0" cy="0" r="10" fill="#f0580e" fill-opacity="1" transform="scale(1.09585 1.09585)">
   <animateTransform attributeName="transform" type="scale" begin="-1.3125s" values="1.1 1.1;1 1" keyTimes="0;1" dur="1.5s" repeatCount="indefinite"></animateTransform>
@@ -57,9 +58,3 @@ const Loading = `<svg class="lds-spin" width="90px"  height="90px"  xmlns="http:
 </circle>
 </g>
 </g></svg>`
-
-
-export {
-  Logo,
-  Loading
-}

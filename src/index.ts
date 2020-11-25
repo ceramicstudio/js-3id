@@ -1,0 +1,5 @@
+export { default as EthereumAuthProvider } from './authProvider/ethereumAuthProvider'
+export { default as ConnectService } from './connectService'
+export { default as DidProviderProxy } from './didProviderProxy'
+export { default as ThreeIdConnect } from './threeIdConnect'
+export * from './types'

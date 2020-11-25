@@ -1,8 +1,11 @@
-import template from './html/template.js'
-import ConnectLegacyService from './../src/connectLegacyService.js'
-import ConnectService from './../src/connectService.js'
-const store = require('store')
-const assets = require('./assets/assets.js')
+import ConnectService from '../src/connectService'
+import type { UserRequestHandler } from '../src/types'
+
+import * as assets from './assets/assets'
+import template from './html/template'
+
+// import ConnectLegacyService from './../src/connectLegacyService.js'
+// const store = require('store')
 
 /**
  *  UI Window Functions
@@ -17,29 +20,30 @@ const error = (error) => `
 
 // Given a request will render UI module templates
 const render = async (request) => {
-  document.getElementById('root').innerHTML = template({request}, checkIsMobile())
+  document.getElementById('root').innerHTML = template({ request }, checkIsMobile())
 }
 
 /**
  *  Identity Wallet Service configuration and start
  */
 
-//  TODO RUN BOTH SERVICES HERE 
+//  TODO RUN BOTH SERVICES HERE
 // const connectService = new ThreeIdConnectService()
 const connectService = new ConnectService()
 
-
 // IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
-const requestHandler = async (req) => {
+const requestHandler: UserRequestHandler = async (req) => {
   await connectService.displayIframe()
+  // @ts-ignore
   if (req.spaces) req.paths = req.spaces
   await render(req)
   const accept = document.getElementById('accept')
+  const decline = document.getElementById('decline')
 
-  const result = await new Promise((resolve, reject) => {
+  const result: boolean = await new Promise((resolve) => {
     accept.addEventListener('click', () => {
-      accept.innerHTML = `Confirm in your wallet ${assets.Loading}`;
-      accept.style.boxShadow = 'none';
+      accept.innerHTML = `Confirm in your wallet ${assets.Loading}`
+      accept.style.boxShadow = 'none'
       resolve(true)
     })
     if (req.type === 'account') {
@@ -63,6 +67,7 @@ const errorCb = (err, msg, req) => {
 // Closure to pass cancel state to IDW iframe service
 let closecallback
 
+// @ts-ignore
 window.hideIframe = () => {
   connectService.hideIframe()
   const root = document.getElementById('root')

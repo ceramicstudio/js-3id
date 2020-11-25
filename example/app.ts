@@ -1,7 +1,8 @@
-import web3Modal from './providers.js'
-const { ThreeIdConnect, EthereumAuthProvider } = require('./../src/index')
-const THREEID_CONNECT_URL = 'http://localhost:30001'
 import { DID } from 'dids'
+import { ThreeIdConnect, EthereumAuthProvider } from '../src'
+import web3Modal from './providers'
+
+const THREEID_CONNECT_URL = 'http://localhost:30001'
 
 const threeIdConnect = new ThreeIdConnect(THREEID_CONNECT_URL)
 let ethAddress
@@ -24,13 +25,11 @@ const authenticate = async () => {
   console.log(jws)
 }
 
-// TODO must connect first 
+// TODO must connect first
 let accountslist
 const accounts = async () => {
   accountslist = await threeIdConnect.accounts()
   console.log(accounts)
-
-
 }
 
 const create = async () => {
@@ -39,13 +38,12 @@ const create = async () => {
 }
 
 const link = async () => {
+  // @ts-ignore
   const res = await threeIdConnect.createAndLink(accountslist[0])
   console.log(res)
 }
 
-
-
-bauth.addEventListener('click', authenticate)
-baccounts.addEventListener('click', accounts)
-bcreate.addEventListener('click', create)
-blink.addEventListener('click', link)
+document.getElementById('bauth').addEventListener('click', authenticate)
+document.getElementById('baccounts').addEventListener('click', accounts)
+document.getElementById('bcreate').addEventListener('click', create)
+document.getElementById('blink').addEventListener('click', link)
