@@ -1,6 +1,7 @@
 import type { LinkProof } from '3id-blockchain-utils'
 import { expose, caller } from 'postmsg-rpc'
-import { RPCClient, RPCRequest } from 'rpc-utils'
+import { RPCClient } from 'rpc-utils'
+import type { RPCConnection, RPCRequest } from 'rpc-utils'
 
 import type AuthProvider from './authProvider/ethereumAuthProvider'
 import DIDProviderProxy from './didProviderProxy'
@@ -33,15 +34,11 @@ type PostMessage = (
   transfer?: Array<Transferable> | undefined
 ) => void
 
-type RPCProvider = {
-  send: <T = unknown>(req: RPCRequest) => Promise<T>
-}
-
-const createRPCProvider = (postMessage: PostMessage): RPCProvider => {
-  const sendRPC = caller<[RPCRequest], string>('send', { postMessage })
+const createRPCProvider = (postMessage: PostMessage): RPCConnection => {
+  const sendRPC = caller<[RPCRequest<string, any>], string>('send', { postMessage })
   return {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    send: async (req: RPCRequest) => JSON.parse(await sendRPC(req)),
+    send: async (req) => JSON.parse(await sendRPC(req as any)),
   }
 }
 
@@ -55,7 +52,7 @@ class ThreeIdConnect {
   iframeLoadedPromise: Promise<void>
   postMessage: PostMessage | undefined
 
-  RPCProvider: RPCProvider | undefined
+  RPCProvider: RPCConnection | undefined
   RPCClient: RPCClient | undefined
 
   authProvider: AuthProvider | undefined

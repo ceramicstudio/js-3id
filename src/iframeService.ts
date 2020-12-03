@@ -39,7 +39,9 @@ class IframeService {
    *
    * @param     {Function}    requestHandler    a function that will consume all rpc request from parent window (specifically didProvider calls)
    */
-  start(requestHandler: (message: RPCRequest) => Promise<string>): void {
+  start(
+    requestHandler: (message: RPCRequest<string, Record<string, unknown>>) => Promise<string>
+  ): void {
     expose('send', requestHandler, { postMessage: window.parent.postMessage.bind(window.parent) })
   }
 

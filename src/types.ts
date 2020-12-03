@@ -1,4 +1,4 @@
-import type { RPCRequest, RPCResponse } from 'rpc-utils'
+import type { RPCParams, RPCRequest, RPCResponse } from 'rpc-utils'
 
 export interface ProviderConnectInfo {
   readonly chainId: string
@@ -29,8 +29,11 @@ export interface EthereumProvider extends NodeJS.EventEmitter {
   request<T = unknown>(args: RequestArguments): Promise<T>
 }
 
-export interface DIDProvider {
-  send(msg: RPCRequest, origin?: string | null): Promise<RPCResponse | null>
+export interface DIDProvider<M = string> {
+  send<P extends RPCParams | undefined = undefined, R = unknown, E = undefined>(
+    msg: RPCRequest<M, P>,
+    origin?: string | null
+  ): Promise<RPCResponse<R, E> | null>
 }
 
 export type UserAuthenticateRequest = {

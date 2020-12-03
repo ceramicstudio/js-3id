@@ -1,4 +1,6 @@
-import type { RPCRequest, RPCResponse } from 'rpc-utils'
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+
+import type { RPCParams, RPCRequest, RPCResponse } from 'rpc-utils'
 
 import type { DIDProvider } from './types'
 
@@ -19,8 +21,10 @@ class DidProviderProxy implements DIDProvider {
     return true
   }
 
-  async send(msg: RPCRequest, origin?: string | null): Promise<RPCResponse | null> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  async send<P extends RPCParams | undefined = undefined, R = unknown, E = undefined>(
+    msg: RPCRequest<string, P>,
+    origin?: string | null
+  ): Promise<RPCResponse<R, E> | null> {
     msg.params = Object.assign({}, msg.params, { accountId: this.accountId })
     return await this.provider.send(msg, origin)
   }

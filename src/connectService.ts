@@ -1,7 +1,9 @@
-import CeramicClient from '@ceramicnetwork/ceramic-http-client'
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+
+import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
-import { definitions } from '@ceramicstudio/idx-constants'
-import IdentityWallet from 'identity-wallet'
+import type { LinkProof } from '3id-blockchain-utils'
+import ThreeIdProvider from '3id-did-provider'
 import { sha256 } from 'js-sha256'
 import { RPCError } from 'rpc-utils'
 import type { RPCErrorObject, RPCRequest, RPCResponse } from 'rpc-utils'
@@ -22,7 +24,9 @@ import type {
   UserRequestCancel,
 } from './types'
 
-const CERAMIC_API = 'https://ceramic.3boxlabs.com'
+type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
+
+const CERAMIC_API = 'https://ceramic-dev.3boxlabs.com'
 const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
@@ -34,7 +38,7 @@ const rpcError = (id: string | number) => {
 }
 
 /**
- *  ConnectService runs an identity wallet instance and rpc server with
+ *  ConnectService runs a 3ID DID provider instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
 class ConnectService extends IframeService {
@@ -43,7 +47,7 @@ class ConnectService extends IframeService {
   errorCb: UserRequestErrorCallback | undefined
 
   ceramic: CeramicClient | undefined
-  idw: IdentityWallet | undefined
+  threeId: ThreeIdProvider | undefined
   idx: IDX | undefined
   provider: DIDProvider | undefined
   activeAccount: string | null = null
@@ -75,7 +79,11 @@ class ConnectService extends IframeService {
   // better manage state for race conditions, two window active
 
   // TODO handle link state better, stores links now, but does not sync with network before lookup
-  async init(accountId: string, authReq: RPCRequest, domain?: string | null): Promise<void> {
+  async init(
+    accountId: string,
+    authReq: RPCRequest<string, { paths?: Array<string> }>,
+    domain?: string | null
+  ): Promise<void> {
     assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
 
     let authSecret = this.getStoredAccount(accountId)
@@ -138,36 +146,37 @@ class ConnectService extends IframeService {
     // Same request relayed before idw handles it, if request reaches idw, then permission given
     const getPermission = () => Promise.resolve([])
 
-    this.idw = await IdentityWallet.create({
+    this.threeId = await ThreeIdProvider.create({
       getPermission,
       ceramic: this.ceramic,
       authSecret,
       authId,
     })
-    this.provider = this.idw.getDidProvider()
-    await this.ceramic.setDIDProvider(this.provider)
-    // definitions types should be exported by idx-constants directly
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    this.idx = new IDX({ ceramic: this.ceramic, definitions })
+    this.provider = this.threeId.getDidProvider() as DIDProvider
+    await this.ceramic.setDIDProvider(this.provider as any)
+    this.idx = new IDX({ ceramic: this.ceramic })
   }
 
   async tryCreateLink(accountId: string): Promise<void> {
     assert.isDefined(this.idx, 'IDX instance must be defined')
-    assert.isDefined(this.idw, 'IdentityWallet instance must be defined')
+    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
 
-    const links: Record<string, string> | null = await this.idx.get('cryptoAccountLinks')
-    if (links) this.storeDIDLinks(this.idw.id, Object.keys(links))
+    const links: Record<string, string> | null = await this.idx.get('cryptoAccounts')
+    if (links) this.storeDIDLinks(this.threeId.id, Object.keys(links))
     if (!(links && links[accountId])) await this.createLinkDoc(accountId)
   }
 
   async addAuth(accountId: string, authSecretAdd: Uint8Array): Promise<void> {
-    assert.isDefined(this.idw, 'IdentityWallet instance must be defined')
+    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
 
-    await this.idw.keychain.add(accountId, authSecretAdd)
-    await this.idw.keychain.commit()
+    await this.threeId.keychain.add(accountId, authSecretAdd)
+    await this.threeId.keychain.commit()
   }
 
-  async userPermissionRequest(authReq: RPCRequest, domain?: string | null): Promise<void> {
+  async userPermissionRequest(
+    authReq: RPCRequest<string, { paths?: Array<string> }>,
+    domain?: string | null
+  ): Promise<void> {
     assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
 
     const userReq = this._createUserRequest(authReq, domain)
@@ -200,25 +209,26 @@ class ConnectService extends IframeService {
   async createLinkDoc(accountId: string): Promise<void> {
     assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
     assert.isDefined(this.idx, 'IDX instance must be defined')
-    assert.isDefined(this.idw, 'IdentityWallet instance must be defined')
+    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
 
-    const linkProofPromise = this.createLink(this.idw.id)
-    const linkDoc = await this.ceramic.createDocument(
-      'account-link',
-      { metadata: { controllers: [accountId] } },
-      { applyOnly: true }
-    )
-    const linkProof = await linkProofPromise
+    const [linkProof, linkDoc] = await Promise.all([
+      this.createLink(this.threeId.id),
+      this.ceramic.createDocument(
+        'caip10-link',
+        { metadata: { controllers: [accountId] } },
+        { anchor: false, publish: false }
+      ),
+    ])
     await linkDoc.change({ content: linkProof })
     await this.ceramic.pin.add(linkDoc.id)
 
-    const existingLinks = (await this.idx.get('cryptoAccountLinks')) || {}
-    const links = Object.assign(existingLinks, { [accountId]: linkDoc.id.toUrl('base36') })
-    await this.idx.set('cryptoAccountLinks', links)
-    this.storeDIDLinks(this.idw.id, [accountId])
+    const existingLinks = (await this.idx.get('cryptoAccounts')) || {}
+    const links = Object.assign(existingLinks, { [accountId]: linkDoc.id.toUrl() })
+    await this.idx.set('cryptoAccounts', links)
+    this.storeDIDLinks(this.threeId.id, [accountId])
   }
 
-  async requestHandler(message: RPCRequest): Promise<string> {
+  async requestHandler(message: RPCRequest<string, Record<string, unknown>>): Promise<string> {
     const domain = new Url(document.referrer).host
 
     const responsePromise = new Promise((resolve, reject) => {
@@ -228,14 +238,12 @@ class ConnectService extends IframeService {
       if (message.method.startsWith('did')) {
         this.requestHandlerDid(message, domain).then(resolve, reject)
       } else if (message.method.startsWith('3id')) {
+        // @ts-ignore compiler doesn't seem to properly handle type
         this.requestHandler3id(message).then(resolve, reject)
       } else {
-        reject(
-          new ConnectError(
-            4,
-            `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
-          )
-        )
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
+        reject(new ConnectError(4, msg))
       }
     })
 
@@ -251,7 +259,7 @@ class ConnectService extends IframeService {
    */
 
   async requestHandlerDid(
-    message: RPCRequest,
+    message: RPCRequest<string, Record<string, unknown>>,
     domain?: string
   ): Promise<RPCResponse | RPCErrorObject | null | void> {
     return message.method === 'did_authenticate'
@@ -259,17 +267,22 @@ class ConnectService extends IframeService {
       : await this._relayDidReq(message, domain)
   }
 
-  async requestHandler3id(message: RPCRequest): Promise<{ result: any }> {
+  async requestHandler3id(
+    message: RPCRequest<ThreeIDMethods, Record<string, unknown>>
+  ): Promise<{ result: any }> {
     //TODO throw if not selfid or localhost
     let res = null
 
     if (message.method === '3id_accounts') {
       res = await this._listAccounts()
     } else if (message.method === '3id_createAccount') {
+      // @ts-ignore compiler doesn't seem to properly handle type
       res = await this._createAccount(message)
     } else if (message.method === '3id_addAuthAndLink') {
+      // @ts-ignore compiler doesn't seem to properly handle type
       res = await this._addAuthAndLink(message)
     } else {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new ConnectError(5, `Unsupported 3ID method: ${message.method}`)
     }
 
@@ -283,7 +296,9 @@ class ConnectService extends IframeService {
     return Promise.resolve({ result: accounts })
   }
 
-  async _createAccount(message: RPCRequest<{ accountId: string }>): Promise<{ result: true }> {
+  async _createAccount(
+    message: RPCRequest<'3id_createAccount', { accountId: string }>
+  ): Promise<{ result: true }> {
     assert.isDefined(message.params, 'Message parameters must be provided')
     const accountId = message.params.accountId
     await this.userPermissionRequest3id({ type: 'create' })
@@ -298,7 +313,7 @@ class ConnectService extends IframeService {
 
   // TODO change name
   async _addAuthAndLink(
-    message: RPCRequest<{ accountId: string; baseDid: string }>
+    message: RPCRequest<'3id_addAuthAndLink', { accountId: string; baseDid: string }>
   ): Promise<{ result: true }> {
     assert.isDefined(message.params, 'Message parameters must be provided')
     const accountId = message.params.accountId
@@ -321,7 +336,7 @@ class ConnectService extends IframeService {
   }
 
   async _didAuthReq(
-    message: RPCRequest,
+    message: RPCRequest<string, { paths?: Array<string> }>,
     domain?: string | null
   ): Promise<RPCResponse | RPCErrorObject | null | void> {
     assert.isDefined(this.errorCb, 'Error callback must be defined')
@@ -353,17 +368,16 @@ class ConnectService extends IframeService {
   /**
    *  Looks up if accountId is linked to did
    */
-  async _resolveLink(accountId: string): Promise<any> {
+  async _resolveLink(accountId: string): Promise<LinkProof | undefined> {
     assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
 
-    const doctype = 'account-link'
-    const content = { metadata: { controllers: [accountId] } }
-    // TODO: applyOnly option changed in new Ceramic version
-    const doc = await this.ceramic.createDocument(doctype, content, { applyOnly: true })
+    const doc = await this.ceramic.createDocument(
+      'caip10-link',
+      { metadata: { controllers: [accountId] } },
+      { anchor: false, publish: false }
+    )
     const linkDoc = await this.ceramic.loadDocument(doc.id)
-    // TODO: proper content type
-    // eslint-disable-next-line
-    return linkDoc.content
+    return linkDoc.content as LinkProof | undefined
   }
 
   storeAccount(accountId: string, authSecretHex: string): void {
@@ -427,13 +441,13 @@ class ConnectService extends IframeService {
   }
 
   _createUserRequest(
-    req: RPCRequest<{ paths?: Array<string> }>,
+    req: RPCRequest<string, { paths?: Array<string> }>,
     origin?: string | null
   ): UserAuthenticateRequest | null {
     assert.isDefined(req.params, 'Request parameters must be provided')
 
-    if (this.idw) {
-      const has = req.params.paths ? this.idw.permissions.has(origin, req.params.paths) : true
+    if (this.threeId) {
+      const has = req.params.paths ? this.threeId.permissions.has(origin, req.params.paths) : true
       if (has) return null
     }
 
