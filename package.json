@@ -1,6 +1,6 @@
 {
   "name": "3id-connect",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "description": "Account management for 3ID",
   "main": "lib/index.js",
   "typings": "types/index.d.ts",
