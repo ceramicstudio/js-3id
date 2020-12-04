@@ -20,15 +20,15 @@ jobs:
           name: install dependencies
           command: |
             sudo npm i -g  codecov node-gyp
-            npm i
+            npm ci
+                
+      - run:
+          name: lint
+          command: npm run lint
 
       # - run:
       #     name: test
       #     command: npm test && codecov
-      #
-      # - run:
-      #     name: lint
-      #     command: npm run lint
 
       - run:
           name: build
@@ -58,26 +58,10 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-connect-dev/v1'
+          to: 's3://3id-connect-dev-ceramic'
       - run:
           name: "Invalidate CloudFront Cache"
-          command: aws cloudfront create-invalidation --distribution-id E3SV2UNQUEOU2O --paths /*
-
-  deploy-ceramic-dev:
-    working_directory: ~/3id-connect
-    docker:
-      - image: 'circleci/python:3.8'
-    steps:
-      - attach_workspace:
-          at: .
-      - aws-s3/sync:
-          arguments: '--acl public-read --cache 604800'
-          from: public
-          overwrite: true
-          to: 's3://3id-connect-ceramic-dev'
-      - run:
-          name: "Invalidate CloudFront Cache"
-          command: aws cloudfront create-invalidation --distribution-id E2S133YJRTSQ1R --paths /*
+          command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /*
 
   deploy-prod:
     working_directory: ~/3id-connect
@@ -90,10 +74,10 @@ jobs:
           arguments: '--acl public-read --cache 604800'
           from: public
           overwrite: true
-          to: 's3://3id-connect-prod/v1'
+          to: 's3://3id-connect-prod-ceramic'
       - run:
           name: "Invalidate CloudFront Cache"
-          command: aws cloudfront create-invalidation --distribution-id E1CFVBE8FYHOZ0 --paths /*
+          command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /*
 
 workflows:
   build-deploy:
@@ -105,12 +89,6 @@ workflows:
           filters:
             branches:
               only: develop
-      - deploy-ceramic-dev:
-          requires:
-            - test-and-build
-          filters:
-            branches:
-              only: develop-ceramic
       - deploy-prod:
           requires:
             - test-and-build
