@@ -7,8 +7,8 @@ import type AuthProvider from './authProvider/ethereumAuthProvider'
 import DIDProviderProxy from './didProviderProxy'
 import type { DIDLinksList } from './types'
 
-// TODO anyway to have default ceramic
-const IDENTITY_WALLET_IFRAME_URL = 'https://3idconnect.org/index.html'
+// TODO config
+const IDENTITY_WALLET_IFRAME_URL = 'https://app.3idconnect.org'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
