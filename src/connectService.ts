@@ -26,7 +26,7 @@ import type {
 
 type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
 
-const CERAMIC_API =  process.env.CERAMIC_API || 'https://ceramic-dev.3boxlabs.com'
+const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-dev.3boxlabs.com'
 const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
