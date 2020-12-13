@@ -29,6 +29,13 @@ export interface EthereumProvider extends NodeJS.EventEmitter {
   request<T = unknown>(args: RequestArguments): Promise<T>
 }
 
+export interface EOSIOProvider {
+  getKeys(): Promise<Array<string>>
+  getAccountName(): Promise<string>
+  getChainId(): Promise<string>
+  signArbitrary(publicKey: string, data: string): Promise<string>
+}
+
 export interface DIDProvider<M = string> {
   send<P extends RPCParams | undefined = undefined, R = unknown, E = undefined>(
     msg: RPCRequest<M, P>,
