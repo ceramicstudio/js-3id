@@ -5,9 +5,8 @@ import { ThreeIdConnect, EthereumAuthProvider } from '../src'
 import web3Modal from './providers'
 
 const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
-const THREEID_CONNECT_URL = 'http://localhost:30001'
 
-const threeIdConnect = new ThreeIdConnect(THREEID_CONNECT_URL)
+const threeIdConnect = new ThreeIdConnect()
 
 const authenticate = async () => {
   const ethProvider = await web3Modal.connect()

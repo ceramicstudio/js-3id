@@ -7,8 +7,7 @@ import type AuthProvider from './authProvider/ethereumAuthProvider'
 import DIDProviderProxy from './didProviderProxy'
 import type { DIDLinksList } from './types'
 
-// TODO config
-const IDENTITY_WALLET_IFRAME_URL = 'https://app.3idconnect.org'
+const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
@@ -66,13 +65,13 @@ class ThreeIdConnect {
    *
    * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
    */
-  constructor(iframeUrl: string) {
+  constructor(iframeUrl?: string) {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       throw new Error('ThreeIdConnect not supported in this enviroment')
     }
 
     this.iframe = document.createElement('iframe')
-    this.iframe.src = iframeUrl || IDENTITY_WALLET_IFRAME_URL
+    this.iframe.src = iframeUrl || CONNECT_IFRAME_URL
     // @ts-ignore
     this.iframe.style = HIDE_IFRAME_STYLE
     // @ts-ignore
