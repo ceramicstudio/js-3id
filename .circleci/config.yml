@@ -7,7 +7,7 @@ jobs:
   test-and-build:
     working_directory: ~/3id-connect
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:14
     steps:
       - checkout
 
