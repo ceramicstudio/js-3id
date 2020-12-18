@@ -1,6 +1,6 @@
 {
   "name": "3id-connect",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "Account management for 3ID",
   "main": "lib/index.js",
   "typings": "types/index.d.ts",
@@ -15,6 +15,7 @@
     "build:prod:types": "rm -rf ./types && tsc --emitDeclarationOnly --skipLibCheck",
     "build:prod:dist": "webpack --config webpack.config.js --mode=production --output-filename index.js",
     "build": "run-p build:prod:**",
+    "prepublishOnly": "npm run build",
     "dev:iframe:build": "webpack --config webpack.config.js --mode=development --watch",
     "dev:iframe:server:start": "http-server -c-1 -p 30001 public",
     "start": "run-p dev:iframe:**",
