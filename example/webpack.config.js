@@ -1,4 +1,14 @@
 const path = require('path')
+const webpack = require('webpack')
+
+const plugins = []
+
+const dp = new webpack.DefinePlugin({
+  'process.env': {
+    'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001')
+  }
+})
+plugins.push(dp)
 
 module.exports = {
   entry: './example/app.ts',
@@ -30,6 +40,7 @@ module.exports = {
       },
     ],
   },
+  plugins,
   node: {
     console: false,
     fs: 'empty',

@@ -46,20 +46,47 @@ const didProvider = await threeIdConnect.getDidProvider()
 
 Clone and install dependencies
 
-#### Run Example
-
-Will serve iframe locally on port 30001 and an example app on port 30000. Example app available in example folder. 
-
-```
-$ npm run start:example
-```
 
 #### Run Iframe Locally
 
-Will serve iframe locally on port 30001
-
 ```
 $ npm run start
+```
+
+The iframe will be served locally on port 30001. The iframe service also requires a Ceramic node, by default it will look for a locally running node. The quickest way to run a node is with the Ceramic CLI. 
+
+```
+$ npm install -g @ceramicnetwork/cli
+& ceramic daemon
+```
+
+You can also run the iframe and connect to a remote testnet Ceramic node. 
+
+```
+$ npm run start:testnet
+```
+
+And lastly connect the iframe to any Ceramic node. 
+
+```
+$ CERAMIC_API=https://yourceramicnode:port npm run start
+```
+
+
+#### Run Demo
+
+The Demo application is served on port 30000, and connects to a locally running iframe, as described above. Demo application is found in the `/example` folder. 
+
+```
+$ npm run start:demo
+```
+
+You can also pass the same options to the local iframe with similar commands. 
+
+```
+$ npm run start:demo:testnet
+// or 
+$ CERAMIC_API=https://yourceramicnode:port npm run start:demo
 ```
 
 #### Build
