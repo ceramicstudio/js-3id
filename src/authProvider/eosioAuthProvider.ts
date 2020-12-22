@@ -21,35 +21,31 @@ class EOSIOAuthProvider extends AbstractAuthProvider {
   }
 
   async init(): Promise<void> {
-    this.accountId = await this._toAccoundId()
+    this.accountId = (await this._toAccoundId()).toString()
   }
 
   _toCAIPChainId(chainId: string): string {
     return `eosio:${chainId.substr(0, 32)}`
   }
 
-  async _toAccoundId(address?: string): Promise<string> {
+  async _toAccoundId(address?: string): Promise<AccountID> {
     if (!address && this.accountId) {
-      return this.accountId
+      return new AccountID(this.accountId)
     }
     const chainId = this._toCAIPChainId(await this.provider.getChainId())
     address = address || (await this.provider.getAccountName())
-    return new AccountID({ address, chainId }).toString()
+    return new AccountID({ address, chainId })
   }
 
   async authenticate(message: string, address?: string): Promise<string> {
     assert.isString(message, 'Message must be a string')
-    // @ts-ignore wrong definition in 3id-blockchain-utils?
     const accountId = await this._toAccoundId(address)
-    console.log('AccountId: ', accountId)
     return await authenticate(message, accountId, this.provider)
   }
 
   async createLink(did: string, address?: string): Promise<LinkProof> {
     assert.isString(did, 'DID must be a string')
-    // @ts-ignore wrong definition in 3id-blockchain-utils?
     const accountId = await this._toAccoundId(address)
-    console.log('AccountId: ', accountId)
     return createLink(did, accountId, this.provider, { type: 'eosio' })
   }
 }
