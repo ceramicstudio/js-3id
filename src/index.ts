@@ -1,3 +1,4 @@
+export { default as EOSIOAuthProvider } from './authProvider/eosioAuthProvider'
 export { default as EthereumAuthProvider } from './authProvider/ethereumAuthProvider'
 export { default as ConnectService } from './connectService'
 export { default as DidProviderProxy } from './didProviderProxy'
