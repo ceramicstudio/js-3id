@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
   if (argv.mode === 'production') {
     const dp = new webpack.DefinePlugin({
       'process.env': {
-        'CERAMIC_API': JSON.stringify('https://ceramic-dev.3boxlabs.com'),
+        'CERAMIC_API': JSON.stringify('https://ceramic-clay.3boxlabs.com'),
         'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org')
       }
     })

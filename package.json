@@ -19,11 +19,11 @@
     "dev:iframe:build": "webpack --config webpack.config.js --mode=development --watch",
     "dev:iframe:server:start": "http-server -c-1 -p 30001 public",
     "start": "run-p dev:iframe:**",
-    "start:testnet": "CERAMIC_API=https://ceramic-dev.3boxlabs.com npm run start",
+    "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start",
     "dev:demo:server:start": "http-server -c-1 -p 30000 example",
     "dev:demo:build": "webpack --config ./example/webpack.config.js --mode=development --watch",
     "start:demo": "run-p dev:demo:** start",
-    "start:demo:testnet": "CERAMIC_API=https://ceramic-dev.3boxlabs.com run-p dev:demo:** start:testnet"
+    "start:demo:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com run-p dev:demo:** start:testnet"
   },
   "jest": {
     "testEnvironment": "node",

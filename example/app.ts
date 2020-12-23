@@ -4,7 +4,7 @@ import { DID } from 'dids'
 import { ThreeIdConnect, EthereumAuthProvider } from '../src'
 import web3Modal from './providers'
 
-const CERAMIC_URL = 'https://ceramic-dev.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 
 const threeIdConnect = new ThreeIdConnect()
 
