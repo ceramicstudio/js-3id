@@ -71,6 +71,8 @@ class ThreeIdConnect {
     }
 
     this.iframe = document.createElement('iframe')
+    this.iframe.name = 'threeid-connect'
+    this.iframe.className = 'threeid-connect'
     this.iframe.src = iframeUrl || CONNECT_IFRAME_URL
     // @ts-ignore
     this.iframe.style = HIDE_IFRAME_STYLE
