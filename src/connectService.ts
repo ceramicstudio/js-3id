@@ -10,6 +10,7 @@ import type { RPCErrorObject, RPCRequest, RPCResponse } from 'rpc-utils'
 import store from 'store'
 import { fromString } from 'uint8arrays'
 import Url from 'url-parse'
+import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
 
 import IframeService from './iframeService'
 import { ConnectError, assert } from './errors'
@@ -25,6 +26,7 @@ import type {
   UserRequestCancel,
 } from './types'
 import { fromHex, toHex } from './utils'
+import { legacyDIDLinkExist, get3BoxProfile } from './migration'
 
 type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
 
@@ -32,6 +34,10 @@ const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.co
 const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
+const DID_MIGRATION = process.env.MIGRATION === 'true'
+
+type AuthConfig = { authId: string; authSecret: Uint8Array }
+type SeedConfig = { v03ID: string; seed: Uint8Array }
 
 // TODO didprovider, auth failed codes?
 const rpcError = (id: string | number) => {
@@ -124,9 +130,29 @@ class ConnectService extends IframeService {
       }
     }
 
-    assert.isDefined(authSecret, 'Auth secret should be defined to initialize identity')
-    await this.initIdentity(authSecret, authId)
+    console.log(DID_MIGRATION)
 
+    let legacyDid, seed, legacyConfig, migration
+    // If legacy did exists and account does not exist in ceramic network yet, then migrate
+    if (!accountAlreadyExist && !existInNetworkOnly && DID_MIGRATION) {
+      legacyDid = await legacyDIDLinkExist(accountId)
+      if (legacyDid) {
+        await this.userRequestHandler({ type: 'migration', legacyDid })
+        seed = await this.legacySeedCreate()
+        authSecretAdd = authSecret
+        legacyConfig = { v03ID: legacyDid, seed } as SeedConfig
+        migration = true
+      }
+    }
+
+    assert.isDefined(authSecret, 'Auth secret should be defined to initialize identity')
+
+    const configId = migration ? legacyConfig : ({ authSecret, authId } as AuthConfig)
+    assert.isDefined(configId, 'Identity Config to initialize identity')
+
+    await this.initIdentity(configId)
+
+    // TODO just change to authsecretADD
     if (otherAccountsExist && authSecretAdd) {
       await this.addAuth(accountId, authSecretAdd)
     }
@@ -140,20 +166,29 @@ class ConnectService extends IframeService {
     }
 
     this.setActiveAccount(accountId)
+
+    if (migration && legacyDid) {
+      assert.isDefined(this.idx, 'IDX instance must be defined')
+      //TODO handle partial migration failures
+      const profile = get3BoxProfile(legacyDid)
+      //TODO which definition are we using?
+      const existing = (await this.idx.get('basicProfile')) || {}
+      await this.idx.set('basicProfile', Object.assign(existing, profile))
+    }
   }
 
-  async initIdentity(authSecret: Uint8Array, authId: string): Promise<void> {
+  async initIdentity(config: AuthConfig | SeedConfig): Promise<void> {
     assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
 
     // Same request relayed before idw handles it, if request reaches idw, then permission given
     const getPermission = () => Promise.resolve([])
 
-    this.threeId = await ThreeIdProvider.create({
+    const threeIdConfig = Object.assign(config, {
       getPermission,
       ceramic: this.ceramic,
-      authSecret,
-      authId,
     })
+
+    this.threeId = await ThreeIdProvider.create(threeIdConfig)
     this.provider = this.threeId.getDidProvider() as DIDProvider
     await this.ceramic.setDIDProvider(this.provider as any)
     this.idx = new IDX({ ceramic: this.ceramic })
@@ -203,6 +238,15 @@ class ConnectService extends IframeService {
     const entropy = hash(fromString(authSecret.slice(2)))
     this.storeAccount(accountId, toHex(entropy))
     return entropy
+  }
+  /**
+   *  Creates a legacy 3Box root seed
+   */
+  async legacySeedCreate(): Promise<Uint8Array> {
+    const message = 'This app wants to view and update your 3Box profile.'
+    const authSecret = await this.authenticate(message)
+    const seed = mnemonicToSeed(entropyToMnemonic(authSecret))
+    return fromHex(seed.slice(2))
   }
 
   /**
@@ -307,7 +351,7 @@ class ConnectService extends IframeService {
     // TODO throw if account already exist
 
     const authSecret = await this.authCreate(accountId)
-    await this.initIdentity(authSecret, accountId)
+    await this.initIdentity({ authSecret, authId: accountId })
     await this.tryCreateLink(accountId)
 
     return { result: true }
@@ -330,7 +374,7 @@ class ConnectService extends IframeService {
 
     const authSecret = this.getStoredAccountByDid(baseDid)
     const authSecretAdd = await this.authCreate(accountId)
-    await this.initIdentity(authSecret, accountId)
+    await this.initIdentity({ authSecret, authId: accountId })
     await this.tryCreateLink(accountId)
     await this.addAuth(accountId, authSecretAdd)
 

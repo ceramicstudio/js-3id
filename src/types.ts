@@ -60,11 +60,16 @@ export type UserLinkRequest = {
   baseDid: string
   accountId: string
 }
+export type UserMigrationRequest = {
+  type: 'migration'
+  legacyDid: string
+}
 export type UserRequest =
   | UserAuthenticateRequest
   | UserAccountRequest
   | UserCreateRequest
   | UserLinkRequest
+  | UserMigrationRequest
 export type UserRequestWithError = UserRequest & { error?: string }
 
 export type UserRequestHandler = (req: UserRequest) => Promise<boolean>
