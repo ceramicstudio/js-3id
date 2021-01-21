@@ -54,6 +54,7 @@
     "dag-jose": "^0.3.0",
     "dids": "^1.1.0",
     "errors-utils": "^0.1.0",
+    "multicodec": "2.0.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.2.0",
     "store": "^2.0.12",
