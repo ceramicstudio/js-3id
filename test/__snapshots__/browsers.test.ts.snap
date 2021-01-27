@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`connect flow trigger connect 1`] = `"{\\"3id_permission_did:3:kjzl6cwe1jw14bjgfn1hl147d2gg8mbhcvaf9afsogmha6mv72rpa9gy33rzyhj___NULL_ORIGIN\\":\\"[]\\",\\"accounts\\":\\"{\\\\\\"0xa98F414D87543ff275167c46A53AB987dBBF0c10@eip155:1\\\\\\":\\\\\\"821b662e859b69164df27549f4fba12727734a3ed853f992c17c2801e6e919a2\\\\\\"}\\",\\"links\\":\\"{\\\\\\"did:3:kjzl6cwe1jw14bjgfn1hl147d2gg8mbhcvaf9afsogmha6mv72rpa9gy33rzyhj\\\\\\":[\\\\\\"0xa98F414D87543ff275167c46A53AB987dBBF0c10@eip155:1\\\\\\"]}\\"}"`;
+exports[`connect flow trigger connect 1`] = `"{\\"0xa98F414D87543ff275167c46A53AB987dBBF0c10@eip155:1\\":\\"821b662e859b69164df27549f4fba12727734a3ed853f992c17c2801e6e919a2\\"}"`;
