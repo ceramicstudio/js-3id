@@ -1,32 +1,51 @@
 import { resolve } from 'path'
-
-// This needs to be in the test script
-import AbstractAuthProvider from '../src/authProvider/abstractAuthProvider'
-class TestAuthProvider extends AbstractAuthProvider {
-  async authenticate(message: string, accountId): Promise<string> {}
-}
-
-// What else needs to be in the test script to initalize the provider?
+import Ceramic from '@ceramicnetwork/http-client'
+import { publishIDXConfig } from '@ceramicstudio/idx-tools'
 
 beforeAll(async () => {
-  const pagePath = resolve(__dirname, '../example/index.html')
+  const ceramic = new Ceramic('http://localhost:7777')
+  await publishIDXConfig(ceramic)
+
+  const pagePath = resolve(__dirname, '../test-app/index.html')
   await page.goto('file://' + pagePath)
 })
 
-// TODO: mock auth provider
-
 describe('connect flow', () => {
-  test('access connect button', async () => {
-    // await page.click('#bauth')
-    // await page.waitForSelector('.threeid-connect')
+  jest.setTimeout(60000)
 
-    const frameElementHandle = await page.$('.threeid-connect')
-    const frame = await frameElementHandle.contentFrame()
-    console.log('got frame?', frame)
+  test('access 3ID connect iframe', async () => {
+    const frame = await page.frame('threeid-connect')
+    expect(frame).toBeDefined()
+  })
 
-    // const frame = await page.frame('threeid-connect')
-    // console.log('got frame?', frame)
-    // const authButton = await page.$('#bauth')
-    // await expect(authButton.textContent()).resolves.toBe('Connect')
+  test('trigger connect', async () => {
+    // Ensure 3ID Connect iframe is present
+    const frame = await page.frame('threeid-connect')
+
+    // Create AuthProvider in page
+    const providerHandle = await page.evaluateHandle((mnemonic) => {
+      const wallet = window.createWallet(mnemonic)
+      return window.createAuthProvider(wallet)
+    }, 'pumpkin urban connect assume cluster drop aware frog journey answer conduct harsh')
+
+    // Run account creation flow in page
+    const accountCreatedHandlePromise = page.evaluateHandle((provider) => {
+      return window.threeIdConnect.connect(provider).then(() => {
+        return window.threeIdConnect.createAccount()
+      })
+    }, providerHandle)
+
+    // 3ID Connect popup should show up with continue button
+    const button = await frame.waitForSelector('#accept')
+    await button.click()
+    await page.waitForSelector('.threeid-connect', { state: 'hidden' })
+
+    // Wait for account creation flow to be completed and check localStorage contents
+    const accountCreatedHandle = await accountCreatedHandlePromise
+    await expect(frame.evaluate(() => JSON.stringify(localStorage))).toMatchSnapshot()
+
+    // Dispose of page handles
+    await accountCreatedHandle.dispose()
+    await providerHandle.dispose()
   })
 })

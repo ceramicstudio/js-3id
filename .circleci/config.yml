@@ -21,14 +21,14 @@ jobs:
           command: |
             sudo npm i -g  codecov node-gyp
             npm ci
-                
+
       - run:
           name: lint
           command: npm run lint
 
-      # - run:
-      #     name: test
-      #     command: npm test && codecov
+      - run:
+          name: test
+          command: npm test
 
       - run:
           name: build
@@ -60,7 +60,7 @@ jobs:
           overwrite: true
           to: 's3://3id-connect-dev-ceramic'
       - run:
-          name: "Invalidate CloudFront Cache"
+          name: 'Invalidate CloudFront Cache'
           command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /*
 
   deploy-prod:
@@ -76,7 +76,7 @@ jobs:
           overwrite: true
           to: 's3://3id-connect-prod-ceramic'
       - run:
-          name: "Invalidate CloudFront Cache"
+          name: 'Invalidate CloudFront Cache'
           command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /*
 
 workflows:
