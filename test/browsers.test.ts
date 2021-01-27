@@ -42,7 +42,8 @@ describe('connect flow', () => {
 
     // Wait for account creation flow to be completed and check localStorage contents
     const accountCreatedHandle = await accountCreatedHandlePromise
-    await expect(frame.evaluate(() => JSON.stringify(localStorage))).toMatchSnapshot()
+    const storageState = await frame.evaluate(() => JSON.stringify(localStorage))
+    expect(storageState).toMatchSnapshot()
 
     // Dispose of page handles
     await accountCreatedHandle.dispose()
