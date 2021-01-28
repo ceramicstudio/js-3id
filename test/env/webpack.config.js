@@ -3,8 +3,8 @@ const path = require('path')
 module.exports = {
   entry: path.resolve(__dirname, 'app.ts'),
   output: {
-    filename: 'build.js',
-    path: __dirname,
+    filename: 'app.js',
+    path: path.resolve(__dirname, 'build'),
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },

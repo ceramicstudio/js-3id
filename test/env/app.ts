@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 import { Wallet } from '@ethersproject/wallet'
 import { fromString, toString } from 'uint8arrays'
 
-import { EthereumAuthProvider, ThreeIdConnect } from '../src'
+import { EthereumAuthProvider, ThreeIdConnect } from '../../src'
 
 class EthereumProvider extends EventEmitter {
   wallet: Wallet
@@ -28,7 +28,7 @@ class EthereumProvider extends EventEmitter {
   }
 }
 
-const threeIdConnect = new ThreeIdConnect('../test-iframe/index.html')
+const threeIdConnect = new ThreeIdConnect('iframe.html')
 window.threeIdConnect = threeIdConnect
 
 function createWallet(mnemonic?: string): Wallet {

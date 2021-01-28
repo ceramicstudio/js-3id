@@ -6,7 +6,7 @@ beforeAll(async () => {
   const ceramic = new Ceramic('http://localhost:7777')
   await publishIDXConfig(ceramic)
 
-  const pagePath = resolve(__dirname, '../test-app/index.html')
+  const pagePath = resolve(__dirname, 'env/app.html')
   await page.goto('file://' + pagePath)
 })
 

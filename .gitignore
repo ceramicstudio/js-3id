@@ -3,5 +3,6 @@ public/index.js
 lib
 types
 example/build.js
+test/env/build
 
 .idea
