@@ -10,10 +10,11 @@
   ],
   "scripts": {
     "lint": "eslint src",
-    "test": "run-p test:build:** && jest",
-    "test:ceramic": "ceramic daemon --port 7777",
     "test:build:app": "webpack --config ./test/env/webpack.config.js --mode=development",
     "test:build:iframe": "CERAMIC_API=http://localhost:7777 webpack --config webpack.config.js --mode=development --output-path ./test/env/build --output-filename iframe.js",
+    "test:ceramic": "ceramic daemon --port 7777",
+    "test:run": "jest",
+    "test": "run-p test:build:** && npm run test:run",
     "build:prod:es5": "rm -rf ./lib && babel src --out-dir lib --extensions .ts",
     "build:prod:types": "rm -rf ./types && tsc --emitDeclarationOnly --skipLibCheck",
     "build:prod:dist": "webpack --config webpack.config.js --mode=production --output-filename index.js",

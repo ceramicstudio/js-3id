@@ -1,5 +1,8 @@
 import { EventEmitter } from 'events'
+import ThreeIDResolver from '@ceramicnetwork/3id-did-resolver'
+import Ceramic from '@ceramicnetwork/http-client'
 import { Wallet } from '@ethersproject/wallet'
+import { DID } from 'dids'
 import { fromString, toString } from 'uint8arrays'
 
 import { EthereumAuthProvider, ThreeIdConnect } from '../../src'
@@ -28,6 +31,9 @@ class EthereumProvider extends EventEmitter {
   }
 }
 
+const ceramic = new Ceramic('http://localhost:7777')
+window.ceramic = ceramic
+
 const threeIdConnect = new ThreeIdConnect('iframe.html')
 window.threeIdConnect = threeIdConnect
 
@@ -38,16 +44,28 @@ window.createWallet = createWallet
 
 function createAuthProvider(wallet: Wallet): EthereumAuthProvider {
   const provider = new EthereumProvider(wallet)
-  return new EthereumAuthProvider(provider, provider.wallet.address)
+  return new EthereumAuthProvider(provider, wallet.address)
 }
 window.createAuthProvider = createAuthProvider
 
-const connect = async () => {
-  const wallet = createWallet()
-  const provider = new EthereumProvider(wallet)
-  const authProvider = new EthereumAuthProvider(provider, wallet.address)
-  await threeIdConnect.connect(authProvider)
-  await threeIdConnect.createAccount()
+function createDID(provider): DID {
+  return new DID({ provider, resolver: ThreeIDResolver.getResolver(ceramic) })
 }
+window.createDID = createDID
 
+async function authenticateDID(mnemonic?: string): DID {
+  const wallet = createWallet(mnemonic)
+  const authProvider = createAuthProvider(wallet)
+  await threeIdConnect.connect(authProvider)
+  const didProvider = await threeIdConnect.getDidProvider()
+  const did = createDID(didProvider)
+  await did.authenticate()
+  return did
+}
+window.authenticateDID = authenticateDID
+
+async function connect() {
+  const did = await authenticateDID()
+  console.log('DID:', did.id)
+}
 document.getElementById('connect').addEventListener('click', connect)
