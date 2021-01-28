@@ -60,7 +60,7 @@ describe('connect flow', () => {
     // 3ID Connect popup should show up with continue button
     const button = await frame.waitForSelector('#accept')
     await button.click()
-    await expect(didPromise).resolves.toMatchSnapshot()
+    await expect(didPromise).resolves.toBeDefined()
 
     // Check localStorage contents
     const accountsState = await frame.evaluate(() => localStorage.getItem('accounts'))
