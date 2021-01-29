@@ -7,7 +7,9 @@ jobs:
   test-and-build:
     working_directory: ~/3id-connect
     docker:
-      - image: circleci/node:14
+      - image: mcr.microsoft.com/playwright:focal
+        environment:
+          NODE_ENV: development
     steps:
       - checkout
 
@@ -19,16 +21,17 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo npm i -g  codecov node-gyp
+            apt-get update && apt-get install -y --no-install-recommends python make gcc g++
+            npm i -g codecov node-gyp
             npm ci
-                
+
       - run:
           name: lint
           command: npm run lint
 
-      # - run:
-      #     name: test
-      #     command: npm test && codecov
+      - run:
+          name: test
+          command: npm test
 
       - run:
           name: build
@@ -60,7 +63,7 @@ jobs:
           overwrite: true
           to: 's3://3id-connect-dev-ceramic'
       - run:
-          name: "Invalidate CloudFront Cache"
+          name: 'Invalidate CloudFront Cache'
           command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /*
 
   deploy-prod:
@@ -76,7 +79,7 @@ jobs:
           overwrite: true
           to: 's3://3id-connect-prod-ceramic'
       - run:
-          name: "Invalidate CloudFront Cache"
+          name: 'Invalidate CloudFront Cache'
           command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /*
 
 workflows:
