@@ -8,7 +8,7 @@ import ThreeIdProvider from '3id-did-provider'
 import { RPCError } from 'rpc-utils'
 import type { RPCErrorObject, RPCRequest, RPCResponse } from 'rpc-utils'
 import store from 'store'
-import { fromString, toString } from 'uint8arrays'
+import { fromString } from 'uint8arrays'
 import Url from 'url-parse'
 
 import IframeService from './iframeService'
@@ -24,6 +24,7 @@ import type {
   UserRequestErrorCallback,
   UserRequestCancel,
 } from './types'
+import { fromHex, toHex } from './utils'
 
 type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
 
@@ -200,7 +201,7 @@ class ConnectService extends IframeService {
     const message = 'Add this account as a Ceramic authentication method'
     const authSecret = await this.authenticate(message)
     const entropy = hash(fromString(authSecret.slice(2)))
-    this.storeAccount(accountId, toString(entropy, 'base16'))
+    this.storeAccount(accountId, toHex(entropy))
     return entropy
   }
 
@@ -399,7 +400,7 @@ class ConnectService extends IframeService {
 
   getStoredAccount(accountId: string): Uint8Array | null {
     const accounts = this.getStoredAccounts()
-    return accounts[accountId] ? fromString(accounts[accountId], 'base16') : null
+    return accounts[accountId] ? fromHex(accounts[accountId]) : null
   }
 
   getStoredAccounts(): Record<string, string> {
@@ -411,7 +412,7 @@ class ConnectService extends IframeService {
     const accounts = this.getStoredAccounts()
     const accountId = links.find((e) => Boolean(accounts[e]))
     assert.isString(accountId, 'Account does not exist')
-    return fromString(accounts[accountId], 'base16')
+    return fromHex(accounts[accountId])
   }
 
   getStoredAccountList(): Array<string> | null {
