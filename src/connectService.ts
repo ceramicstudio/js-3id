@@ -199,7 +199,7 @@ class ConnectService extends IframeService {
   async authCreate(accountId: string): Promise<Uint8Array> {
     const message = 'Add this account as a Ceramic authentication method'
     const authSecret = await this.authenticate(message)
-    const entropy = hash(fromString(authSecret.slice(2), 'base16'))
+    const entropy = hash(fromString(authSecret.slice(2)))
     this.storeAccount(accountId, toString(entropy, 'base16'))
     return entropy
   }
