@@ -1,4 +1,4 @@
-import type { LinkProof } from '3id-blockchain-utils'
+import type { LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import { expose, caller } from 'postmsg-rpc'
 import type { RPCRequest } from 'rpc-utils'
 
@@ -49,19 +49,17 @@ class IframeService {
    *  Authenticate Request to authProvider in parent window
    *
    * @param     {String}    message      authentication message
-   * @param     {String}    accountId    external account ID handling authentication message
    * @return    {Promise<String>}        AuthSecret - 32 byte string
    */
-  authenticate: (message: string, accountId?: string) => Promise<string>
+  authenticate: (message: string) => Promise<string>
 
   /**
    * CreateLink Request to authProvider in parent window
    *
    * @param     {String}    did          did which is being linked
-   * @param     {String}    accountId    external account ID handling authentication message
    * @return    {Promise<Object>}        linkProof
    */
-  createLink: (did: string, accountId?: string) => Promise<LinkProof>
+  createLink: (did: string) => Promise<LinkProof>
 
   /**
    *  Tells parent window to display iframe

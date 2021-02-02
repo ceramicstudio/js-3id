@@ -1,9 +1,8 @@
-import type { LinkProof } from '3id-blockchain-utils'
+import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import { expose, caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection, RPCRequest } from 'rpc-utils'
 
-import type AuthProvider from './authProvider/ethereumAuthProvider'
 import DIDProviderProxy from './didProviderProxy'
 import type { DIDLinksList } from './types'
 
@@ -94,7 +93,7 @@ class ThreeIdConnect {
     // TODO DETECTION ON CAP10,  consume auth provider or other providers
     // just consume any providers and then create auth provider here, at very least has to support 3box
     if (provider) {
-      this.setAuthProvider(provider)
+      await this.setAuthProvider(provider)
     }
     await this.iframeLoadedPromise
     this.postMessage = this.iframe.contentWindow!.postMessage.bind(this.iframe.contentWindow)
@@ -105,9 +104,10 @@ class ThreeIdConnect {
     this._connected = true
   }
 
-  setAuthProvider(authProvider: AuthProvider): void {
+  async setAuthProvider(authProvider: AuthProvider): Promise<void> {
     this.authProvider = authProvider
-    this.accountId = this.authProvider.accountId
+    const accountId = await this.authProvider.accountId()
+    this.accountId = accountId.toString()
   }
 
   get connected(): boolean {
@@ -134,12 +134,12 @@ class ThreeIdConnect {
     expose('createLink', this._createLink.bind(this), { postMessage: this.postMessage })
   }
 
-  async _authenticate(message: string, accountId?: string): Promise<string> {
-    return await this.authProvider!.authenticate(message, accountId)
+  async _authenticate(message: string): Promise<string> {
+    return await this.authProvider!.authenticate(message)
   }
 
-  async _createLink(did: string, accountId?: string): Promise<LinkProof> {
-    return this.authProvider!.createLink(did, accountId)
+  async _createLink(did: string): Promise<LinkProof> {
+    return this.authProvider!.createLink(did)
   }
 
   async accounts(): Promise<DIDLinksList> {
@@ -147,23 +147,17 @@ class ThreeIdConnect {
   }
 
   async createAccount(): Promise<boolean> {
-    if (!this.authProvider) throw new Error('setAuthProvder required')
-    const params = {
-      accountId: this.accountId,
-    }
-
-    return this.RPCClient!.request('3id_createAccount', params)
+    if (!this.authProvider) throw new Error('setAuthProvider required')
+    return await this.RPCClient!.request('3id_createAccount', { accountId: this.accountId })
   }
 
   // support priv links in future, auth link, link auth
   async addAuthAndLink(baseDid: string): Promise<boolean> {
-    if (!this.authProvider) throw new Error('setAuthProvder required')
-    const params = {
-      baseDid,
+    if (!this.authProvider) throw new Error('setAuthProvider required')
+    return await this.RPCClient!.request('3id_addAuthAndLink', {
       accountId: this.accountId,
-    }
-
-    return this.RPCClient!.request('3id_addAuthAndLink', params)
+      baseDid,
+    })
   }
 
   /**
@@ -172,8 +166,8 @@ class ThreeIdConnect {
    * @return    {DIDProviderProxy}     A DID provider
    */
   getDidProvider(): DIDProviderProxy {
-    if (!this.authProvider) throw new Error('setAuthProvder required')
-    return new DIDProviderProxy(this.RPCProvider!, this.authProvider.accountId)
+    if (!this.authProvider) throw new Error('setAuthProvider required')
+    return new DIDProviderProxy(this.RPCProvider!, this.accountId!)
   }
 }
 

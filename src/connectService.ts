@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 
+import type { LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
-import type { LinkProof } from '3id-blockchain-utils'
+import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
-import { sha256 } from 'js-sha256'
 import { RPCError } from 'rpc-utils'
 import type { RPCErrorObject, RPCRequest, RPCResponse } from 'rpc-utils'
 import store from 'store'
+import { fromString, toString } from 'uint8arrays'
 import Url from 'url-parse'
 
 import IframeService from './iframeService'
@@ -198,9 +199,9 @@ class ConnectService extends IframeService {
   async authCreate(accountId: string): Promise<Uint8Array> {
     const message = 'Add this account as a Ceramic authentication method'
     const authSecret = await this.authenticate(message)
-    const entropy = sha256(authSecret.slice(2))
-    this.storeAccount(accountId, entropy)
-    return Uint8Array.from(Buffer.from(entropy, 'hex'))
+    const entropy = hash(fromString(authSecret.slice(2), 'base16'))
+    this.storeAccount(accountId, toString(entropy, 'base16'))
+    return entropy
   }
 
   /**
@@ -398,7 +399,7 @@ class ConnectService extends IframeService {
 
   getStoredAccount(accountId: string): Uint8Array | null {
     const accounts = this.getStoredAccounts()
-    return accounts[accountId] ? Uint8Array.from(Buffer.from(accounts[accountId], 'hex')) : null
+    return accounts[accountId] ? fromString(accounts[accountId], 'base16') : null
   }
 
   getStoredAccounts(): Record<string, string> {
@@ -410,7 +411,7 @@ class ConnectService extends IframeService {
     const accounts = this.getStoredAccounts()
     const accountId = links.find((e) => Boolean(accounts[e]))
     assert.isString(accountId, 'Account does not exist')
-    return Uint8Array.from(Buffer.from(accounts[accountId], 'hex'))
+    return fromString(accounts[accountId], 'base16')
   }
 
   getStoredAccountList(): Array<string> | null {

@@ -19,14 +19,16 @@ class EthereumProvider extends EventEmitter {
     request: { method: string; params: Array<any> },
     callback: (err: Error | null | undefined, res?: any) => void
   ) {
-    if (request.method !== 'personal_sign') {
-      callback(new Error('only supports personal_sign'))
-    } else {
+    if (request.method === 'eth_chainId') {
+      callback(null, { result: '1' })
+    } else if (request.method === 'personal_sign') {
       let message = request.params[0] as string
       if (message.startsWith('0x')) {
         message = toString(fromString(message.slice(2), 'base16'), 'utf8')
       }
       callback(null, { result: this.wallet.signMessage(message) })
+    } else {
+      callback(new Error(`Unsupported method: ${request.method}`))
     }
   }
 }
@@ -53,12 +55,11 @@ function createDID(provider): DID {
 }
 window.createDID = createDID
 
-async function authenticateDID(mnemonic?: string): DID {
+async function authenticateDID(mnemonic?: string): Promise<DID> {
   const wallet = createWallet(mnemonic)
   const authProvider = createAuthProvider(wallet)
   await threeIdConnect.connect(authProvider)
-  const didProvider = await threeIdConnect.getDidProvider()
-  const did = createDID(didProvider)
+  const did = createDID(threeIdConnect.getDidProvider())
   await did.authenticate()
   return did
 }
