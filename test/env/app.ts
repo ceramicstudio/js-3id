@@ -2,10 +2,12 @@ import { EventEmitter } from 'events'
 import ThreeIDResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
 import { Wallet } from '@ethersproject/wallet'
+import { EOSIOProvider } from '@smontero/eosio-local-provider'
 import { DID } from 'dids'
+import ecc from 'eosjs-ecc'
 import { fromString, toString } from 'uint8arrays'
 
-import { EthereumAuthProvider, ThreeIdConnect } from '../../src'
+import { EosioAuthProvider, EthereumAuthProvider, ThreeIdConnect } from '../../src'
 
 class EthereumProvider extends EventEmitter {
   wallet: Wallet
@@ -39,25 +41,42 @@ window.ceramic = ceramic
 const threeIdConnect = new ThreeIdConnect('iframe.html')
 window.threeIdConnect = threeIdConnect
 
-function createWallet(mnemonic?: string): Wallet {
-  return mnemonic ? Wallet.fromMnemonic(mnemonic) : Wallet.createRandom()
+async function createEosioAuthProvider(seed?: string): Promise<EosioAuthProvider> {
+  // const privateKey = seed ? ecc.seedPrivate(seed) : await ecc.unsafeRandomKey()
+  // const publicKey = ecc.privateToPublic(privateKey)
+  // const keys = { [publicKey]: privateKey }
+  // console.log('keys', keys)
+  // const account = 'eostestaccount'
+  // const provider = new EOSIOProvider({
+  //   chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
+  //   account,
+  //   keys,
+  // })
+  const provider = new EOSIOProvider({
+    chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
+    account: 'idx3idctest1',
+    keys: {
+      EOS7f7hdusWKXY1cymDLvUL3m6rTLKmdyPi4e6kquSnmfVxxEwVcC:
+        '5JRzDcbMqvTJxjHeP8vZqZbU9PwvaaTsoQhoVTAs3xBVSZaPB9U',
+    },
+  })
+  return new EosioAuthProvider(provider, 'idx3idctest1')
 }
-window.createWallet = createWallet
+window.createEosioAuthProvider = createEosioAuthProvider
 
-function createAuthProvider(wallet: Wallet): EthereumAuthProvider {
+function createEthereumAuthProvider(mnemonic?: string): EthereumAuthProvider {
+  const wallet = mnemonic ? Wallet.fromMnemonic(mnemonic) : Wallet.createRandom()
   const provider = new EthereumProvider(wallet)
   return new EthereumAuthProvider(provider, wallet.address)
 }
-window.createAuthProvider = createAuthProvider
+window.createEthereumAuthProvider = createEthereumAuthProvider
 
 function createDID(provider): DID {
   return new DID({ provider, resolver: ThreeIDResolver.getResolver(ceramic) })
 }
 window.createDID = createDID
 
-async function authenticateDID(mnemonic?: string): Promise<DID> {
-  const wallet = createWallet(mnemonic)
-  const authProvider = createAuthProvider(wallet)
+async function authenticateDID(authProvider): Promise<DID> {
   await threeIdConnect.connect(authProvider)
   const did = createDID(threeIdConnect.getDidProvider())
   await did.authenticate()
@@ -66,7 +85,12 @@ async function authenticateDID(mnemonic?: string): Promise<DID> {
 window.authenticateDID = authenticateDID
 
 async function connect() {
-  const did = await authenticateDID()
-  console.log('DID:', did.id)
+  // const authProvider = await createEosioAuthProvider('Test EOSIO')
+  const authProvider = await createEthereumAuthProvider()
+  const [accountId, did] = await Promise.all([
+    authProvider.accountId(),
+    authenticateDID(authProvider),
+  ])
+  console.log('DID:', { [did.id]: [accountId.toString()] })
 }
 document.getElementById('connect').addEventListener('click', connect)

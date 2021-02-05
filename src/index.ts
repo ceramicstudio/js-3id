@@ -1,7 +1,11 @@
 // Re-exports from blockchain-utils-linking
-import { eosio, ethereum } from '@ceramicnetwork/blockchain-utils-linking'
-export const EosioAuthProvider = eosio.EosioAuthProvider
-export const EthereumAuthProvider = ethereum.EthereumAuthProvider
+export {
+  CosmosAuthProvider,
+  EosioAuthProvider,
+  EthereumAuthProvider,
+  FilecoinAuthProvider,
+  PolkadotAuthProvider,
+} from '@ceramicnetwork/blockchain-utils-linking'
 export type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 
 export { default as ConnectService } from './connectService'
