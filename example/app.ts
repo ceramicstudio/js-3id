@@ -1,7 +1,9 @@
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
 import { DID } from 'dids'
-import { ThreeIdConnect, EthereumAuthProvider } from '../src'
+
+import { EthereumAuthProvider, ThreeIdConnect } from '../src'
+
 import web3Modal from './providers'
 
 const CERAMIC_URL = process.env.CERAMIC_API || 'http://localhost:7007'
@@ -16,8 +18,10 @@ const authenticate = async () => {
   await threeIdConnect.connect(authProvider)
 
   const ceramic = new Ceramic(CERAMIC_URL)
-  const didProvider = await threeIdConnect.getDidProvider()
-  const did = new DID({ provider: didProvider, resolver: ThreeIdResolver.getResolver(ceramic) })
+  const did = new DID({
+    provider: threeIdConnect.getDidProvider(),
+    resolver: ThreeIdResolver.getResolver(ceramic),
+  })
 
   await did.authenticate()
   console.log(did.id)

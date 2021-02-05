@@ -4,8 +4,6 @@ import { publishIDXConfig } from '@ceramicstudio/idx-tools'
 
 const PAGE_PATH = resolve(__dirname, 'env/app.html')
 
-const MNEMONIC = 'pumpkin urban connect assume cluster drop aware frog journey answer conduct harsh'
-
 beforeAll(async () => {
   const ceramic = new Ceramic('http://localhost:7777')
   await publishIDXConfig(ceramic)
@@ -17,6 +15,7 @@ describe('connect flow', () => {
   beforeEach(async () => {
     await jestPlaywright.resetContext()
     await page.goto('file://' + PAGE_PATH)
+    // page.on('console', (consoleObj) => console.log(consoleObj.text()))
   })
 
   test('access 3ID connect iframe', async () => {
@@ -29,13 +28,14 @@ describe('connect flow', () => {
     const frame = await page.frame('threeid-connect')
 
     // Run account creation flow in page
-    const accountCreatedPromise = page.evaluate((mnemonic) => {
-      const wallet = window.createWallet(mnemonic)
-      const provider = window.createAuthProvider(wallet)
+    const accountCreatedPromise = page.evaluate(() => {
+      const provider = window.createEthereumAuthProvider()
       return window.threeIdConnect.connect(provider).then(() => {
-        return window.threeIdConnect.createAccount()
+        return window.threeIdConnect.createAccount().then(() => {
+          return provider.accountId().then((id) => id.toString())
+        })
       })
-    }, MNEMONIC)
+    })
 
     // 3ID Connect popup should show up with continue button
     const button = await frame.waitForSelector('#accept')
@@ -43,28 +43,33 @@ describe('connect flow', () => {
     await page.waitForSelector('.threeid-connect', { state: 'hidden' })
 
     // Wait for account creation flow to be completed and check localStorage contents
-    await accountCreatedPromise
+    const accountId = await accountCreatedPromise
     const accountsState = await frame.evaluate(() => localStorage.getItem('accounts'))
-    expect(accountsState).toMatchSnapshot()
+    expect(JSON.parse(accountsState)).toEqual({ [accountId]: expect.any(String) })
   })
 
   test('get DID provider', async () => {
     // Ensure 3ID Connect iframe is present
     const frame = await page.frame('threeid-connect')
 
-    // Get DID string from in-page calls
-    const didPromise = page.evaluate((mnemonic) => {
-      return window.authenticateDID(mnemonic).then((did) => did.id)
-    }, MNEMONIC)
+    // Get DID and account from in-page calls
+    const didAccountPromise = page.evaluate(() => {
+      const provider = window.createEthereumAuthProvider()
+      return window.authenticateDID(provider).then((did) => {
+        return provider.accountId().then((accountId) => {
+          return [did.id, accountId.toString()]
+        })
+      })
+    })
 
     // 3ID Connect popup should show up with continue button
     const button = await frame.waitForSelector('#accept')
     await button.click()
-    await expect(didPromise).resolves.toBeDefined()
+    const [did, account] = await didAccountPromise
 
     // Check localStorage contents
-    const accountsState = await frame.evaluate(() => localStorage.getItem('accounts'))
-    expect(accountsState).toMatchSnapshot()
+    const linksState = await frame.evaluate(() => localStorage.getItem('links'))
+    expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
   })
 
   test('link existing account - accept', async () => {
@@ -73,7 +78,8 @@ describe('connect flow', () => {
 
     // First create a DID with a random wallet
     const didCreatedPromise = page.evaluate(() => {
-      return window.authenticateDID().then((did) => did.id)
+      const provider = window.createEthereumAuthProvider()
+      return window.authenticateDID(provider).then((did) => did.id)
     })
 
     // 3ID Connect popup should show up with continue button
@@ -83,7 +89,8 @@ describe('connect flow', () => {
 
     // Connect with another account
     const didLinkedPromise = page.evaluate(() => {
-      return window.authenticateDID().then((did) => did.id)
+      const provider = window.createEthereumAuthProvider()
+      return window.authenticateDID(provider).then((did) => did.id)
     })
 
     // Accept linking in 3ID Connect popup
@@ -101,7 +108,8 @@ describe('connect flow', () => {
 
     // First create a DID with a random wallet
     const didCreatedPromise = page.evaluate(() => {
-      return window.authenticateDID().then((did) => did.id)
+      const provider = window.createEthereumAuthProvider()
+      return window.authenticateDID(provider).then((did) => did.id)
     })
 
     // 3ID Connect popup should show up with continue button
@@ -111,7 +119,8 @@ describe('connect flow', () => {
 
     // Connect with another account
     const otherDIDPromise = page.evaluate(() => {
-      return window.authenticateDID().then((did) => did.id)
+      const provider = window.createEthereumAuthProvider()
+      return window.authenticateDID(provider).then((did) => did.id)
     })
 
     // Decline linking in 3ID Connect popup

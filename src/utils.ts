@@ -1,5 +1,15 @@
 // Partically redundant with 3boxjs utils, but added to remove circular dependency entirely for now
 
+import { fromString, toString } from 'uint8arrays'
+
+export function fromHex(hex: string): Uint8Array {
+  return fromString(hex, 'base16')
+}
+
+export function toHex(bytes: Uint8Array): string {
+  return toString(bytes, 'base16')
+}
+
 const HTTPError = (status: number, message: string): Error => {
   const e = new Error(message)
   // @ts-ignore

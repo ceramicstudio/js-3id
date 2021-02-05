@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`connect flow create account 1`] = `"{\\"0xa98F414D87543ff275167c46A53AB987dBBF0c10@eip155:1\\":\\"821b662e859b69164df27549f4fba12727734a3ed853f992c17c2801e6e919a2\\"}"`;
-
-exports[`connect flow get DID provider 1`] = `"{\\"0xa98F414D87543ff275167c46A53AB987dBBF0c10@eip155:1\\":\\"821b662e859b69164df27549f4fba12727734a3ed853f992c17c2801e6e919a2\\"}"`;
