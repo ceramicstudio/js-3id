@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 import ThreeIDResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
 import { Wallet as EthereumWallet } from '@ethersproject/wallet'
+// These cause Webpack loading to fail at runtime
 // import { Network } from '@glif/filecoin-address'
 // import { LocalManagedProvider } from '@glif/local-managed-provider'
 import { EOSIOProvider } from '@smontero/eosio-local-provider'
@@ -15,14 +16,14 @@ import {
 } from '@tendermint/sig'
 import { generateMnemonic } from 'bip39'
 import { DID } from 'dids'
-// import ecc from 'eosjs-ecc'
+import ecc from 'eosjs-ecc'
 import { fromString, toString } from 'uint8arrays'
 
 import {
   CosmosAuthProvider,
   EosioAuthProvider,
   EthereumAuthProvider,
-  FilecoinAuthProvider,
+  // FilecoinAuthProvider,
   ThreeIdConnect,
 } from '../../src'
 
@@ -80,24 +81,23 @@ function createCosmosAuthProvider(mnemonic?: string): Promise<CosmosAuthProvider
 }
 
 async function createEosioAuthProvider(seed?: string): Promise<EosioAuthProvider> {
-  // const privateKey = seed ? ecc.seedPrivate(seed) : await ecc.unsafeRandomKey()
-  // const publicKey = ecc.privateToPublic(privateKey)
-  // const keys = { [publicKey]: privateKey }
-  // console.log('keys', keys)
-  // const account = 'eostestaccount'
-  // const provider = new EOSIOProvider({
-  //   chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
-  //   account,
-  //   keys,
-  // })
+  const privateKey = seed ? ecc.seedPrivate(seed) : await ecc.unsafeRandomKey()
+  const publicKey = ecc.privateToPublic(privateKey)
+  const keys = { [publicKey]: privateKey }
+  const account = 'eostestaccount'
   const provider = new EOSIOProvider({
     chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
-    account: 'idx3idctest1',
-    keys: {
-      EOS7f7hdusWKXY1cymDLvUL3m6rTLKmdyPi4e6kquSnmfVxxEwVcC:
-        '5JRzDcbMqvTJxjHeP8vZqZbU9PwvaaTsoQhoVTAs3xBVSZaPB9U',
-    },
+    account,
+    keys,
   })
+  // const provider = new EOSIOProvider({
+  //   chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
+  //   account: 'idx3idctest1',
+  //   keys: {
+  //     EOS7f7hdusWKXY1cymDLvUL3m6rTLKmdyPi4e6kquSnmfVxxEwVcC:
+  //       '5JRzDcbMqvTJxjHeP8vZqZbU9PwvaaTsoQhoVTAs3xBVSZaPB9U',
+  //   },
+  // })
   return new EosioAuthProvider(provider, 'idx3idctest1')
 }
 
