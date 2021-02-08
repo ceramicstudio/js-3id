@@ -1,18 +1,50 @@
 import { EventEmitter } from 'events'
 import ThreeIDResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
-import { Wallet } from '@ethersproject/wallet'
+import { Wallet as EthereumWallet } from '@ethersproject/wallet'
+// import { Network } from '@glif/filecoin-address'
+// import { LocalManagedProvider } from '@glif/local-managed-provider'
 import { EOSIOProvider } from '@smontero/eosio-local-provider'
+import {
+  signTx,
+  Tx,
+  SignMeta,
+  createWalletFromMnemonic,
+  Wallet as CosmosWallet,
+  StdTx,
+} from '@tendermint/sig'
+import { generateMnemonic } from 'bip39'
 import { DID } from 'dids'
-import ecc from 'eosjs-ecc'
+// import ecc from 'eosjs-ecc'
 import { fromString, toString } from 'uint8arrays'
 
-import { EosioAuthProvider, EthereumAuthProvider, ThreeIdConnect } from '../../src'
+import {
+  CosmosAuthProvider,
+  EosioAuthProvider,
+  EthereumAuthProvider,
+  FilecoinAuthProvider,
+  ThreeIdConnect,
+} from '../../src'
+
+// const FILECOIN_PRIVATE_KEY =
+//   '7b2254797065223a22736563703235366b31222c22507269766174654b6579223a2257587362654d5176487a366f5668344b637262633045642b31362b3150766a6a554f3753514931355031343d227d'
+
+class CosmosProvider {
+  wallet: CosmosWallet
+
+  constructor(wallet: CosmosWallet) {
+    this.wallet = wallet
+  }
+
+  sign(msg: Tx, metadata: SignMeta): Promise<StdTx> {
+    return Promise.resolve(signTx(msg, metadata, this.wallet))
+  }
+}
 
 class EthereumProvider extends EventEmitter {
-  wallet: Wallet
+  wallet: EthereumWallet
 
-  constructor(wallet: Wallet) {
+  constructor(wallet: EthereumWallet) {
     super()
     this.wallet = wallet
   }
@@ -41,6 +73,12 @@ window.ceramic = ceramic
 const threeIdConnect = new ThreeIdConnect('iframe.html')
 window.threeIdConnect = threeIdConnect
 
+function createCosmosAuthProvider(mnemonic?: string): Promise<CosmosAuthProvider> {
+  const wallet = createWalletFromMnemonic(mnemonic ?? generateMnemonic())
+  const provider = new CosmosProvider(wallet)
+  return Promise.resolve(new CosmosAuthProvider(provider, wallet.address, 'cosmoshub-3'))
+}
+
 async function createEosioAuthProvider(seed?: string): Promise<EosioAuthProvider> {
   // const privateKey = seed ? ecc.seedPrivate(seed) : await ecc.unsafeRandomKey()
   // const publicKey = ecc.privateToPublic(privateKey)
@@ -62,14 +100,37 @@ async function createEosioAuthProvider(seed?: string): Promise<EosioAuthProvider
   })
   return new EosioAuthProvider(provider, 'idx3idctest1')
 }
-window.createEosioAuthProvider = createEosioAuthProvider
 
-function createEthereumAuthProvider(mnemonic?: string): EthereumAuthProvider {
-  const wallet = mnemonic ? Wallet.fromMnemonic(mnemonic) : Wallet.createRandom()
+function createEthereumAuthProvider(mnemonic?: string): Promise<EthereumAuthProvider> {
+  const wallet = mnemonic ? EthereumWallet.fromMnemonic(mnemonic) : EthereumWallet.createRandom()
   const provider = new EthereumProvider(wallet)
-  return new EthereumAuthProvider(provider, wallet.address)
+  return Promise.resolve(new EthereumAuthProvider(provider, wallet.address))
 }
-window.createEthereumAuthProvider = createEthereumAuthProvider
+
+// async function createFilecoinAuthProvider(
+//   privateKey = FILECOIN_PRIVATE_KEY
+// ): Promise<FilecoinAuthProvider> {
+//   const provider = new LocalManagedProvider(privateKey, Network.MAIN)
+//   const addresses = await provider.getAccounts()
+//   return new FilecoinAuthProvider(provider, addresses[0])
+// }
+
+const providerFactories = {
+  cosmos: createCosmosAuthProvider,
+  eosio: createEosioAuthProvider,
+  ethereum: createEthereumAuthProvider,
+  // filecoin: createFilecoinAuthProvider,
+}
+type Providers = typeof providerFactories
+
+async function createAuthProvider<T extends keyof Providers>(
+  type: T,
+  seed?: string
+): Promise<ReturnType<Providers[T]>> {
+  const createProvider = providerFactories[type]
+  return await createProvider(seed)
+}
+window.createAuthProvider = createAuthProvider
 
 function createDID(provider): DID {
   return new DID({ provider, resolver: ThreeIDResolver.getResolver(ceramic) })
@@ -85,8 +146,7 @@ async function authenticateDID(authProvider): Promise<DID> {
 window.authenticateDID = authenticateDID
 
 async function connect() {
-  // const authProvider = await createEosioAuthProvider('Test EOSIO')
-  const authProvider = await createEthereumAuthProvider()
+  const authProvider = await createAuthProvider('ethereum')
   const [accountId, did] = await Promise.all([
     authProvider.accountId(),
     authenticateDID(authProvider),

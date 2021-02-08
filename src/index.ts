@@ -4,7 +4,6 @@ export {
   EosioAuthProvider,
   EthereumAuthProvider,
   FilecoinAuthProvider,
-  PolkadotAuthProvider,
 } from '@ceramicnetwork/blockchain-utils-linking'
 export type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 
