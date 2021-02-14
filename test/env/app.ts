@@ -18,6 +18,7 @@ import { generateMnemonic } from 'bip39'
 import { DID } from 'dids'
 import ecc from 'eosjs-ecc'
 import { fromString, toString } from 'uint8arrays'
+import { AccountID } from "caip"
 
 import {
   CosmosAuthProvider,
@@ -25,6 +26,7 @@ import {
   EthereumAuthProvider,
   // FilecoinAuthProvider,
   ThreeIdConnect,
+  AuthProvider,
 } from '../../src'
 
 // const FILECOIN_PRIVATE_KEY =
@@ -65,6 +67,29 @@ class EthereumProvider extends EventEmitter {
     } else {
       callback(new Error(`Unsupported method: ${request.method}`))
     }
+  }
+}
+
+class EthereumMigrationMockAuthProvider implements AuthProvider {
+  async accountId() {
+    return new AccountID({
+      address: '0x5314846209d781caad6258b0de7c13acb99ef692',
+      chainId: `eip155:1`,
+    });
+  }
+
+  async authenticate(message: string): Promise<string> {
+    if (message === 'Add this account as a Ceramic authentication method') {
+      return '0xe80f049f93bd9ad99b24ba7cea21271eea92e493bf01e0633821c29760f69381'
+    } else if (message === 'This app wants to view and update your 3Box profile.') {
+      return '0xda87c0f5ff9d1237f0cf7eeb0d6507e8144038d56ccac1c7479df7bf95f20015'
+    } else {
+      throw new Error('Mock message signature not supported')
+    }
+  }
+
+  async createLink(did: string): Promise<LinkProof> {
+    throw new Error('CreateLink not required in migration')
   }
 }
 
@@ -119,6 +144,7 @@ const providerFactories = {
   cosmos: createCosmosAuthProvider,
   eosio: createEosioAuthProvider,
   ethereum: createEthereumAuthProvider,
+  ethereumMockMigration: () => new EthereumMigrationMockAuthProvider(),
   // filecoin: createFilecoinAuthProvider,
 }
 type Providers = typeof providerFactories
@@ -146,7 +172,7 @@ async function authenticateDID(authProvider): Promise<DID> {
 window.authenticateDID = authenticateDID
 
 async function connect() {
-  const authProvider = await createAuthProvider('ethereum')
+  const authProvider = await createAuthProvider('ethereumMockMigration')
   const [accountId, did] = await Promise.all([
     authProvider.accountId(),
     authenticateDID(authProvider),

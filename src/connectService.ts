@@ -26,7 +26,8 @@ import type {
   UserRequestCancel,
 } from './types'
 import { fromHex, toHex } from './utils'
-import { legacyDIDLinkExist, get3BoxProfile } from './migration'
+import { legacyDIDLinkExist, get3BoxProfile, transformProfile, get3BoxLinkProof } from './migration'
+import type { CryptoAccounts } from '@ceramicstudio/idx-constants'
 
 type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
 
@@ -34,7 +35,7 @@ const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.co
 const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
-const DID_MIGRATION = process.env.MIGRATION === 'true'
+const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
 type AuthConfig = { authId: string; authSecret: Uint8Array }
 type SeedConfig = { v03ID: string; seed: Uint8Array }
@@ -130,13 +131,12 @@ class ConnectService extends IframeService {
       }
     }
 
-    console.log(DID_MIGRATION)
-
     let legacyDid, seed, legacyConfig, migration
     // If legacy did exists and account does not exist in ceramic network yet, then migrate
     if (!accountAlreadyExist && !existInNetworkOnly && DID_MIGRATION) {
       legacyDid = await legacyDIDLinkExist(accountId)
       if (legacyDid) {
+        console.log(legacyDid)
         await this.userRequestHandler({ type: 'migration', legacyDid })
         seed = await this.legacySeedCreate()
         authSecretAdd = authSecret
@@ -146,10 +146,8 @@ class ConnectService extends IframeService {
     }
 
     assert.isDefined(authSecret, 'Auth secret should be defined to initialize identity')
-
     const configId = migration ? legacyConfig : ({ authSecret, authId } as AuthConfig)
     assert.isDefined(configId, 'Identity Config to initialize identity')
-
     await this.initIdentity(configId)
 
     // TODO just change to authsecretADD
@@ -157,7 +155,10 @@ class ConnectService extends IframeService {
       await this.addAuth(accountId, authSecretAdd)
     }
 
-    if (firstAccount || authSecretAdd || accountAlreadyExist || !existInNetworkOnly) {
+    if (
+      (firstAccount || authSecretAdd || accountAlreadyExist || !existInNetworkOnly) &&
+      !migration
+    ) {
       await this.tryCreateLink(accountId)
     }
 
@@ -168,12 +169,8 @@ class ConnectService extends IframeService {
     this.setActiveAccount(accountId)
 
     if (migration && legacyDid) {
-      assert.isDefined(this.idx, 'IDX instance must be defined')
-      //TODO handle partial migration failures
-      const profile = get3BoxProfile(legacyDid)
-      //TODO which definition are we using?
-      const existing = (await this.idx.get('basicProfile')) || {}
-      await this.idx.set('basicProfile', Object.assign(existing, profile))
+      await this.migrate3BoxProfile(legacyDid)
+      await this.migrate3BoxLinks(legacyDid, accountId)
     }
   }
 
@@ -198,9 +195,12 @@ class ConnectService extends IframeService {
     assert.isDefined(this.idx, 'IDX instance must be defined')
     assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
 
-    const links: Record<string, string> | null = await this.idx.get('cryptoAccounts')
-    if (links) this.storeDIDLinks(this.threeId.id, Object.keys(links))
-    if (!(links && links[accountId])) await this.createLinkDoc(accountId)
+    const links: CryptoAccounts = (await this.idx.get('cryptoAccounts')) || {}
+
+    if (!(links && links[accountId])) {
+      const linkProof = await this.createLink(this.threeId.id)
+      await this._writeLinkProof(accountId, linkProof, links)
+    }
   }
 
   async addAuth(accountId: string, authSecretAdd: Uint8Array): Promise<void> {
@@ -249,29 +249,49 @@ class ConnectService extends IframeService {
     return fromHex(seed.slice(2))
   }
 
-  /**
-   *  Creates a publicly verifiable link between crypto account and 3id
-   */
-  async createLinkDoc(accountId: string): Promise<void> {
+  async migrate3BoxProfile(did: string): Promise<void> {
+    assert.isDefined(this.idx, 'IDX instance must be defined')
+    assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
+    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
+
+    const profile = await get3BoxProfile(did)
+    const transform = transformProfile(profile)
+    const existing = (await this.idx.get('basicProfile')) || {}
+    console.log(Object.assign(existing, transform))
+    await this.idx.set('basicProfile', Object.assign(existing, transform))
+  }
+
+  async migrate3BoxLinks(did: string, accountId: string): Promise<void> {
+    assert.isDefined(this.idx, 'IDX instance must be defined')
+    assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
+    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
+
+    const linkProof = await get3BoxLinkProof(did)
+    if (linkProof) await this._writeLinkProof(accountId, linkProof)
+  }
+
+  async _writeLinkProof(
+    accountId: string,
+    linkProof: LinkProof,
+    existing?: CryptoAccounts
+  ): Promise<void> {
     assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
     assert.isDefined(this.idx, 'IDX instance must be defined')
     assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
 
-    const [linkProof, linkDoc] = await Promise.all([
-      this.createLink(this.threeId.id),
-      this.ceramic.createDocument(
-        'caip10-link',
-        { metadata: { controllers: [accountId] } },
-        { anchor: false, publish: false }
-      ),
-    ])
+    const linkDoc = await this.ceramic.createDocument(
+      'caip10-link',
+      { metadata: { controllers: [accountId] } },
+      { anchor: false, publish: false }
+    )
+
     await linkDoc.change({ content: linkProof })
     await this.ceramic.pin.add(linkDoc.id)
 
-    const existingLinks = (await this.idx.get('cryptoAccounts')) || {}
-    const links = Object.assign(existingLinks, { [accountId]: linkDoc.id.toUrl() })
+    if (!existing) existing = (await this.idx.get('cryptoAccounts')) || {}
+    const links = Object.assign(existing, { [accountId]: linkDoc.id.toUrl() })
     await this.idx.set('cryptoAccounts', links)
-    this.storeDIDLinks(this.threeId.id, [accountId])
+    this.storeDIDLinks(this.threeId.id, Object.keys(links))
   }
 
   async requestHandler(message: RPCRequest<string, Record<string, unknown>>): Promise<string> {

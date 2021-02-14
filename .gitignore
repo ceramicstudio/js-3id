@@ -4,5 +4,6 @@ lib
 types
 example/build.js
 test/env/build
+test/data
 
 .idea
