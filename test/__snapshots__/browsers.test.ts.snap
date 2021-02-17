@@ -2,6 +2,10 @@
 
 exports[`connect flow Ethereum didv0 Migration migrate v0 did to did v0 and 3box to IDX profile 1`] = `
 Object {
+  "affiliations": Array [
+    "3Box",
+    "MySchool",
+  ],
   "background": Object {
     "original": Object {
       "height": 175,

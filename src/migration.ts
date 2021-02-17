@@ -62,17 +62,37 @@ export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> =
   }
 }
 
+// Validation for BasicProfile
+const lengthIndex = <Record<string, number>>{
+  name: 150,
+  description: 420,
+  location: 140, //homeLocation
+  website: 240, // url
+  emoji: 2,
+  employer: 140, //affiliations
+  school: 140, //affiliations
+}
+
+const isStrAndLen = (obj: any, key: string): boolean => {
+  if (!lengthIndex[key]) return false
+  return typeof obj[key] === 'string' && obj[key].length <= lengthIndex[key]
+}
+
 // Transforms give 3box.io profile to a BasicProfile
 export const transformProfile = (profile: any): BasicProfile => {
   const transform = {} as BasicProfile
   let image, background
-  if (profile.name) transform.name = profile.name
-  if (profile.description) transform.description = profile.description
-  if (profile.location) transform.homeLocation = profile.location
-  if (profile.website) transform.url = profile.website
-  if (profile.emoji) transform.emoji = profile.emoji
-  if (profile.image) image = profile.image[0].contentUrl['/'] as string
-  if (image) {
+  if (isStrAndLen(profile, 'name')) transform.name = profile.name
+  if (isStrAndLen(profile, 'description')) transform.description = profile.description
+  if (isStrAndLen(profile, 'location')) transform.homeLocation = profile.location
+  if (isStrAndLen(profile, 'website')) transform.url = profile.website
+  if (isStrAndLen(profile, 'emoji')) transform.emoji = profile.emoji
+  if (isStrAndLen(profile, 'employer')) transform.affiliations = [profile.employer]
+  if (isStrAndLen(profile, 'school')) {
+    transform.affiliations = (transform.affiliations || []).concat([profile.school])
+  }
+  if (profile.image) image = profile.image[0]?.contentUrl['/']
+  if (image && typeof image === 'string') {
     transform.image = {
       original: {
         src: `ipfs://${image}`,
@@ -82,8 +102,8 @@ export const transformProfile = (profile: any): BasicProfile => {
       },
     }
   }
-  if (profile.coverPhoto) background = profile.coverPhoto[0].contentUrl['/'] as string
-  if (background) {
+  if (profile.coverPhoto) background = profile.coverPhoto[0]?.contentUrl['/']
+  if (background && typeof background === 'string') {
     transform.background = {
       original: {
         src: `ipfs://${background}`,
@@ -93,9 +113,5 @@ export const transformProfile = (profile: any): BasicProfile => {
       },
     }
   }
-
-  // School, work in affiliations?
-
-  //TODO validate, drop keys that dont
   return transform
 }
