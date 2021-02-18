@@ -12,7 +12,8 @@ module.exports = (env, argv) => {
     const dp = new webpack.DefinePlugin({
       'process.env': {
         'CERAMIC_API': JSON.stringify('https://ceramic-clay.3boxlabs.com'),
-        'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org')
+        'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org'), 
+        'MIGRATION': JSON.stringify('false')
       }
     })
     plugins.push(dp)
@@ -22,7 +23,8 @@ module.exports = (env, argv) => {
     const dp = new webpack.DefinePlugin({
       'process.env': {
         'CERAMIC_API': JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
-        'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001')
+        'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
+        'MIGRATION':  JSON.stringify('true')
       }
     })
     plugins.push(dp)

@@ -65,10 +65,13 @@ const content = (data) => {
   if (data.request.type === 'link') {
     return `Do you want to link this account to ${data.request.baseDid.substring(0, 18)}... ?`
   }
+  if (data.request.type === 'migration') {
+    return `Migrate ${data.request.legacyDid.substring(0, 18)}... ?`
+  }
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate' || data.request.type === 'create') {
+  if (data.request.type === 'authenticate' || data.request.type === 'create' || data.request.type === 'migration') {
     return `
       <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''
