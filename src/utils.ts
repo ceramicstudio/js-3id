@@ -40,14 +40,3 @@ export const fetchJson = async <T = unknown>(
     throw HTTPError(r.status, res.message)
   }
 }
-
-export const isLinked = async (address: string): Promise<boolean> => {
-  try {
-    const res = await fetchJson<{ data: { rootStoreAddress: string } }>(
-      `https://beta.3box.io/address-server/odbAddress/${address}`
-    )
-    return Boolean(res.data.rootStoreAddress)
-  } catch (err) {
-    return false
-  }
-}

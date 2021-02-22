@@ -11,6 +11,9 @@ import store from 'store'
 import { fromString } from 'uint8arrays'
 import Url from 'url-parse'
 import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
+import jwt_decode from 'jwt-decode'
+import { DID } from 'dids'
+import Resolver from '@ceramicnetwork/3id-did-resolver'
 
 import IframeService from './iframeService'
 import { ConnectError, assert } from './errors'
@@ -26,8 +29,15 @@ import type {
   UserRequestCancel,
 } from './types'
 import { fromHex, toHex } from './utils'
-import { legacyDIDLinkExist, get3BoxProfile, transformProfile, get3BoxLinkProof } from './migration'
-import type { CryptoAccounts } from '@ceramicstudio/idx-constants'
+import {
+  legacyDIDLinkExist,
+  get3BoxProfile,
+  transformProfile,
+  get3BoxLinkProof,
+  linkRequest,
+  linkVerify,
+} from './migration'
+import type { CryptoAccounts, AlsoKnownAs, AlsoKnownAsAccount } from '@ceramicstudio/idx-constants'
 
 type ThreeIDMethods = '3id_accounts' | '3id_createAccount' | '3id_addAuthAndLink'
 
@@ -136,7 +146,6 @@ class ConnectService extends IframeService {
     if (!accountAlreadyExist && !existInNetworkOnly && DID_MIGRATION) {
       legacyDid = await legacyDIDLinkExist(accountId)
       if (legacyDid) {
-        console.log(legacyDid)
         await this.userRequestHandler({ type: 'migration', legacyDid })
         seed = await this.legacySeedCreate()
         authSecretAdd = authSecret
@@ -169,8 +178,9 @@ class ConnectService extends IframeService {
     this.setActiveAccount(accountId)
 
     if (migration && legacyDid) {
-      await this.migrate3BoxProfile(legacyDid)
+      const profile3Box = await this.migrate3BoxProfile(legacyDid)
       await this.migrate3BoxLinks(legacyDid, accountId)
+      await this.migrateAKALinks(legacyDid, profile3Box)
     }
   }
 
@@ -239,6 +249,7 @@ class ConnectService extends IframeService {
     this.storeAccount(accountId, toHex(entropy))
     return entropy
   }
+
   /**
    *  Creates a legacy 3Box root seed
    */
@@ -249,25 +260,97 @@ class ConnectService extends IframeService {
     return fromHex(seed.slice(2))
   }
 
-  async migrate3BoxProfile(did: string): Promise<void> {
+  // Returns 3box original profile
+  async migrate3BoxProfile(did: string): Promise<any> {
     assert.isDefined(this.idx, 'IDX instance must be defined')
-    assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
-    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
-
     const profile = await get3BoxProfile(did)
     const transform = transformProfile(profile)
     const existing = (await this.idx.get('basicProfile')) || {}
-    console.log(Object.assign(existing, transform))
     await this.idx.set('basicProfile', Object.assign(existing, transform))
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return profile
   }
 
   async migrate3BoxLinks(did: string, accountId: string): Promise<void> {
-    assert.isDefined(this.idx, 'IDX instance must be defined')
-    assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
-    assert.isDefined(this.threeId, 'ThreeIdProvider instance must be defined')
-
     const linkProof = await get3BoxLinkProof(did)
     if (linkProof) await this._writeLinkProof(accountId, linkProof)
+  }
+
+  async _twitterVerify(dids: DID, did: string, profile: any): Promise<AlsoKnownAsAccount | null> {
+    try {
+      if (!profile.proof_twitter) return null
+      const type = 'twitter'
+      const decoded = jwt_decode<{ claim: { twitter_handle: string; twitter_proof: string } }>(
+        profile.proof_twitter
+      )
+      const twitterHandle = decoded.claim?.twitter_handle
+      const tweetUrl = decoded.claim?.twitter_proof
+      const challengeCode = await linkRequest(type, did, twitterHandle)
+      const jws = await dids.createJWS({ challengeCode })
+      const twitterProof = await linkVerify(type, jws, tweetUrl)
+      return {
+        protocol: 'https',
+        host: 'twitter.com',
+        id: twitterHandle,
+        claim: tweetUrl,
+        attestations: [{ 'did-jwt': twitterProof }],
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async _githubVerify(dids: DID, did: string, profile: any): Promise<AlsoKnownAsAccount | null> {
+    try {
+      if (!profile.proof_github) return null
+      const type = 'github'
+      const gistUrl = profile.proof_github
+      const githubHandle = profile.proof_github.split('//')[1]?.split('/')[1]
+      if (!githubHandle) throw new Error('link fail')
+      const challengeCode = await linkRequest(type, did, githubHandle)
+      const jws = await dids.createJWS({ challengeCode })
+      const githubProof = await linkVerify(type, jws, gistUrl)
+      return {
+        protocol: 'https',
+        host: 'github.com',
+        id: githubHandle,
+        claim: gistUrl,
+        attestations: [{ 'did-jwt': githubProof }],
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async migrateAKALinks(did: string, profile = {} as any): Promise<void> {
+    assert.isDefined(this.idx, 'IDX instance must be defined')
+    assert.isDefined(this.ceramic, 'Ceramic instance must be defined')
+    assert.isDefined(this.provider, 'ThreeIdProvider instance must be defined')
+
+    const dids = new DID({
+      provider: this.provider as any,
+      resolver: Resolver.getResolver(this.ceramic),
+    })
+    await dids.authenticate()
+
+    const existing = async (idx: IDX): Promise<Array<AlsoKnownAsAccount>> => {
+      return (await idx.get<AlsoKnownAs>('alsoKnownAs'))?.accounts || []
+    }
+
+    const results: Array<
+      Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null
+    > = await Promise.all([
+      existing(this.idx),
+      this._twitterVerify(dids, did, profile),
+      this._githubVerify(dids, did, profile),
+    ])
+
+    type ExcludesBoolean = <T>(x: T | null) => x is T
+    const accounts: Array<AlsoKnownAsAccount> = results
+      .filter((Boolean as any) as ExcludesBoolean)
+      .flat()
+
+    await this.idx.set('alsoKnownAs', { accounts })
   }
 
   async _writeLinkProof(
