@@ -1,6 +1,5 @@
-// Partically redundant with 3boxjs utils, but added to remove circular dependency entirely for now
-
 import { fromString, toString } from 'uint8arrays'
+import { RPCError } from 'rpc-utils'
 
 export function fromHex(hex: string): Uint8Array {
   return fromString(hex, 'base16')
@@ -39,4 +38,17 @@ export const fetchJson = async <T = unknown>(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     throw HTTPError(r.status, res.message)
   }
+}
+
+export const jwtDecode = <T>(jwt: string): T => {
+  const payload = jwt.split('.')[1]
+  const uint8 = fromString(payload, 'base64')
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return JSON.parse(toString(uint8))
+}
+
+// TODO didprovider, auth failed codes?
+export const rpcError = (id: string | number) => {
+  const rpcError = new RPCError(-32401, `3id-connect: Request not authorized`)
+  return Object.assign(rpcError.toObject(), { id })
 }

@@ -5,10 +5,9 @@ import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
-import { RPCError } from 'rpc-utils'
 import type { RPCErrorObject, RPCRequest, RPCResponse } from 'rpc-utils'
 import store from 'store'
-import { fromString, toString } from 'uint8arrays'
+import { fromString } from 'uint8arrays'
 import Url from 'url-parse'
 import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
 import { DID } from 'dids'
@@ -26,8 +25,11 @@ import type {
   UserRequestHandler,
   UserRequestErrorCallback,
   UserRequestCancel,
+  ExcludesBoolean,
+  AuthConfig,
+  SeedConfig,
 } from './types'
-import { fromHex, toHex } from './utils'
+import { fromHex, toHex, jwtDecode, rpcError } from './utils'
 import {
   legacyDIDLinkExist,
   get3BoxProfile,
@@ -45,22 +47,6 @@ const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
 const ACTIVE_ACCOUNT_KEY = 'active_account'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
-
-type AuthConfig = { authId: string; authSecret: Uint8Array }
-type SeedConfig = { v03ID: string; seed: Uint8Array }
-
-// TODO didprovider, auth failed codes?
-const rpcError = (id: string | number) => {
-  const rpcError = new RPCError(-32401, `3id-connect: Request not authorized`)
-  return Object.assign(rpcError.toObject(), { id })
-}
-
-const jwt_decode = <T>(jwt: string): T => {
-  const payload = jwt.split('.')[1]
-  const uint8 = fromString(payload, 'base64')
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return JSON.parse(toString(uint8))
-}
 
 /**
  *  ConnectService runs a 3ID DID provider instance and rpc server with
@@ -185,8 +171,10 @@ class ConnectService extends IframeService {
 
     if (migration && legacyDid) {
       const profile3Box = await this.migrate3BoxProfile(legacyDid)
-      await this.migrate3BoxLinks(legacyDid, accountId)
-      await this.migrateAKALinks(legacyDid, profile3Box)
+      await Promise.all([
+        this.migrate3BoxLinks(legacyDid, accountId),
+        this.migrateAKALinks(legacyDid, profile3Box),
+      ])
     }
   }
 
@@ -271,8 +259,7 @@ class ConnectService extends IframeService {
     assert.isDefined(this.idx, 'IDX instance must be defined')
     const profile = await get3BoxProfile(did)
     const transform = transformProfile(profile)
-    const existing = (await this.idx.get('basicProfile')) || {}
-    await this.idx.set('basicProfile', Object.assign(existing, transform))
+    await this.idx.merge('basicProfile', transform)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return profile
   }
@@ -286,7 +273,7 @@ class ConnectService extends IframeService {
     try {
       if (!profile.proof_twitter) return null
       const type = 'twitter'
-      const decoded = jwt_decode<{ claim: { twitter_handle: string; twitter_proof: string } }>(
+      const decoded = jwtDecode<{ claim: { twitter_handle: string; twitter_proof: string } }>(
         profile.proof_twitter
       )
       const twitterHandle = decoded.claim?.twitter_handle
@@ -351,7 +338,6 @@ class ConnectService extends IframeService {
       this._githubVerify(user, did, profile),
     ])
 
-    type ExcludesBoolean = <T>(x: T | null) => x is T
     const accounts: Array<AlsoKnownAsAccount> = results
       .filter((Boolean as any) as ExcludesBoolean)
       .flat()
