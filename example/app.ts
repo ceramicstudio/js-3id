@@ -1,6 +1,7 @@
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
 import { DID } from 'dids'
+import { IDX } from '@ceramicstudio/idx'
 
 import { EthereumAuthProvider, ThreeIdConnect } from '../src'
 
@@ -28,6 +29,10 @@ const authenticate = async () => {
 
   const jws = await did.createJWS({ hello: 'world' })
   console.log(jws)
+
+  window.idx = new IDX({ceramic})
+  window.ceramic = ceramic
+  window.did = did.id
 }
 
 // TODO must connect first

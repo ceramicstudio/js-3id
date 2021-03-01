@@ -4,9 +4,11 @@ import { AccountID } from 'caip'
 import { fetchJson } from './utils'
 import type { BasicProfile } from '@ceramicstudio/idx-constants'
 import type { LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
+import { DagJWS } from 'dids'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'
+const VERIFICATION_SERVICE = 'https://verifications.3boxlabs.com'
 
 const errorNotFound = (err: any): boolean => {
   if (err.statusCode) {
@@ -42,7 +44,6 @@ export const get3BoxProfile = async (did: string): Promise<any> => {
 export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> => {
   try {
     const url = `${THREEBOX_PROFILE_API}/config?did=${encodeURIComponent(did)}`
-    console.log(url)
     const { links } = await fetchJson<{ links: Array<any> }>(url)
     const link = links.filter((e) => e.type === 'ethereum-eoa')[0]
     if (!link) return null
@@ -114,4 +115,38 @@ export const transformProfile = (profile: any): BasicProfile => {
     }
   }
   return transform
+}
+
+type LinkType = 'twitter' | 'github'
+
+export const linkRequest = async (
+  type: LinkType,
+  did: string,
+  username: string
+): Promise<string> => {
+  try {
+    const body = { username, did }
+    const url = `${VERIFICATION_SERVICE}/api/v0/request-${type}`
+    const res = await fetchJson<{ data: { challengeCode: string } }>(url, body)
+    return res.data.challengeCode
+  } catch (err) {
+    console.error(err)
+    throw new Error(`Error while requesting ${type} link request.`)
+  }
+}
+
+export const linkVerify = async (
+  type: string,
+  jws: DagJWS,
+  verificationUrl: string
+): Promise<string> => {
+  try {
+    const body = { jws, verificationUrl }
+    const url = `${VERIFICATION_SERVICE}/api/v0/confirm-${type}`
+    const res = await fetchJson<{ data: { attestation: string } }>(url, body)
+    return res.data.attestation
+  } catch (err) {
+    console.error(err)
+    throw new Error(`Error while verifying ${type} link request.`)
+  }
 }

@@ -183,6 +183,12 @@ describe('connect flow', () => {
       const links = await idx.get('cryptoAccounts', did)
       expect(links).toMatchSnapshot()
 
+      const aka = await idx.get('alsoKnownAs', did)
+      
+      // twitter & github
+      expect(aka.accounts[0].claim).toMatchSnapshot()
+      expect(aka.accounts[1].claim).toMatchSnapshot()
+
       // Check localStorage contents
       const linksState = await frame.evaluate(() => localStorage.getItem('links'))
       expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
