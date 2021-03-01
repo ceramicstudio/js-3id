@@ -33,9 +33,22 @@ jobs:
           name: test
           command: npm test
 
-      - run:
-          name: build
-          command: npm run build
+      - when:
+          condition:
+            equal: [ develop, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: build
+                command: npm run build:dev
+      
+      - when:
+          condition:
+            not:
+              equal: [ develop, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: build
+                command: npm run build
 
       # - run:
       #     name: code-coverage

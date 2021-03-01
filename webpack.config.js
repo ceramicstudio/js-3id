@@ -8,27 +8,35 @@ if (process.env.ANALYZE) {
 }
 
 module.exports = (env, argv) => {
+  let config
   if (argv.mode === 'production') {
-    const dp = new webpack.DefinePlugin({
-      'process.env': {
+    if (env === 'develop') {
+      // develop, develop branch
+      config = {
+        'CERAMIC_API': JSON.stringify('https://ceramic-dev.3boxlabs.com'),
+        'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org'), 
+        'MIGRATION': JSON.stringify('true')
+      }
+    } else {
+      //production, main branch, default this so that npm releases dont accidently configure differently 
+      config = {
         'CERAMIC_API': JSON.stringify('https://ceramic-clay.3boxlabs.com'),
         'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org'), 
         'MIGRATION': JSON.stringify('false')
       }
-    })
-    plugins.push(dp)
+    }
   }
   
   if (argv.mode=== 'development') {
-    const dp = new webpack.DefinePlugin({
-      'process.env': {
-        'CERAMIC_API': JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
-        'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
-        'MIGRATION':  JSON.stringify('true')
-      }
-    })
-    plugins.push(dp)
+    config = {
+      'CERAMIC_API': JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
+      'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
+      'MIGRATION':  JSON.stringify('true')
+    }
   }
+
+  const dp = new webpack.DefinePlugin({'process.env': config})
+  plugins.push(dp)
 
   return  {
     entry: './iframe/index.ts',
