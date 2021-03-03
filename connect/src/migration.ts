@@ -1,14 +1,130 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
-
 import { AccountID } from 'caip'
 import { fetchJson } from './utils'
 import type { BasicProfile } from '@ceramicstudio/idx-constants'
-import type { LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
-import { DagJWS } from 'dids'
+import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
+import { DagJWS, DIDProvider } from 'dids'
+import { IDX } from '@ceramicstudio/idx'
+import { CeramicApi } from '@ceramicnetwork/common'
+import type { AlsoKnownAs, AlsoKnownAsAccount } from '@ceramicstudio/idx-constants'
+import Resolver from '@ceramicnetwork/3id-did-resolver'
+import type { ExcludesBoolean } from './types'
+import { DID } from 'dids'
+import { fromHex, jwtDecode } from './utils'
+import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'
 const VERIFICATION_SERVICE = 'https://verifications.3boxlabs.com'
+
+export class Migrate3IDV0 {
+  private idx: IDX
+  private ceramic: CeramicApi
+  private user: DID
+
+  constructor(threeIdProvider: DIDProvider, idx: IDX) {
+    this.idx = idx
+    this.ceramic = idx.ceramic
+    this.user = new DID({
+      provider: threeIdProvider,
+      resolver: Resolver.getResolver(this.ceramic),
+    })
+  }
+
+  /**
+   *  Creates a legacy 3Box root seed
+   */
+  static async legacySeedCreate(authProvider: AuthProvider): Promise<Uint8Array> {
+    const message = 'This app wants to view and update your 3Box profile.'
+    const authSecret = await authProvider.authenticate(message)
+    const seed = mnemonicToSeed(entropyToMnemonic(authSecret))
+    return fromHex(seed.slice(2))
+  }
+
+  async userDIDAuthenticated() {
+    if (!this.user.authenticated) await this.user.authenticate()
+  }
+
+  async migrateAKALinks(did: string, profile = {} as any): Promise<void> {
+    await this.userDIDAuthenticated()
+
+    const existing = async (idx: IDX): Promise<Array<AlsoKnownAsAccount>> => {
+      return (await idx.get<AlsoKnownAs>('alsoKnownAs'))?.accounts || []
+    }
+
+    const results: Array<
+      Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null
+    > = await Promise.all([
+      existing(this.idx),
+      this._twitterVerify(did, profile),
+      this._githubVerify(did, profile),
+    ])
+
+    const accounts: Array<AlsoKnownAsAccount> = results
+      .filter((Boolean as any) as ExcludesBoolean)
+      .flat()
+
+    await this.idx.set('alsoKnownAs', { accounts })
+  }
+
+  // Returns 3box original profile
+  async migrate3BoxProfile(did: string): Promise<any> {
+    const profile = await get3BoxProfile(did)
+    const transform = transformProfile(profile)
+    await this.idx.merge('basicProfile', transform)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return profile
+  }
+
+  async _twitterVerify(did: string, profile: any): Promise<AlsoKnownAsAccount | null> {
+    await this.userDIDAuthenticated()
+    try {
+      if (!profile.proof_twitter) return null
+      const type = 'twitter'
+      const decoded = jwtDecode<{ claim: { twitter_handle: string; twitter_proof: string } }>(
+        profile.proof_twitter
+      )
+      const twitterHandle = decoded.claim?.twitter_handle
+      const tweetUrl = decoded.claim?.twitter_proof
+      const challengeCode = await linkRequest(type, did, twitterHandle)
+      const jws = await this.user.createJWS({ challengeCode })
+      const twitterProof = await linkVerify(type, jws, tweetUrl)
+      return {
+        protocol: 'https',
+        host: 'twitter.com',
+        id: twitterHandle,
+        claim: tweetUrl,
+        attestations: [{ 'did-jwt-vc': twitterProof }],
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async _githubVerify(did: string, profile: any): Promise<AlsoKnownAsAccount | null> {
+    await this.userDIDAuthenticated()
+    try {
+      if (!profile.proof_github) return null
+      const type = 'github'
+      const gistUrl = profile.proof_github
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      const githubHandle = profile.proof_github?.split('//')[1]?.split('/')[1]
+      if (!githubHandle) throw new Error('link fail')
+      const challengeCode = await linkRequest(type, did, githubHandle)
+      const jws = await this.user.createJWS({ challengeCode })
+      const githubProof = await linkVerify(type, jws, gistUrl)
+      return {
+        protocol: 'https',
+        host: 'github.com',
+        id: githubHandle,
+        claim: gistUrl,
+        attestations: [{ 'did-jwt-vc': githubProof }],
+      }
+    } catch (e) {
+      return null
+    }
+  }
+}
 
 const errorNotFound = (err: any): boolean => {
   if (err.statusCode) {

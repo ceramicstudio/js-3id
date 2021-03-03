@@ -15,8 +15,9 @@
     "test:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
     "test:server": "http-server -c-1 -p 30001 ./test/env/",
     "test:app": "run-p test:build:** test:ceramic test:server",
-    "test:run": "jest",
-    "test": "run-p test:build:** && npm run test:run",
+    "test:run:integration": "jest --config integration.jest.config.js",
+    "test:run:unit": "jest --projects src/__tests__ --detectOpenHandles",
+    "test": "run-p test:build:** && npm run test:run:integration && npm run test:run:unit",
     "build:prod:es5": "rm -rf ./lib && babel src --out-dir lib --extensions .ts",
     "build:prod:types": "rm -rf ./types && tsc --emitDeclarationOnly --skipLibCheck",
     "build:prod:dist": "webpack --config webpack.config.js --mode=production --output-filename index.js",
@@ -32,13 +33,6 @@
     "dev:demo:build": "webpack --config ./example/webpack.config.js --mode=development --watch",
     "start:demo": "run-p dev:demo:** start",
     "start:demo:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com run-p dev:demo:** start:testnet"
-  },
-  "jest": {
-    "preset": "jest-playwright-preset",
-    "testPathIgnorePatterns": [
-      "node_modules",
-      "lib"
-    ]
   },
   "repository": {
     "type": "git",
@@ -61,6 +55,7 @@
     "@stablelib/sha256": "^1.0.0",
     "3id-did-provider": "^0.5.1",
     "caip": "^0.9.2",
+    "cross-fetch": "^3.0.6",
     "dag-jose": "^0.3.0",
     "dids": "^1.1.1",
     "errors-utils": "^0.1.0",
@@ -125,5 +120,8 @@
     "webpack": "^4.20.2",
     "webpack-bundle-analyzer": "^3.9.0",
     "webpack-cli": "^3.1.2"
-  }
+  },
+  "eslintIgnore": [
+    "src/__tests__/"
+  ]
 }
