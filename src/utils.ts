@@ -1,5 +1,6 @@
 import { fromString, toString } from 'uint8arrays'
 import { RPCError } from 'rpc-utils'
+import fetch from 'cross-fetch'
 
 export function fromHex(hex: string): Uint8Array {
   return fromString(hex, 'base16')
@@ -28,7 +29,7 @@ export const fetchJson = async <T = unknown>(
       headers: { 'Content-Type': 'application/json' },
     }
   }
-  const r = await window.fetch(url, opts)
+  const r = await fetch(url, opts)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const res = await r.json()
 
