@@ -5,33 +5,34 @@ orbs:
 
 jobs:
   test-and-build:
-    working_directory: ~/3id-connect
+    working_directory: ~/3id-connect/connect
     docker:
       - image: mcr.microsoft.com/playwright:focal
         environment:
           NODE_ENV: development
     steps:
       - checkout
+        path: ~/3id-connect
 
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - dependencies-cache-{{ checksum "./connect/package.json" }}
+            - dependencies-cache-{{ checksum "package.json" }}
 
       - run:
           name: install dependencies
           command: |
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
             npm i -g codecov node-gyp
-            cd ./connect && npm ci
+            npm ci
 
       - run:
           name: lint
-          command: cd ./connect && npm run lint
+          command: npm run lint
 
       - run:
           name: test
-          command: cd ./connect && npm test
+          command: npm test
 
       - when:
           condition:
@@ -39,7 +40,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: cd ./connect && npm run build:dev
+                command: npm run build:dev
 
       - when:
           condition:
@@ -48,7 +49,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: cd ./connect && npm run build
+                command: npm run build
 
       # - run:
       #     name: code-coverage
@@ -60,9 +61,9 @@ jobs:
             - public
 
       - save_cache:
-          key: dependency-cache-{{ checksum "./connect/package.json" }}
+          key: dependency-cache-{{ checksum "package.json" }}
           paths:
-            - ./connect/node_modules
+            - node_modules
   deploy-dev:
     working_directory: ~/3id-connect
     docker:
