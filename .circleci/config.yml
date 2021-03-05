@@ -56,7 +56,7 @@ jobs:
       #     command: bash <(curl -s https://codecov.io/bash)
 
       - persist_to_workspace:
-          root: .
+          root: ~/3id-connect
           paths:
             - public
 
