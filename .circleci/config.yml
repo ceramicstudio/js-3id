@@ -16,39 +16,39 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - dependencies-cache-{{ checksum "package.json" }}
+            - dependencies-cache-{{ checksum "./connect/package.json" }}
 
       - run:
           name: install dependencies
           command: |
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
             npm i -g codecov node-gyp
-            npm ci
+            cd ./connect && npm ci
 
       - run:
           name: lint
-          command: npm run lint
+          command: cd ./connect && npm run lint
 
       - run:
           name: test
-          command: npm test
+          command: cd ./connect && npm test
 
       - when:
           condition:
-            equal: [ develop, << pipeline.git.branch >> ]
+            equal: [develop, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
-                command: npm run build:dev
-      
+                command: cd ./connect && npm run build:dev
+
       - when:
           condition:
             not:
-              equal: [ develop, << pipeline.git.branch >> ]
+              equal: [develop, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
-                command: npm run build
+                command: cd ./connect && npm run build
 
       # - run:
       #     name: code-coverage
@@ -60,9 +60,9 @@ jobs:
             - public
 
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "./connect/package.json" }}
           paths:
-            - ./node_modules
+            - ./connect/node_modules
   deploy-dev:
     working_directory: ~/3id-connect
     docker:
