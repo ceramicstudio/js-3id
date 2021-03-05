@@ -11,8 +11,8 @@ jobs:
         environment:
           NODE_ENV: development
     steps:
-      - checkout
-        path: ~/3id-connect
+      - checkout:
+          path: ~/3id-connect
 
       # Download and cache dependencies
       - restore_cache:
