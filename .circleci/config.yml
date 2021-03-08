@@ -95,9 +95,9 @@ jobs:
           command: npm run build
 
       - persist_to_workspace:
-          root: ~/3id-connect/public/management
+          root: ~/3id-connect
           paths:
-            - build/*
+            - public
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
