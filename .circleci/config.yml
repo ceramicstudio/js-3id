@@ -5,13 +5,14 @@ orbs:
 
 jobs:
   test-and-build:
-    working_directory: ~/3id-connect
+    working_directory: ~/3id-connect/connect
     docker:
       - image: mcr.microsoft.com/playwright:focal
         environment:
           NODE_ENV: development
     steps:
-      - checkout
+      - checkout:
+          path: ~/3id-connect
 
       # Download and cache dependencies
       - restore_cache:
@@ -35,16 +36,16 @@ jobs:
 
       - when:
           condition:
-            equal: [ develop, << pipeline.git.branch >> ]
+            equal: [develop, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
                 command: npm run build:dev
-      
+
       - when:
           condition:
             not:
-              equal: [ develop, << pipeline.git.branch >> ]
+              equal: [develop, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
@@ -55,14 +56,14 @@ jobs:
       #     command: bash <(curl -s https://codecov.io/bash)
 
       - persist_to_workspace:
-          root: .
+          root: ~/3id-connect
           paths:
             - public
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
-            - ./node_modules
+            - node_modules
   deploy-dev:
     working_directory: ~/3id-connect
     docker:

@@ -13,36 +13,36 @@ module.exports = (env, argv) => {
     if (env === 'develop') {
       // develop, develop branch
       config = {
-        'CERAMIC_API': JSON.stringify('https://ceramic-dev.3boxlabs.com'),
-        'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org'), 
-        'MIGRATION': JSON.stringify('true')
+        CERAMIC_API: JSON.stringify('https://ceramic-dev.3boxlabs.com'),
+        CONNECT_IFRAME_URL: JSON.stringify('https://app.3idconnect.org'),
+        MIGRATION: JSON.stringify('true'),
       }
     } else {
-      //production, main branch, default this so that npm releases dont accidently configure differently 
+      //production, main branch, default this so that npm releases dont accidently configure differently
       config = {
-        'CERAMIC_API': JSON.stringify('https://ceramic-clay.3boxlabs.com'),
-        'CONNECT_IFRAME_URL': JSON.stringify('https://app.3idconnect.org'), 
-        'MIGRATION': JSON.stringify('false')
+        CERAMIC_API: JSON.stringify('https://ceramic-clay.3boxlabs.com'),
+        CONNECT_IFRAME_URL: JSON.stringify('https://app.3idconnect.org'),
+        MIGRATION: JSON.stringify('false'),
       }
     }
   }
-  
-  if (argv.mode=== 'development') {
+
+  if (argv.mode === 'development') {
     config = {
-      'CERAMIC_API': JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
-      'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
-      'MIGRATION':  JSON.stringify('true')
+      CERAMIC_API: JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
+      CONNECT_IFRAME_URL: JSON.stringify('http://localhost:30001'),
+      MIGRATION: JSON.stringify('true'),
     }
   }
 
-  const dp = new webpack.DefinePlugin({'process.env': config})
+  const dp = new webpack.DefinePlugin({ 'process.env': config })
   plugins.push(dp)
 
-  return  {
+  return {
     entry: './iframe/index.ts',
     output: {
       filename: 'index.js',
-      path: path.resolve(__dirname, 'public'),
+      path: path.resolve(__dirname, '..', 'public'),
       libraryTarget: 'umd',
       umdNamedDefine: true,
     },
