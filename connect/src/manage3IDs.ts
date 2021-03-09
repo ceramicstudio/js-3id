@@ -3,18 +3,18 @@ import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
-import store from 'store'
 import { fromString } from 'uint8arrays'
 import { assert } from './errors'
-import type { AccountsList, DIDLinksList, DIDProvider, AuthConfig, SeedConfig } from './types'
-import { fromHex, toHex } from './utils'
+import type { AccountsList, DIDProvider, AuthConfig, SeedConfig } from './types'
+import { toHex } from './utils'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
+import { AccountStore } from './accountStore'
 import type { CryptoAccounts } from '@ceramicstudio/idx-constants'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
-class Manage3IDs {
+export default class Manage3IDs {
   authProvider: AuthProvider
   store: AccountStore
   idx: IDX
@@ -203,73 +203,7 @@ class Manage3IDs {
     return Boolean(this.store.getStoredAccount(accountId))
   }
 
-  // TODO and use
-  // didProvider(did:string): DIDProvider | undefined {
-  //   return this.threeIdProviders[did]?.getDidProvider()
-  // }
-}
-
-// TODO, AccountStore will change, just pulls out existing functions, and will likely later take an
-// leveldown interface as a store, also all will likely become async funcs
-const ACCOUNT_KEY = 'accounts'
-const LINK_KEY = 'links'
-
-class AccountStore {
-  store: StoreJsAPI
-
-  constructor(localStore?: StoreJsAPI) {
-    this.store = localStore || store
-  }
-
-  storeAccount(accountId: string, authSecretHex: string): void {
-    const accounts = this.getStoredAccounts()
-    accounts[accountId] = authSecretHex
-    this.store.set(ACCOUNT_KEY, accounts)
-  }
-
-  getStoredAccount(accountId: string): Uint8Array | null {
-    const accounts = this.getStoredAccounts()
-    return accounts[accountId] ? fromHex(accounts[accountId]) : null
-  }
-
-  getStoredAccounts(): Record<string, string> {
-    return (this.store.get(ACCOUNT_KEY) as Record<string, string> | undefined) || {}
-  }
-
-  getStoredAccountByDid(did: string): Uint8Array {
-    const links = this.getDIDLinks(did) || []
-    const accounts = this.getStoredAccounts()
-    const accountId = links.find((e) => Boolean(accounts[e]))
-    assert.isString(accountId, 'Account does not exist')
-    return fromHex(accounts[accountId])
-  }
-
-  getStoredAccountList(): Array<string> | null {
-    const val = this.store.get(ACCOUNT_KEY) as Record<string, string> | undefined
-    return val ? Object.keys(val) : null
-  }
-
-  storeDIDLinks(did: string, linkArray: Array<string> = []): void {
-    const dids = this.getDIDLinksList()
-    const didsArr = dids[did] || []
-    const arr = didsArr.concat(linkArray.filter((i) => didsArr.indexOf(i) < 0))
-    dids[did] = arr
-    this.store.set(LINK_KEY, dids)
-  }
-
-  getDIDLinks(did: string): AccountsList | undefined {
-    const dids = this.getDIDLinksList()
-    return dids[did]
-  }
-
-  getDIDLinksList(): DIDLinksList {
-    return (this.store.get(LINK_KEY) as DIDLinksList | undefined) || {}
-  }
-
-  getDIDs(): Array<string> | null {
-    const val = this.store.get(LINK_KEY) as DIDLinksList | undefined
-    return val ? Object.keys(val) : null
+  didProvider(did: string): DIDProvider | undefined {
+    return this.threeIdProviders[did]?.getDidProvider() as DIDProvider
   }
 }
-
-export { AccountStore, Manage3IDs }

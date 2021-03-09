@@ -1,76 +1,21 @@
 import Ceramic from '@ceramicnetwork/http-client'
 import { publishIDXConfig } from '@ceramicstudio/idx-tools'
 import { IDX } from '@ceramicstudio/idx'
-import { Wallet as EthereumWallet } from '@ethersproject/wallet'
-import { Manage3IDs } from '../manage3IDs'
-import { fromString, toString } from 'uint8arrays'
-import { AccountID } from 'caip'
-import { EthereumAuthProvider, AuthProvider } from '../index'
-import { EventEmitter } from 'events'
+import Manage3IDs from '../manage3IDs'
 import { entropyToMnemonic } from '@ethersproject/hdnode'
-
-//TODO needs to be configured to no run per browser
-
-// TODO moved shared test utils, after repo reorg
-class EthereumProvider extends EventEmitter {
-  wallet: EthereumWallet
-
-  constructor(wallet: EthereumWallet) {
-    super()
-    this.wallet = wallet
-  }
-
-  send(
-    request: { method: string; params: Array<any> },
-    callback: (err: Error | null | undefined, res?: any) => void
-  ) {
-    if (request.method === 'eth_chainId') {
-      callback(null, { result: '1' })
-    } else if (request.method === 'personal_sign') {
-      let message = request.params[0] as string
-      if (message.startsWith('0x')) {
-        message = toString(fromString(message.slice(2), 'base16'), 'utf8')
-      }
-      callback(null, { result: this.wallet.signMessage(message) })
-    } else {
-      callback(new Error(`Unsupported method: ${request.method}`))
-    }
-  }
-}
-
-// TODO moved shared test utils, after repo reorg
-class EthereumMigrationMockAuthProvider implements AuthProvider {
-  async accountId() {
-    return new AccountID({
-      address: '0x5314846209d781caad6258b0de7c13acb99ef692',
-      chainId: `eip155:1`,
-    })
-  }
-
-  async authenticate(message: string): Promise<string> {
-    if (message === 'Add this account as a Ceramic authentication method') {
-      return '0xe80f049f93bd9ad99b24ba7cea21271eea92e493bf01e0633821c29760f69381'
-    } else if (message === 'This app wants to view and update your 3Box profile.') {
-      return '0xda87c0f5ff9d1237f0cf7eeb0d6507e8144038d56ccac1c7479df7bf95f20015'
-    } else {
-      throw new Error('Mock message signature not supported')
-    }
-  }
-
-  async createLink(did: string): Promise<LinkProof> {
-    throw new Error('CreateLink not required in migration')
-  }
-}
-
-// TODO moved shared test utils, after repo reorg
-function createEthereumAuthProvider(mnemonic?: string): Promise<EthereumAuthProvider> {
-  const wallet = mnemonic ? EthereumWallet.fromMnemonic(mnemonic) : EthereumWallet.createRandom()
-  const provider = new EthereumProvider(wallet)
-  return Promise.resolve(new EthereumAuthProvider(provider, wallet.address))
-}
+import { EthereumMigrationMockAuthProvider, createEthereumAuthProvider } from '../../test/utils'
+import { AuthProvider } from '../index'
 
 let ceramic: Ceramic
 let idx: IDX
+
+// Generate deterministic eth auth providers by id
+const createAuthProvider = async (id: number):Promise<AuthProvider> => {
+  const idStr = id.toString()
+  const entropy = `0x${'0'.repeat(64 - idStr.length)}${idStr}`
+  const mn = entropyToMnemonic(entropy)
+  return createEthereumAuthProvider(mn)
+}
 
 beforeAll(async () => {
   ceramic = new Ceramic('http://localhost:7777')
@@ -87,9 +32,7 @@ describe('3ID Management', () => {
 
   test('creates/loads new did', async () => {
     // auth provider create
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000001')
-    )
+    const authProvider = await createAuthProvider(1)
     const accountId = (await authProvider.accountId()).toString()
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     const did = await manage3ids.createAccount()
@@ -99,10 +42,7 @@ describe('3ID Management', () => {
   })
 
   test('creates/loads existing did in network', async () => {
-    // auth provider create
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000002')
-    )
+    const authProvider = await createAuthProvider(2)
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     const did1 = await manage3ids.createAccount()
     manage3ids.store.store.clearAll()
@@ -139,9 +79,7 @@ describe('3ID Management', () => {
   })
 
   test('setDid throws if not available locally', async () => {
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000001')
-    )
+    const authProvider = await createAuthProvider(1)
     const accountId = (await authProvider.accountId()).toString()
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     const did = 'did:3:kjzl6cwe1jw146eidnvzjnhxfebcovtiote32s2w5zj519kj3ja8nbuqmq5884a'
@@ -149,9 +87,7 @@ describe('3ID Management', () => {
   })
 
   test('setDid returns with in memory did', async () => {
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000001')
-    )
+    const authProvider = await createAuthProvider(1)
     const accountId = (await authProvider.accountId()).toString()
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     const did = await manage3ids.createAccount()
@@ -161,9 +97,7 @@ describe('3ID Management', () => {
   })
 
   test('setDid returns with did from store', async () => {
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000003')
-    )
+    const authProvider = await createAuthProvider(3)
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     const did = await manage3ids.createAccount()
     const manage3ids2 = new Manage3IDs(authProvider, { ceramic })
@@ -173,16 +107,12 @@ describe('3ID Management', () => {
   })
 
   test('addAuthAndLink to existing did', async () => {
-    const authProvider = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000004')
-    )
+    const authProvider = await createAuthProvider(4)
     const manage3ids = new Manage3IDs(authProvider, { ceramic })
     manage3ids.store.store.clearAll()
     const accountId1 = (await authProvider.accountId()).toString()
     const did1 = await manage3ids.createAccount()
-    const authProvider2 = await createEthereumAuthProvider(
-      entropyToMnemonic('0x0000000000000000000000000000000000000000000000000000000000000005')
-    )
+    const authProvider2 = await createAuthProvider(5)
     const accountId2 = (await authProvider2.accountId()).toString()
     const manage3ids2 = new Manage3IDs(authProvider2, { ceramic })
     await manage3ids2.addAuthAndLink(did1)

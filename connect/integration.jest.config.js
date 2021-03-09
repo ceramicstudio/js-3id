@@ -5,6 +5,6 @@ module.exports = {
     "lib"
   ],
   "testMatch": [
-    "**/test/*"
+    "**/test/*.test.ts"
   ]
 }
