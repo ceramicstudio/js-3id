@@ -11,6 +11,7 @@
     "rootDir": "./src",
     "outDir": "./types",
     "strict": true,
+    "downlevelIteration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,

@@ -1,17 +1,20 @@
-import Ceramic from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import type {
   BasicProfile,
   ImageMetadata,
   ImageSources,
 } from '@ceramicstudio/idx-constants'
+import type { Manage3IDs } from '3id-connect'
+import { AccountID } from 'caip'
 
-import { CERAMIC_URL, IPFS_PREFIX, IPFS_URL } from './constants'
+import { IPFS_PREFIX, IPFS_URL } from '../constants'
+import type { DIDsData } from '../types'
+
+import { ceramic } from './ceramic'
 
 export type Dimensions = { height: number; width: number }
 export type SizeMode = 'contain' | 'cover'
 
-const ceramic = new Ceramic(CERAMIC_URL)
 export const idx = new IDX({ ceramic })
 
 export async function loadProfile(did: string): Promise<BasicProfile | null> {
@@ -93,4 +96,22 @@ export function getImageSrc(
   mode?: SizeMode,
 ) {
   return toImageSrc(selectImageSource(sources, dimensions, mode))
+}
+
+export async function getDIDsData(manager: Manage3IDs): Promise<DIDsData> {
+  const dids = manager.listDIDS() ?? []
+  const entries = await Promise.all(
+    dids.map(async (did) => {
+      const accounts = manager.accountLinks(did) ?? []
+      return {
+        did,
+        accounts: accounts.map((account) => new AccountID(account)),
+        profile: await loadProfile(did),
+      }
+    }),
+  )
+  return entries.reduce((acc, { did, ...entry }) => {
+    acc[did] = entry
+    return acc
+  }, {} as DIDsData)
 }
