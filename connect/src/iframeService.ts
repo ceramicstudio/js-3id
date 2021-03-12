@@ -1,5 +1,5 @@
 import { expose } from 'postmsg-rpc'
-import type { RPCRequest } from 'rpc-utils'
+import type { RPCMethods, RPCRequest } from 'rpc-utils'
 import { DisplayClientRPC } from './iframeDisplay'
 
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
@@ -10,9 +10,9 @@ const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
  *  and authProvider calls. It also runs rpc server to receive and realay request to another service.
  */
 
-//  TODO can just merge this back with connect service, this will just be init all rpc clients/servers needed 
-class IframeService {
-  display: (isMobile?: boolean, height?:string, width?:string) => Promise<void>
+//  TODO can just merge this back with connect service, this will just be init all rpc clients/servers needed
+class IframeService<Methods extends RPCMethods> {
+  display: (isMobile?: boolean, height?: string, width?: string) => Promise<void>
   hide: () => Promise<void>
   iframeDisplay: DisplayClientRPC
 
@@ -21,8 +21,8 @@ class IframeService {
    */
   constructor() {
     this.iframeDisplay = new DisplayClientRPC(window.parent)
-    this.display = this.iframeDisplay.display
-    this.hide = this.iframeDisplay.hide
+    this.display = this.iframeDisplay.display.bind(this.iframeDisplay)
+    this.hide = this.iframeDisplay.hide.bind(this.iframeDisplay)
   }
 
   /**
@@ -30,10 +30,8 @@ class IframeService {
    *
    * @param     {Function}    requestHandler    a function that will consume all rpc request from parent window (specifically didProvider calls)
    */
-  // TODO replace this as well for did provider 
-  start(
-    requestHandler: (message: RPCRequest<string, Record<string, unknown>>) => Promise<string>
-  ): void {
+  // TODO replace this as well for did provider
+  start(requestHandler: (message: RPCRequest<Methods, keyof Methods>) => Promise<string>): void {
     expose('send', requestHandler, { postMessage: window.parent.postMessage.bind(window.parent) })
   }
 

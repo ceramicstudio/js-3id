@@ -1,5 +1,6 @@
 import { fromString, toString } from 'uint8arrays'
 import { RPCError } from 'rpc-utils'
+import type { RPCErrorObject } from 'rpc-utils'
 import fetch from 'cross-fetch'
 
 export function fromHex(hex: string): Uint8Array {
@@ -49,7 +50,7 @@ export const jwtDecode = <T>(jwt: string): T => {
 }
 
 // TODO didprovider, auth failed codes?
-export const rpcError = (id: string | number) => {
+export const rpcError = (id: string | number): RPCErrorObject & { id: string | number } => {
   const rpcError = new RPCError(-32401, `3id-connect: Request not authorized`)
   return Object.assign(rpcError.toObject(), { id })
 }

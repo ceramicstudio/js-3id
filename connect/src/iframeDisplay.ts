@@ -1,7 +1,9 @@
-import { RPCClient } from 'rpc-utils'
+import { RPCClient, RPCMethodTypes } from 'rpc-utils'
+import type { RPCRequest, RPCResponse } from 'rpc-utils'
 import { serveCrossOrigin } from '@ceramicnetwork/rpc-postmessage'
-import {  createClient } from '@ceramicnetwork/rpc-transport'
+import { createClient } from '@ceramicnetwork/rpc-transport'
 import { PostMessageTransport, PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
+import type { Subscription } from 'rxjs'
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
@@ -21,56 +23,57 @@ const display = (iframe: HTMLIFrameElement) => (
   }`
 }
 
-// TODO probably not return
 type DisplayMethods = {
-  hide: { result: string },
+  hide: RPCMethodTypes
   display: {
-    params: { 
-      mobile?: boolean,
-      height?: string,
+    params: {
+      mobile?: boolean
+      height?: string
       width?: string
-    },
-    result: string
+    }
   }
 }
-
+type Request = RPCRequest<DisplayMethods, keyof DisplayMethods>
+type Response = RPCResponse<DisplayMethods, keyof DisplayMethods>
 export class DisplayClientRPC {
-  client: RPCClient
+  client: RPCClient<DisplayMethods>
 
-  constructor(target:PostMessageTarget) {
+  constructor(target: PostMessageTarget) {
     target = target || window.parent
-    const transport = new PostMessageTransport<DisplayMethods>(window, target, {
-      postMessageArguments: [window.origin], 
+    const transport = new PostMessageTransport<Response, Request>(window, target, {
+      postMessageArguments: [window.origin],
     })
-    //TODO Cant resolve these types???
     this.client = createClient<DisplayMethods>(transport)
   }
 
   async hide(): Promise<void> {
-    return this.client.request('hide')
+    await this.client.request('hide')
   }
 
   async display(mobile?: boolean, height?: string, width?: string): Promise<void> {
-    return this.client.request('display', {mobile, height, width})
+    await this.client.request('display', { mobile, height, width })
   }
 }
 
-export const DisplayServerRPC = (iframe: HTMLIFrameElement) => {
-  const server = serveCrossOrigin<DisplayMethods>(window, {
-    ownOrigin: window.origin, 
+export const DisplayServerRPC = (iframe: HTMLIFrameElement): Subscription => {
+  const callDisplay = display(iframe)
+
+  return serveCrossOrigin<DisplayMethods>(window, {
+    ownOrigin: window.origin,
     methods: {
       hide: hide(iframe),
-      display: display(iframe)
-    }
+      display: (_event, { mobile, height, width }) => {
+        callDisplay(mobile, height, width)
+      },
+    },
   })
-  return server
 }
 
-export const createIframe = (iframeUrl:string): HTMLIFrameElement  => {
+export const createIframe = (iframeUrl: string): HTMLIFrameElement => {
   const iframe = document.createElement('iframe')
   iframe.name = 'threeid-connect'
   iframe.className = 'threeid-connect'
-  iframe.src = iframeUrl 
+  iframe.src = iframeUrl
   // @ts-ignore
   iframe.style = HIDE_IFRAME_STYLE
   // @ts-ignore
@@ -79,5 +82,3 @@ export const createIframe = (iframeUrl:string): HTMLIFrameElement  => {
   iframe.frameBorder = 0
   return iframe
 }
-
-
