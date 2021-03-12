@@ -5,6 +5,9 @@ import Manage3IDs from '../manage3IDs'
 import { entropyToMnemonic } from '@ethersproject/hdnode'
 import { EthereumMigrationMockAuthProvider, createEthereumAuthProvider } from '../../test/utils'
 import { AuthProvider } from '../index'
+import { AuthProviderClient, AuthProviderServer } from '../authProviderRelay'
+import { serveCrossOrigin, serveSameOrigin } from '@ceramicnetwork/rpc-postmessage'
+import { authenticate } from '@ceramicnetwork/blockchain-utils-linking/lib/ethereum'
 
 let ceramic: Ceramic
 let idx: IDX
@@ -54,6 +57,23 @@ describe('3ID Management', () => {
   test('creates/loads did from storage', async () => {})
 
   test('creates/loads did from in memory', async () => {})
+
+  //TODO This test fails, if you log the authclient and authserver you can see it returns
+  // unfefined to client before server returns response (or appears that way)
+  test('creates/loads did with a RPC authprovider ', async () => {
+    const ethAuthProvider = await createAuthProvider(6)
+    const server = AuthProviderServer(ethAuthProvider)
+    //this makes target source same (but using cross origin server, normally window.parent)
+    const authProvider = new AuthProviderClient(window)
+    const accountId = (await authProvider.accountId()).toString()
+    const manage3ids = new Manage3IDs(authProvider, { ceramic })
+    const did = await manage3ids.createAccount()
+    // expect link to be created
+    const links = await idx.get('cryptoAccounts', did)
+    expect(links[accountId]).toBeTruthy()
+
+    server.unsubscribe()
+  })
 
   test('creates/loads and migrates a 3IDV0 did', async () => {
     // auth provider create

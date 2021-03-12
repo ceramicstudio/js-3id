@@ -1,6 +1,6 @@
-import type { LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
-import { expose, caller } from 'postmsg-rpc'
+import { expose } from 'postmsg-rpc'
 import type { RPCRequest } from 'rpc-utils'
+import { DisplayClientRPC } from './iframeDisplay'
 
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
@@ -10,28 +10,19 @@ const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
  *  and authProvider calls. It also runs rpc server to receive and realay request to another service.
  */
 
+//  TODO can just merge this back with connect service, this will just be init all rpc clients/servers needed 
 class IframeService {
-  display: (isMobile: boolean) => Promise<void>
+  display: (isMobile?: boolean, height?:string, width?:string) => Promise<void>
   hide: () => Promise<void>
+  iframeDisplay: DisplayClientRPC
 
   /**
    * Create IframeService
    */
   constructor() {
-    const postMessage = window.parent.postMessage.bind(window.parent)
-
-    /**
-     * Registers rpc call function for display and hiding iframe (Note: reverse of
-     * idw rpc calls, this is rpc client, sending messages to parent window)
-     */
-    this.display = caller('display', { postMessage })
-    this.hide = caller('hide', { postMessage })
-
-    /**
-     * Registers rpc call functions for handling external auth calls needed for IDW to parent window
-     */
-    this.authenticate = caller('authenticate', { postMessage })
-    this.createLink = caller('createLink', { postMessage })
+    this.iframeDisplay = new DisplayClientRPC(window.parent)
+    this.display = this.iframeDisplay.display
+    this.hide = this.iframeDisplay.hide
   }
 
   /**
@@ -39,27 +30,12 @@ class IframeService {
    *
    * @param     {Function}    requestHandler    a function that will consume all rpc request from parent window (specifically didProvider calls)
    */
+  // TODO replace this as well for did provider 
   start(
     requestHandler: (message: RPCRequest<string, Record<string, unknown>>) => Promise<string>
   ): void {
     expose('send', requestHandler, { postMessage: window.parent.postMessage.bind(window.parent) })
   }
-
-  /**
-   *  Authenticate Request to authProvider in parent window
-   *
-   * @param     {String}    message      authentication message
-   * @return    {Promise<String>}        AuthSecret - 32 byte string
-   */
-  authenticate: (message: string) => Promise<string>
-
-  /**
-   * CreateLink Request to authProvider in parent window
-   *
-   * @param     {String}    did          did which is being linked
-   * @return    {Promise<Object>}        linkProof
-   */
-  createLink: (did: string) => Promise<LinkProof>
 
   /**
    *  Tells parent window to display iframe

@@ -1,4 +1,4 @@
 module.exports = {
-  preset: 'jest-playwright-preset',
+  preset: 'jest-playwright-jsdom',
   testMatch: ['**.test.ts'],
 }

@@ -171,8 +171,8 @@ export default class Manage3IDs {
   }
 
   // return true if a link exist for AccountId/caip10 in network
-  async linkExistInNetwork(): Promise<LinkProof | undefined> {
-    const accountId = (await this.authProvider.accountId()).toString()
+  async linkExistInNetwork(accountId?: string): Promise<LinkProof | undefined> {
+    accountId = accountId || (await this.authProvider.accountId()).toString()
     const doc = await this.ceramic.createDocument(
       'caip10-link',
       { metadata: { controllers: [accountId] } },

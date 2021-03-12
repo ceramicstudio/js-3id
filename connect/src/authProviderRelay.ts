@@ -28,6 +28,7 @@ export class AuthProviderClient implements AuthProvider {
     const transport = new PostMessageTransport<AuthProviderMethods>(window, target, {
       postMessageArguments: [window.origin], 
     })
+    //TODO Cant resolve these types???
     this.client = createClient<AuthProviderMethods>(transport)
   }
 
