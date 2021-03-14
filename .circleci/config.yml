@@ -97,7 +97,7 @@ jobs:
       - persist_to_workspace:
           root: ~/3id-connect
           paths:
-            - public
+            - public/management
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
