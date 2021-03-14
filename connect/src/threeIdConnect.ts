@@ -1,11 +1,13 @@
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
-import type { RPCConnection, RPCRequest } from 'rpc-utils'
+import type { RPCConnection, RPCMethods } from 'rpc-utils'
+import type { Subscription } from 'rxjs'
+
 import { AuthProviderServer } from './authProviderRelay'
 import { DisplayServerRPC, createIframe } from './iframeDisplay'
-
 import DIDProviderProxy from './didProviderProxy'
+import type { DIDProvider } from './types'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
 
@@ -15,11 +17,13 @@ type PostMessage = (
   transfer?: Array<Transferable> | undefined
 ) => void
 
-const createRPCProvider = (postMessage: PostMessage): RPCConnection => {
-  const sendRPC = caller<[RPCRequest<string, any>], string>('send', { postMessage })
+type Methods = RPCMethods
+
+const createRPCProvider = (postMessage: PostMessage): DIDProvider => {
+  const sendRPC = caller<[...any], string>('send', { postMessage })
   return {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    send: async (req) => JSON.parse(await sendRPC(req as any)),
+    send: async (req: any) => JSON.parse(await sendRPC(req)),
   }
 }
 
@@ -39,15 +43,14 @@ class ThreeIdConnect {
   iframeLoadedPromise: Promise<void>
   postMessage: PostMessage | undefined
 
-  RPCProvider: RPCConnection | undefined
-  RPCClient: RPCClient | undefined
+  RPCProvider: DIDProvider | undefined
+  RPCClient: RPCClient<Methods> | undefined
 
   authProvider: AuthProvider | undefined
   accountId: string | undefined
 
-  // TODO
-  rpcServer: any
-  rpcDisplayServer: any
+  rpcServer: Subscription | undefined
+  rpcDisplayServer: Subscription | undefined
 
   _connected = false
 
@@ -83,7 +86,7 @@ class ThreeIdConnect {
 
     // TODO also change this to use transports
     this.RPCProvider = createRPCProvider(this.postMessage)
-    this.RPCClient = new RPCClient(this.RPCProvider)
+    this.RPCClient = new RPCClient(this.RPCProvider as RPCConnection<any>)
     this._connected = true
   }
 
