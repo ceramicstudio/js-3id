@@ -30,7 +30,7 @@ const authenticate = async () => {
   const jws = await did.createJWS({ hello: 'world' })
   console.log(jws)
 
-  window.idx = new IDX({ceramic})
+  window.idx = new IDX({ ceramic })
   window.ceramic = ceramic
   window.did = did.id
 }

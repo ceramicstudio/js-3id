@@ -67,7 +67,7 @@ export default class Manage3IDs {
     let linkProof
     if (migrate && legacyDid) {
       const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-      const migration = new Migrate3IDV0(didProvider as any, this.idx)
+      const migration = new Migrate3IDV0(didProvider, this.idx)
       const promChain = async (): Promise<void> => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const profile3Box = await migration.migrate3BoxProfile(did)

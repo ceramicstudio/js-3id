@@ -1,11 +1,13 @@
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import { RPCClient } from 'rpc-utils'
 import type { RPCRequest, RPCResponse } from 'rpc-utils'
-import { serveCrossOrigin } from '@ceramicnetwork/rpc-postmessage'
-import { createClient } from '@ceramicnetwork/rpc-transport'
-import { PostMessageTransport } from '@ceramicnetwork/transport-postmessage'
+import { createCrossOriginClient, createCrossOriginServer } from '@ceramicnetwork/rpc-postmessage'
+import type { Wrapped } from '@ceramicnetwork/transport-subject'
+import { createPostMessageTransport } from '@ceramicnetwork/transport-postmessage'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { AccountID } from 'caip'
+
+const NAMESPACE = '3id-connect-authprovider' as const
 
 type AuthProviderMethods = {
   accountId: { result: string }
@@ -18,19 +20,27 @@ type AuthProviderMethods = {
     result: LinkProof
   }
 }
-type Request = RPCRequest<AuthProviderMethods, keyof AuthProviderMethods>
-type Response = RPCResponse<AuthProviderMethods, keyof AuthProviderMethods>
+type Request = Wrapped<RPCRequest<AuthProviderMethods, keyof AuthProviderMethods>, typeof NAMESPACE>
+type Response = Wrapped<
+  RPCResponse<AuthProviderMethods, keyof AuthProviderMethods>,
+  typeof NAMESPACE
+>
 
 export class AuthProviderClient implements AuthProvider {
   client: RPCClient<AuthProviderMethods>
   readonly isAuthProvider = true
 
   constructor(target: PostMessageTarget) {
-    target = target || window.parent
-    const transport = new PostMessageTransport<Response, Request>(window, target, {
-      postMessageArguments: [window.origin],
-    })
-    this.client = createClient<AuthProviderMethods>(transport)
+    const transport = createPostMessageTransport<Response, Request>(
+      window,
+      target ?? window.parent,
+      { postMessageArguments: ['*'] }
+    )
+    this.client = createCrossOriginClient<AuthProviderMethods, typeof NAMESPACE>(
+      transport,
+      NAMESPACE,
+      { onInvalidInput: () => {} } // Silence warnings of invalid messages
+    )
   }
 
   async accountId() {
@@ -52,8 +62,9 @@ export class AuthProviderClient implements AuthProvider {
 }
 
 export const AuthProviderServer = (authProvider: AuthProvider) => {
-  const server = serveCrossOrigin<AuthProviderMethods>(window, {
-    ownOrigin: window.origin,
+  const server = createCrossOriginServer<AuthProviderMethods>({
+    namespace: NAMESPACE,
+    target: window,
     methods: {
       accountId: async () => {
         return (await authProvider.accountId()).toString()
@@ -66,5 +77,9 @@ export const AuthProviderServer = (authProvider: AuthProvider) => {
       },
     },
   })
-  return server
+  return server.subscribe({
+    error(msg) {
+      console.error('authProvider server error', msg)
+    },
+  })
 }

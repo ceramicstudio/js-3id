@@ -1,9 +1,11 @@
-import { RPCClient, RPCMethodTypes } from 'rpc-utils'
-import type { RPCRequest, RPCResponse } from 'rpc-utils'
-import { serveCrossOrigin } from '@ceramicnetwork/rpc-postmessage'
-import { createClient } from '@ceramicnetwork/rpc-transport'
-import { PostMessageTransport, PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
+import type { RPCClient, RPCMethodTypes, RPCRequest, RPCResponse } from 'rpc-utils'
+import { createCrossOriginClient, createCrossOriginServer } from '@ceramicnetwork/rpc-postmessage'
+import type { Wrapped } from '@ceramicnetwork/transport-subject'
+import { createPostMessageTransport } from '@ceramicnetwork/transport-postmessage'
+import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import type { Subscription } from 'rxjs'
+
+const NAMESPACE = '3id-connect-iframedisplay' as const
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
@@ -33,17 +35,22 @@ type DisplayMethods = {
     }
   }
 }
-type Request = RPCRequest<DisplayMethods, keyof DisplayMethods>
-type Response = RPCResponse<DisplayMethods, keyof DisplayMethods>
+type Request = Wrapped<RPCRequest<DisplayMethods, keyof DisplayMethods>, typeof NAMESPACE>
+type Response = Wrapped<RPCResponse<DisplayMethods, keyof DisplayMethods>, typeof NAMESPACE>
 export class DisplayClientRPC {
   client: RPCClient<DisplayMethods>
 
-  constructor(target: PostMessageTarget) {
-    target = target || window.parent
-    const transport = new PostMessageTransport<Response, Request>(window, target, {
-      postMessageArguments: [window.origin],
-    })
-    this.client = createClient<DisplayMethods>(transport)
+  constructor(target?: PostMessageTarget) {
+    const transport = createPostMessageTransport<Response, Request>(
+      window,
+      target ?? window.parent,
+      { postMessageArguments: ['*'] }
+    )
+    this.client = createCrossOriginClient<DisplayMethods, typeof NAMESPACE>(
+      transport,
+      NAMESPACE,
+      { onInvalidInput: () => {} } // Silence warnings of invalid messages
+    )
   }
 
   async hide(): Promise<void> {
@@ -57,14 +64,22 @@ export class DisplayClientRPC {
 
 export const DisplayServerRPC = (iframe: HTMLIFrameElement): Subscription => {
   const callDisplay = display(iframe)
+  const callHide = hide(iframe)
 
-  return serveCrossOrigin<DisplayMethods>(window, {
-    ownOrigin: window.origin,
+  return createCrossOriginServer<DisplayMethods>({
+    namespace: NAMESPACE,
+    target: window,
     methods: {
-      hide: hide(iframe),
-      display: (_event, { mobile, height, width }) => {
+      hide: () => {
+        callHide()
+      },
+      display: (event, { mobile, height, width }) => {
         callDisplay(mobile, height, width)
       },
+    },
+  }).subscribe({
+    error(msg) {
+      console.error('display server error', msg)
     },
   })
 }
