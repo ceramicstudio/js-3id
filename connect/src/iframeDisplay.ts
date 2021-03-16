@@ -1,9 +1,8 @@
-import type { RPCClient, RPCMethodTypes, RPCRequest, RPCResponse } from 'rpc-utils'
-import { createCrossOriginClient, createCrossOriginServer } from '@ceramicnetwork/rpc-postmessage'
-import type { Wrapped } from '@ceramicnetwork/transport-subject'
-import { createPostMessageTransport } from '@ceramicnetwork/transport-postmessage'
+import type { RPCClient, RPCMethodTypes } from 'rpc-utils'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import type { Subscription } from 'rxjs'
+
+import { createClient, createServer } from './iframeRPC'
 
 const NAMESPACE = '3id-connect-iframedisplay' as const
 
@@ -35,22 +34,11 @@ type DisplayMethods = {
     }
   }
 }
-type Request = Wrapped<RPCRequest<DisplayMethods, keyof DisplayMethods>, typeof NAMESPACE>
-type Response = Wrapped<RPCResponse<DisplayMethods, keyof DisplayMethods>, typeof NAMESPACE>
 export class DisplayClientRPC {
   client: RPCClient<DisplayMethods>
 
   constructor(target?: PostMessageTarget) {
-    const transport = createPostMessageTransport<Response, Request>(
-      window,
-      target ?? window.parent,
-      { postMessageArguments: ['*'] }
-    )
-    this.client = createCrossOriginClient<DisplayMethods, typeof NAMESPACE>(
-      transport,
-      NAMESPACE,
-      { onInvalidInput: () => {} } // Silence warnings of invalid messages
-    )
+    this.client = createClient<DisplayMethods>(NAMESPACE, target)
   }
 
   async hide(): Promise<void> {
@@ -66,16 +54,12 @@ export const DisplayServerRPC = (iframe: HTMLIFrameElement): Subscription => {
   const callDisplay = display(iframe)
   const callHide = hide(iframe)
 
-  return createCrossOriginServer<DisplayMethods>({
-    namespace: NAMESPACE,
-    target: window,
-    methods: {
-      hide: () => {
-        callHide()
-      },
-      display: (event, { mobile, height, width }) => {
-        callDisplay(mobile, height, width)
-      },
+  return createServer<DisplayMethods>(NAMESPACE, {
+    hide: () => {
+      callHide()
+    },
+    display: (_event, { mobile, height, width }) => {
+      callDisplay(mobile, height, width)
     },
   }).subscribe({
     error(msg) {
