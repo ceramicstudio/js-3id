@@ -1,7 +1,7 @@
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
-import type { RPCConnection, RPCMethods } from 'rpc-utils'
+import type { RPCConnection } from 'rpc-utils'
 import type { Subscription } from 'rxjs'
 
 import { AuthProviderServer } from './authProviderRelay'
@@ -16,8 +16,6 @@ type PostMessage = (
   targetOrigin: string,
   transfer?: Array<Transferable> | undefined
 ) => void
-
-type Methods = RPCMethods
 
 const createRPCProvider = (postMessage: PostMessage): DIDProvider => {
   const sendRPC = caller<[...any], string>('send', { postMessage })
@@ -44,7 +42,7 @@ class ThreeIdConnect {
   postMessage: PostMessage | undefined
 
   RPCProvider: DIDProvider | undefined
-  RPCClient: RPCClient<Methods> | undefined
+  RPCClient: RPCClient<any> | undefined
 
   authProvider: AuthProvider | undefined
   accountId: string | undefined

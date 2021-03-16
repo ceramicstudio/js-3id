@@ -1,11 +1,11 @@
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
-import { RPCClient } from 'rpc-utils'
-import type { RPCRequest, RPCResponse } from 'rpc-utils'
-import { serveCrossOrigin } from '@ceramicnetwork/rpc-postmessage'
-import { createClient } from '@ceramicnetwork/rpc-transport'
-import { PostMessageTransport } from '@ceramicnetwork/transport-postmessage'
+import type { RPCClient } from 'rpc-utils'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { AccountID } from 'caip'
+
+import { createClient, createServer } from './iframeRPC'
+
+const NAMESPACE = '3id-connect-authprovider' as const
 
 type AuthProviderMethods = {
   accountId: { result: string }
@@ -18,19 +18,13 @@ type AuthProviderMethods = {
     result: LinkProof
   }
 }
-type Request = RPCRequest<AuthProviderMethods, keyof AuthProviderMethods>
-type Response = RPCResponse<AuthProviderMethods, keyof AuthProviderMethods>
 
 export class AuthProviderClient implements AuthProvider {
   client: RPCClient<AuthProviderMethods>
   readonly isAuthProvider = true
 
-  constructor(target: PostMessageTarget) {
-    target = target || window.parent
-    const transport = new PostMessageTransport<Response, Request>(window, target, {
-      postMessageArguments: [window.origin],
-    })
-    this.client = createClient<AuthProviderMethods>(transport)
+  constructor(target?: PostMessageTarget) {
+    this.client = createClient<AuthProviderMethods>(NAMESPACE, target)
   }
 
   async accountId() {
@@ -52,19 +46,20 @@ export class AuthProviderClient implements AuthProvider {
 }
 
 export const AuthProviderServer = (authProvider: AuthProvider) => {
-  const server = serveCrossOrigin<AuthProviderMethods>(window, {
-    ownOrigin: window.origin,
-    methods: {
-      accountId: async () => {
-        return (await authProvider.accountId()).toString()
-      },
-      authenticate: async (_event, { message }) => {
-        return await authProvider.authenticate(message)
-      },
-      createLink: async (_event, { did }) => {
-        return await authProvider.createLink(did)
-      },
+  const server = createServer<AuthProviderMethods>(NAMESPACE, {
+    accountId: async () => {
+      return (await authProvider.accountId()).toString()
+    },
+    authenticate: async (_event, { message }) => {
+      return await authProvider.authenticate(message)
+    },
+    createLink: async (_event, { did }) => {
+      return await authProvider.createLink(did)
     },
   })
-  return server
+  return server.subscribe({
+    error(msg) {
+      console.error('authProvider server error', msg)
+    },
+  })
 }
