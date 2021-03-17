@@ -1,4 +1,4 @@
-import { createCrossOriginClient, createCrossOriginServer } from '@ceramicnetwork/rpc-postmessage'
+import { createNamespaceClient, createNamespaceServer } from '@ceramicnetwork/rpc-postmessage'
 import type { Wrapped } from '@ceramicnetwork/transport-subject'
 import { createPostMessageTransport } from '@ceramicnetwork/transport-postmessage'
 import type { IncomingMessage, PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
@@ -10,8 +10,9 @@ const transportOptions = {
   postMessageArguments: ['*'],
 }
 const clientOptions = {
-  // Silence warnings of invalid messages, such as message events sent by third-parties
-  onInvalidInput: () => {},
+  onInvalidInput: (_input: unknown, _error: Error) => {
+    // Silence warnings of invalid messages, such as message events sent by third-parties
+  },
 }
 
 export function createClient<Methods extends RPCMethods, Namespace extends string = string>(
@@ -22,7 +23,7 @@ export function createClient<Methods extends RPCMethods, Namespace extends strin
     Wrapped<RPCResponse<Methods, keyof Methods>, Namespace>,
     Wrapped<RPCRequest<Methods, keyof Methods>, Namespace>
   >(window, target ?? window.parent, transportOptions)
-  return createCrossOriginClient<Methods, Namespace>(transport, namespace, clientOptions)
+  return createNamespaceClient<Methods, Namespace>(transport, namespace, clientOptions)
 }
 
 export function createServer<Methods extends RPCMethods, Namespace extends string = string>(
@@ -32,5 +33,5 @@ export function createServer<Methods extends RPCMethods, Namespace extends strin
     Methods
   >
 ) {
-  return createCrossOriginServer<Methods, Namespace>({ methods, namespace, target: window })
+  return createNamespaceServer<Methods, Namespace>({ methods, namespace, target: window })
 }
