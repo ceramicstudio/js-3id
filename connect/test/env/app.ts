@@ -48,7 +48,7 @@ class CosmosProvider {
 const ceramic = new Ceramic('http://localhost:7777')
 window.ceramic = ceramic
 
-const threeIdConnect = new ThreeIdConnect('iframe.html')
+const threeIdConnect = new ThreeIdConnect('http://localhost:30001/iframe.html')
 window.threeIdConnect = threeIdConnect
 
 function createCosmosAuthProvider(mnemonic?: string): Promise<CosmosAuthProvider> {
@@ -117,11 +117,14 @@ async function authenticateDID(authProvider): Promise<DID> {
 window.authenticateDID = authenticateDID
 
 async function connect() {
-  const authProvider = await createAuthProvider('ethereumMockMigration')
+  const authProvider = await createAuthProvider('ethereum')
   const [accountId, did] = await Promise.all([
     authProvider.accountId(),
     authenticateDID(authProvider),
   ])
   console.log('DID:', { [did.id]: [accountId.toString()] })
+  return did.id
 }
 document.getElementById('connect').addEventListener('click', connect)
+
+window.connect = connect

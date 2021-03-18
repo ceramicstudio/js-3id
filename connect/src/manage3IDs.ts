@@ -67,7 +67,7 @@ export default class Manage3IDs {
     let linkProof
     if (migrate && legacyDid) {
       const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-      const migration = new Migrate3IDV0(didProvider as any, this.idx)
+      const migration = new Migrate3IDV0(didProvider, this.idx)
       const promChain = async (): Promise<void> => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const profile3Box = await migration.migrate3BoxProfile(did)
@@ -171,8 +171,8 @@ export default class Manage3IDs {
   }
 
   // return true if a link exist for AccountId/caip10 in network
-  async linkExistInNetwork(): Promise<LinkProof | undefined> {
-    const accountId = (await this.authProvider.accountId()).toString()
+  async linkExistInNetwork(accountId?: string): Promise<LinkProof | undefined> {
+    accountId = accountId || (await this.authProvider.accountId()).toString()
     const doc = await this.ceramic.createDocument(
       'caip10-link',
       { metadata: { controllers: [accountId] } },

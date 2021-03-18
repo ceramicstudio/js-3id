@@ -57,21 +57,16 @@ const content = (data) => {
     }${data.request.paths.length > 1 ? 's. ' : '.'}`
   }
   if (data.request.type === 'account') {
-    return `You have not used this account with 3id, do you want to link this account?`
+    return `You have not used this account with 3ID, do you want to create a new account or link to existing?`
   }
-  if (data.request.type === 'create') {
-    return `Do you want to create a new account?`
-  }
-  if (data.request.type === 'link') {
-    return `Do you want to link this account to ${data.request.baseDid.substring(0, 18)}... ?`
-  }
+  // may not use 
   if (data.request.type === 'migration') {
     return `Migrate ${data.request.legacyDid.substring(0, 18)}... ?`
   }
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate' || data.request.type === 'create' || data.request.type === 'migration') {
+  if (data.request.type === 'authenticate') {
     return `
       <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''
@@ -80,17 +75,17 @@ const actions = (data) => {
       </button>
     `
   }
-  if (data.request.type === 'account' || data.request.type === 'link') {
+  if (data.request.type === 'account') {
     return `
       <button id='accept' style='margin-right:8%;' class='${style.primaryButtonHalf}' ${
       data.error ? 'style="display:none;"' : ''
     } >
-        Yes
+        Create
       </button>
       <button id='decline' class='${style.primaryButtonHalf}' ${
       data.error ? 'style="display:none;"' : ''
     } >
-        No
+        Link
       </button>
     `
   }
