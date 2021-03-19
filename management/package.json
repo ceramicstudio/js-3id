@@ -11,6 +11,7 @@
   "dependencies": {
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "@ceramicnetwork/http-client": "^0.9.6",
+    "@ceramicnetwork/transport-postmessage": "^0.2.0",
     "@ceramicstudio/idx": "^0.8.0",
     "@web3-react/core": "^6.1.1",
     "@web3-react/injected-connector": "^6.0.7",

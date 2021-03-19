@@ -1,5 +1,6 @@
 import { Box, Text } from 'grommet'
 
+import { notify } from '../data/connect'
 import { useEthereum } from '../hooks'
 
 import Button from './Button'
@@ -13,6 +14,15 @@ export default function LinkExistingDID() {
       onClick={() => {
         // TODO: ethereum.manager.createAccount()
         console.log('add ID')
+        ethereum.manager.createAccount().then(
+          (res) => {
+            console.log('created ID to link', res)
+            notify('3id-connect-callback')
+          },
+          (err) => {
+            console.warn('ID to link creation error', err)
+          },
+        )
       }}
     />
   ) : (

@@ -1,7 +1,8 @@
 import { Web3ReactProvider } from '@web3-react/core'
 import { Box, Grommet, Text } from 'grommet'
 
-import { useDIDsData, useRemoteProxy } from '../hooks'
+import { useConnectRemoteProxy, useDIDsData } from '../hooks'
+
 import { theme } from '../theme'
 
 import IdentitySelect from './IdentitySelect'
@@ -11,8 +12,8 @@ function getLibrary(provider: any): any {
 }
 
 export default function App() {
+  const proxy = useConnectRemoteProxy()
   const data = useDIDsData()
-  const proxy = useRemoteProxy()
 
   const contents =
     data && proxy ? (

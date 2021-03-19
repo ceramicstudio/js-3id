@@ -6,7 +6,7 @@ import type { ChainIDParams } from 'caip'
 import { useAtom } from 'jotai'
 import { useCallback, useEffect, useRef } from 'react'
 
-import { getManager } from './data/connect'
+import { createRemoteProxy, getManager, transport } from './data/connect'
 import { toChainId } from './data/ethereum'
 import { getDIDsData } from './data/idx'
 import { didsDataAtom, ethereumDataAtom, remoteProxyAtom } from './state'
@@ -122,6 +122,26 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
 
 export function useRemoteProxy(): RemoteProxy | null {
   return useAtom(remoteProxyAtom)[0]
+}
+
+export function useConnectRemoteProxy(): RemoteProxy | null {
+  const [proxy, setProxy] = useAtom(remoteProxyAtom)
+
+  useEffect(() => {
+    const sub = transport.subscribe({
+      next(event) {
+        if (event.data === '3id-connect-inject-provider') {
+          setProxy(createRemoteProxy(event.source as Window))
+        }
+      },
+    })
+
+    return () => {
+      sub.unsubscribe()
+    }
+  })
+
+  return proxy
 }
 
 export function useDIDsData(): DIDsData | null {
