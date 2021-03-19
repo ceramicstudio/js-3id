@@ -1,7 +1,7 @@
 import type { Manage3IDs } from '3id-connect'
 import { Box, Text } from 'grommet'
 
-import { notify } from '../data/connect'
+import { notifyDone } from '../data/connect'
 
 import Button from './Button'
 
@@ -24,11 +24,10 @@ export default function LinkNewDID({ manager }: Props) {
         <Button
           label="New ID"
           onClick={() => {
-            // TODO: manager.createAccount()
             manager.createAccount().then(
               (res) => {
                 console.log('created ID', res)
-                notify('3id-connect-callback')
+                notifyDone()
               },
               (err) => {
                 console.warn('ID creation error', err)

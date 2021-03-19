@@ -4,11 +4,10 @@ import type { Manage3IDs } from '3id-connect'
 import { AccountID } from 'caip'
 import type { ChainIDParams } from 'caip'
 import { useAtom } from 'jotai'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 
-import { createRemoteProxy, getManager, transport } from './data/connect'
+import { getManager } from './data/connect'
 import { toChainId } from './data/ethereum'
-import { getDIDsData } from './data/idx'
 import { didsDataAtom, ethereumDataAtom, remoteProxyAtom } from './state'
 import type { DIDsData, EthereumData, RemoteProxy } from './types'
 
@@ -124,42 +123,6 @@ export function useRemoteProxy(): RemoteProxy | null {
   return useAtom(remoteProxyAtom)[0]
 }
 
-export function useConnectRemoteProxy(): RemoteProxy | null {
-  const [proxy, setProxy] = useAtom(remoteProxyAtom)
-
-  useEffect(() => {
-    const sub = transport.subscribe({
-      next(event) {
-        if (event.data === '3id-connect-inject-provider') {
-          setProxy(createRemoteProxy(event.source as Window))
-        }
-      },
-    })
-
-    return () => {
-      sub.unsubscribe()
-    }
-  })
-
-  return proxy
-}
-
 export function useDIDsData(): DIDsData | null {
-  const proxy = useRemoteProxy()
-  const [data, setData] = useAtom(didsDataAtom)
-  const handleProvided = useRef(0)
-
-  function handler() {
-    if (proxy != null) {
-      const currentHandle = ++handleProvided.current
-      getDIDsData(proxy.manager).then((newData) => {
-        if (currentHandle === handleProvided.current) {
-          setData(newData)
-        }
-      })
-    }
-  }
-  useEffect(handler, [proxy, setData])
-
-  return data
+  return useAtom(didsDataAtom)[0]
 }

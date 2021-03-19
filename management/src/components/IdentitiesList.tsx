@@ -2,7 +2,7 @@ import type { Manage3IDs } from '3id-connect'
 import { Avatar, Box, Text } from 'grommet'
 import { useMemo } from 'react'
 
-import { notify } from '../data/connect'
+import { notifyDone } from '../data/connect'
 import { formatDID, getImageSrc } from '../data/idx'
 import { useEthereum } from '../hooks'
 import avatarPlaceholder from '../images/avatar-placeholder.png'
@@ -57,12 +57,11 @@ function IdentityItem({ data, did, manager }: ItemProps) {
             color={ACCENT_COLOR}
             label="Link"
             onClick={() => {
-              // TODO: call manager.addAuthAndLink(did)
               console.log('link account', did)
               manager.addAuthAndLink(did).then(
                 (res) => {
                   console.log('created link', did, res)
-                  notify('3id-connect-callback')
+                  notifyDone()
                 },
                 (err) => {
                   console.warn('link creation error', err)

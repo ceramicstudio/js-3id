@@ -1,4 +1,4 @@
-import { createPostMessageTransport } from '@ceramicnetwork/transport-postmessage'
+import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import {
   AuthProviderClient,
@@ -11,17 +11,13 @@ import type { RemoteProxy } from '../types'
 
 import { ceramic } from './ceramic'
 
-export const transport = createPostMessageTransport<string>(window, window, {
-  filter: (event) => {
-    return (
-      typeof event.data === 'string' && event.data.startsWith('3id-connect-')
-    )
-  },
-  postMessageArguments: ['*'],
-})
+const observer = createPostMessageObserver(window, '*')
+export function notify(msg: string, data?: any) {
+  observer.next({ ns: '3id-connect-management', msg, data })
+}
 
-export function notify(msg: string) {
-  transport.next(msg)
+export function notifyDone() {
+  notify('done')
 }
 
 export function getManager(provider: EthereumProvider): Manage3IDs {
@@ -37,3 +33,5 @@ export function createRemoteProxy(target: PostMessageTarget): RemoteProxy {
   const manager = new Manage3IDs(provider, { ceramic })
   return { manager, provider }
 }
+
+export const remoteProxy = createRemoteProxy(window.parent)
