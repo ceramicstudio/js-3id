@@ -1,16 +1,15 @@
 import type { RPCClient, RPCMethodTypes } from 'rpc-utils'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import type { Subscription } from 'rxjs'
-
+import { createMessageObservable} from '@ceramicnetwork/transport-postmessage'
 import { createClient, createServer } from './iframeRPC'
 
 const NAMESPACE = '3id-connect-iframedisplay' as const
 const NAMESPACE_MANAGE = '3id-connect-managedisplay' as const
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
-const DISPLAY_IFRAME_STYLE = 'border:none border:0; z-index: 500; position: fixed; max-width: 100%;'
-const DISPLAY_MANAGE_STYLE =
-  'border:none border:0; z-index: 500; position: fixed; width: 100%; height:100%'
+const DISPLAY_IFRAME_STYLE = 'border:none; border:0; z-index: 500; position: fixed; max-width: 100%;'
+const DISPLAY_MANAGE_STYLE ='border:none; border:0; z-index: 500; position: fixed; width: 100%; height:100%'
 const IFRAME_TOP = `top: 10px; right: 10px`
 const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
@@ -86,7 +85,6 @@ export const createConnectIframe = (iframeUrl: string): HTMLIFrameElement => {
 }
 
 type DisplayManageMethods = {
-  close: RPCMethodTypes
   display: {
     params: {
       accountId: string
@@ -100,10 +98,6 @@ export class DisplayManageClientRPC {
     this.client = createClient<DisplayManageMethods>(NAMESPACE_MANAGE, target)
   }
 
-  async close(): Promise<void> {
-    await this.client.request('close')
-  }
-
   async display(accountId: string): Promise<void> {
     await this.client.request('display', { accountId })
   }
@@ -113,13 +107,28 @@ export const DisplayManageServerRPC = (manageAppUrl: string, closeCB: () => any)
   let app: HTMLIFrameElement
 
   return createServer<DisplayManageMethods>(NAMESPACE_MANAGE, {
-    close: () => {
-      app?.remove()
-      closeCB()
-    },
-    display: (_event, { accountId }) => {
+    // todo change name
+    display: async (_event, { accountId }) => {
       app = createManageIframe(`${manageAppUrl}?accountId=${accountId}`)
       document.body.appendChild(app)
+
+      await new Promise((resolve) => {
+        app.onload = () => {
+          resolve()
+        }
+      })
+      // @ts-ignore
+      const observer = createMessageObservable(window)
+
+      await new Promise(res => {
+        observer.subscribe(x => {
+          if (x.data.ns === '3id-connect-management') {
+            res()
+          }
+        })
+      })
+
+      app.remove()
     },
   }).subscribe({
     error(msg) {
@@ -133,6 +142,8 @@ export const createManageIframe = (iframeUrl: string): HTMLIFrameElement => {
   iframe.name = 'threeid-connect-manage'
   iframe.className = 'threeid-connect-manage'
   iframe.src = iframeUrl
+    // @ts-ignore
+  iframe.allowtransparency= false
   // @ts-ignore
   iframe.style = DISPLAY_MANAGE_STYLE
   return iframe

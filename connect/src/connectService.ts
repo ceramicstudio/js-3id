@@ -85,6 +85,7 @@ class ConnectService extends IframeService<DIDProviderMethods> {
       await this.userPermissionRequest(authReq, domain)
     }
     let did
+    // TODO change ifs
     if (!existLocally && !existNetwork) {
       const createHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (createHuh) {
@@ -92,7 +93,6 @@ class ConnectService extends IframeService<DIDProviderMethods> {
       } else {
         //open management app
         await this.manageApp.display(accountId)
-        // TODO await control return, likely just ping rpc, then continue
         did = await manage.createAccount()
       }
     } else {

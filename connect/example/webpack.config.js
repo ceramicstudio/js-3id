@@ -5,7 +5,8 @@ const plugins = []
 
 const dp = new webpack.DefinePlugin({
   'process.env': {
-    'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001')
+    'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
+    'CONNECT_MANAGE_URL': JSON.stringify('http://localhost:30001/management')
   }
 })
 plugins.push(dp)

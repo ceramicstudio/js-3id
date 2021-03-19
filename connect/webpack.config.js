@@ -31,6 +31,7 @@ module.exports = (env, argv) => {
     config = {
       CERAMIC_API: JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
       CONNECT_IFRAME_URL: JSON.stringify('http://localhost:30001'),
+      CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management'),
       MIGRATION: JSON.stringify('true'),
     }
   }
