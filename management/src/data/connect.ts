@@ -1,4 +1,4 @@
-import { createPostMessageObserver, createMessageObservable } from '@ceramicnetwork/transport-postmessage'
+import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import {
   AuthProviderClient,

@@ -84,10 +84,7 @@ class ThreeIdConnect {
 
     AuthProviderServer(provider)
     DisplayConnectServerRPC(this.iframe)
-    DisplayManageServerRPC(this.manageUrl, () => {
-      // depends on implementation
-      // likely just a ping rpc, to signal control return
-    })
+    DisplayManageServerRPC(this.manageUrl)
 
     // TODO also change this to use transports
     this.RPCProvider = createRPCProvider(this.postMessage)
