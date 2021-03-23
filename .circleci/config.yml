@@ -68,7 +68,7 @@ jobs:
   test-and-build-management:
     working_directory: ~/3id-connect/management
     docker:
-      - image: circleci/node:lts
+      - image: cimg/node:lts
     steps:
       - checkout:
           path: ~/3id-connect
