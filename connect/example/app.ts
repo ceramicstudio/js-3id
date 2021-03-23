@@ -35,26 +35,4 @@ const authenticate = async () => {
   window.did = did.id
 }
 
-// TODO must connect first
-let accountslist
-const accounts = async () => {
-  const dids = await threeIdConnect.accounts()
-  accountslist = Object.keys(dids)
-  console.log(dids)
-}
-
-const create = async () => {
-  const res = await threeIdConnect.createAccount()
-  console.log(res)
-}
-
-const link = async () => {
-  // @ts-ignore
-  const res = await threeIdConnect.addAuthAndLink(accountslist[0])
-  console.log(res)
-}
-
 document.getElementById('bauth').addEventListener('click', authenticate)
-document.getElementById('baccounts').addEventListener('click', accounts)
-document.getElementById('bcreate').addEventListener('click', create)
-document.getElementById('blink').addEventListener('click', link)

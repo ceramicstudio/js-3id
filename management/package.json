@@ -8,6 +8,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "./",
   "dependencies": {
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "@ceramicnetwork/http-client": "^0.9.6",

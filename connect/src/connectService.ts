@@ -20,6 +20,7 @@ import type {
   UserRequestCancel,
 } from './types'
 import { rpcError } from './utils'
+import { DisplayManageClientRPC } from './iframeDisplay'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
 
@@ -40,6 +41,8 @@ class ConnectService extends IframeService<DIDProviderMethods> {
   idx: IDX | undefined
   provider: DIDProvider | undefined
 
+  manageApp: DisplayManageClientRPC | undefined
+
   /**
    *  Start connect service. Once returns ready to receive rpc requests
    *
@@ -58,6 +61,7 @@ class ConnectService extends IframeService<DIDProviderMethods> {
     this.userRequestHandler = userRequestHandler
     this.ceramic = new CeramicClient(CERAMIC_API)
     super.start(this.requestHandler.bind(this))
+    this.manageApp = new DisplayManageClientRPC()
   }
 
   async init(
@@ -66,12 +70,12 @@ class ConnectService extends IframeService<DIDProviderMethods> {
     domain?: string | null
   ): Promise<void> {
     assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
+    assert.isDefined(this.manageApp, 'manageApp must be defined')
 
     const authProviderRelay = new AuthProviderClient(window.parent)
     const manage = new Manage3IDs(authProviderRelay, { ceramic: this.ceramic })
 
     //TODO if exist in state, return before even looking up links
-
     const existLocally = manage.linkExist(accountId)
     const existNetwork = await manage.linkExistInNetwork(accountId)
 
@@ -79,20 +83,17 @@ class ConnectService extends IframeService<DIDProviderMethods> {
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
-    let did
+
     if (!existLocally && !existNetwork) {
-      // TODO change to create or link to other (reverse)
       const createHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
-      if (createHuh) {
-        did = await manage.createAccount()
-      } else {
-        //open management app
+      if (!createHuh) {
+        await this.manageApp.display(accountId)
       }
-    } else {
-      did = await manage.createAccount()
     }
 
-    this.threeId = manage.threeIdProviders[did as string]
+    const did = await manage.createAccount()
+
+    this.threeId = manage.threeIdProviders[did]
     this.provider = this.threeId.getDidProvider() as DIDProvider
 
     // after since 3id-did-provider permissions may exist
