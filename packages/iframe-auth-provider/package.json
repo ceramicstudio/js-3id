@@ -1,0 +1,33 @@
+{
+  "name": "@3id/iframe-auth-provider",
+  "version": "0.1.0",
+  "author": "Ceramic Studio",
+  "license": "(Apache-2.0 OR MIT)",
+  "main": "dist/index.js",
+  "module": "dist/iframe-auth-provider.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint src test --fix",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "@3id/iframe-rpc": "^0.1.0",
+    "caip": "^0.9.2"
+  },
+  "devDependencies": {
+    "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
+    "@ceramicnetwork/transport-postmessage": "^0.2.0",
+    "rpc-utils": "^0.3.4",
+    "tslib": "^2.1.0"
+  }
+}
