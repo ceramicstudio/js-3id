@@ -1,9 +1,9 @@
 import { assertAs, createNamespaceError } from 'errors-utils'
 
-export class ConnectError extends createNamespaceError('3IC') {}
+export class ManagerError extends createNamespaceError('3IDM') {}
 
 export function assert(condition: boolean, code: number, message: string): asserts condition {
-  return assertAs(condition, ConnectError, code, message)
+  return assertAs(condition, ManagerError, code, message)
 }
 
 assert.isDefined = function <T = unknown>(
