@@ -3,13 +3,17 @@ import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
-import type { Subscription } from 'rxjs'
 
 import DIDProviderProxy from './didProviderProxy'
-import { DisplayServerRPC, createIframe } from './iframeDisplay'
+import {
+  DisplayConnectServerRPC,
+  createConnectIframe,
+  DisplayManageServerRPC,
+} from './iframeDisplay'
 import type { DIDProvider } from './types'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
+const CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || 'https://app.3idconnect.org/management'
 
 type PostMessage = (
   message: any,
@@ -46,9 +50,7 @@ class ThreeIdConnect {
 
   authProvider: AuthProvider | undefined
   accountId: string | undefined
-
-  rpcServer: Subscription | undefined
-  rpcDisplayServer: Subscription | undefined
+  manageUrl: string
 
   _connected = false
 
@@ -58,10 +60,11 @@ class ThreeIdConnect {
    *
    * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
    */
-  constructor(iframeUrl?: string) {
+  constructor(iframeUrl?: string, manageUrl?: string) {
     assertBrowser()
 
-    this.iframe = createIframe(iframeUrl || CONNECT_IFRAME_URL)
+    this.iframe = createConnectIframe(iframeUrl || CONNECT_IFRAME_URL)
+    this.manageUrl = manageUrl || CONNECT_MANAGE_URL
 
     this.iframeLoadedPromise = new Promise((resolve) => {
       this.iframe.onload = () => {
@@ -79,8 +82,10 @@ class ThreeIdConnect {
     await this.iframeLoadedPromise
     this.postMessage = this.iframe.contentWindow!.postMessage.bind(this.iframe.contentWindow)
 
-    this.rpcServer = createAuthProviderServer(provider).subscribe()
-    this.rpcDisplayServer = DisplayServerRPC(this.iframe)
+    // TODO: this should only be set if there is a provider injected, also need to stop current subscription
+    createAuthProviderServer(provider).subscribe()
+    DisplayConnectServerRPC(this.iframe)
+    DisplayManageServerRPC(this.manageUrl)
 
     // TODO also change this to use transports
     this.RPCProvider = createRPCProvider(this.postMessage)

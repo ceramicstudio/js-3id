@@ -8,6 +8,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "./",
   "dependencies": {
     "@3id/iframe-auth-provider": "^0.1.0",
     "@3id/manager": "^0.1.0",

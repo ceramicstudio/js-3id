@@ -1,7 +1,7 @@
 import { expose } from 'postmsg-rpc'
 import type { RPCMethods, RPCRequest } from 'rpc-utils'
 
-import { DisplayClientRPC } from './iframeDisplay'
+import { DisplayConnectClientRPC } from './iframeDisplay'
 
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
@@ -15,13 +15,13 @@ const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
 class IframeService<Methods extends RPCMethods> {
   display: (isMobile?: boolean, height?: string, width?: string) => Promise<void>
   hide: () => Promise<void>
-  iframeDisplay: DisplayClientRPC
+  iframeDisplay: DisplayConnectClientRPC
 
   /**
    * Create IframeService
    */
   constructor() {
-    this.iframeDisplay = new DisplayClientRPC(window.parent)
+    this.iframeDisplay = new DisplayConnectClientRPC(window.parent)
     this.display = this.iframeDisplay.display.bind(this.iframeDisplay)
     this.hide = this.iframeDisplay.hide.bind(this.iframeDisplay)
   }

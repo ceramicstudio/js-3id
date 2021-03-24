@@ -9,7 +9,7 @@ import type { RemoteProxy } from '../types'
 
 import { ceramic } from './ceramic'
 
-const observer = createPostMessageObserver(window, '*')
+const observer = createPostMessageObserver(window.parent, '*')
 export function notify(msg: string, data?: any) {
   observer.next({ ns: '3id-connect-management', msg, data })
 }

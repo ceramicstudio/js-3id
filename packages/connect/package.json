@@ -26,7 +26,7 @@
     "build:dev": "run-p build:prod:es5 build:prod:types build:dev:dist",
     "prepublishOnly": "npm run build",
     "dev:iframe:build": "webpack --config webpack.config.js --mode=development --watch",
-    "dev:iframe:server:start": "http-server -c-1 -p 30001 ../public",
+    "dev:iframe:server:start": "http-server -c-1 -p 30001 ../../public",
     "start": "run-p dev:iframe:**",
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start",
     "dev:demo:server:start": "http-server -c-1 -p 30000 example",
