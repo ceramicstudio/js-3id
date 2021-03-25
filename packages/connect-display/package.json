@@ -1,10 +1,10 @@
 {
-  "name": "@3id/iframe-rpc",
+  "name": "@3id/connect-display",
   "version": "0.1.0",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
   "main": "dist/index.js",
-  "module": "dist/iframe-rpc.esm.js",
+  "module": "dist/connect-display.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -21,13 +21,13 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@ceramicnetwork/rpc-postmessage": "^0.3.1",
+    "@3id/iframe-rpc": "^0.1.0",
     "@ceramicnetwork/transport-postmessage": "^0.2.0",
-    "rpc-utils": "^0.3.4"
+    "rxjs": "^6.6.6"
   },
   "devDependencies": {
     "@ceramicnetwork/transport-subject": "^0.2.0",
-    "rxjs": "^6.6.6",
+    "rpc-utils": "^0.3.4",
     "tslib": "^2.1.0"
   }
 }

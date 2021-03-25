@@ -1,4 +1,4 @@
-import type { Manage3IDs } from '3id-connect'
+import type { Manager } from '@3id/manager'
 import { Box, Heading, Text } from 'grommet'
 
 import IdentitiesList from './IdentitiesList'
@@ -9,7 +9,7 @@ import type { DIDsData } from '../types'
 
 export type Props = {
   dids: DIDsData
-  manager: Manage3IDs
+  manager: Manager
 }
 
 export default function IdentitySelect({ dids, manager }: Props) {

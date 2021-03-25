@@ -1,4 +1,4 @@
-import type { Manage3IDs } from '3id-connect'
+import type { Manager } from '@3id/manager'
 import { Avatar, Box, Text } from 'grommet'
 import { useMemo } from 'react'
 
@@ -14,7 +14,7 @@ import Button from './Button'
 type ItemProps = {
   data: DIDData
   did: string
-  manager: Manage3IDs
+  manager: Manager
 }
 
 function IdentityItem({ data, did, manager }: ItemProps) {
@@ -80,7 +80,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
 
 export type Props = {
   dids: DIDsData
-  manager: Manage3IDs
+  manager: Manager
 }
 
 export default function IdentitiesList({ dids, manager }: Props) {

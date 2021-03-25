@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 
-import { AuthProviderClient } from '@3id/iframe-auth-provider'
-import { Manager } from '@3id/manager'
-import CeramicClient from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
-import ThreeIdProvider from '3id-did-provider'
-import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
-import Url from 'url-parse'
-
-import { ConnectError, assert } from './errors'
-import IframeService from './iframeService'
+import { ThreeIDError, assert } from '@3id/common'
 import type {
   DIDMethodName,
   DIDProvider,
@@ -20,9 +11,18 @@ import type {
   UserRequestHandler,
   UserRequestErrorCallback,
   UserRequestCancel,
-} from './types'
+} from '@3id/common'
+import { DisplayManageClientRPC } from '@3id/connect-display'
+import { AuthProviderClient } from '@3id/iframe-auth-provider'
+import { Manager } from '@3id/manager'
+import CeramicClient from '@ceramicnetwork/http-client'
+import { IDX } from '@ceramicstudio/idx'
+import ThreeIdProvider from '3id-did-provider'
+import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
+import Url from 'url-parse'
+
+import { IframeService } from './iframeService'
 import { rpcError } from './utils'
-import { DisplayManageClientRPC } from './iframeDisplay'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
 
@@ -33,7 +33,7 @@ type Methods = DIDProviderMethods
  *  ConnectService runs a 3ID DID provider instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-class ConnectService extends IframeService<DIDProviderMethods> {
+export class ConnectService extends IframeService<DIDProviderMethods> {
   userRequestHandler: UserRequestHandler | undefined
   cancel: UserRequestCancel | undefined
   errorCb: UserRequestErrorCallback | undefined
@@ -124,7 +124,7 @@ class ConnectService extends IframeService<DIDProviderMethods> {
       } else {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
-        reject(new ConnectError(4, msg))
+        reject(new ThreeIDError(4, msg))
       }
     })
 
@@ -209,5 +209,3 @@ class ConnectService extends IframeService<DIDProviderMethods> {
     }
   }
 }
-
-export default ConnectService

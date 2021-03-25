@@ -1,8 +1,6 @@
+import { assert, fromHex } from '@3id/common'
+import type { AccountsList, DIDLinksList } from '@3id/common'
 import store from 'store'
-
-import { assert } from './errors'
-import type { AccountsList, DIDLinksList } from './types'
-import { fromHex } from './utils'
 
 const ACCOUNT_KEY = 'accounts'
 const LINK_KEY = 'links'
@@ -58,11 +56,11 @@ export class AccountStore {
   }
 
   getDIDLinksList(): DIDLinksList {
-    return (this.store.get(LINK_KEY) as DIDLinksList | undefined) || {}
+    return this.store.get(LINK_KEY) || {}
   }
 
   getDIDs(): Array<string> | null {
-    const val = this.store.get(LINK_KEY) as DIDLinksList | undefined
+    const val = this.store.get(LINK_KEY)
     return val ? Object.keys(val) : null
   }
 }

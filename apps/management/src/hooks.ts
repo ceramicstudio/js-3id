@@ -1,6 +1,6 @@
+import type { Manager } from '@3id/manager'
 import { useWeb3React } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
-import type { Manage3IDs } from '3id-connect'
 import { AccountID } from 'caip'
 import type { ChainIDParams } from 'caip'
 import { useAtom } from 'jotai'
@@ -14,14 +14,11 @@ import type { DIDsData, EthereumData, RemoteProxy } from './types'
 const injected = new InjectedConnector({ supportedChainIds: [1, 3, 4, 5, 42] })
 
 export function useEthereum(): [EthereumData | null, () => Promise<void>] {
-  const { activate, error } = useWeb3React<Manage3IDs>()
+  const { activate, error } = useWeb3React<Manager>()
   const [data, setData] = useAtom(ethereumDataAtom)
 
   const handleAccount = useCallback(
-    async (
-      providedAddress?: string,
-      providedChainId?: ChainIDParams | string | number,
-    ) => {
+    async (providedAddress?: string, providedChainId?: ChainIDParams | string | number) => {
       try {
         const [provider, address, chainId] = await Promise.all([
           injected.getProvider(),
@@ -43,7 +40,7 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
         console.warn('Failed to handle setting accountId', err)
       }
     },
-    [setData],
+    [setData]
   )
 
   const connect = useCallback(() => {
@@ -51,7 +48,7 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
       () => handleAccount(),
       (err) => {
         console.warn('Failed to handle activation on connect', err)
-      },
+      }
     )
   }, [activate, handleAccount])
 
@@ -63,7 +60,7 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
           () => handleAccount(data?.account.address, chainId),
           (err) => {
             console.warn('Failed to handle activation on chain changed', err)
-          },
+          }
         )
       }
 
@@ -73,16 +70,11 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
             () =>
               handleAccount(
                 accounts[0],
-                data?.account.chainId
-                  ? toChainId(data.account.chainId.toString())
-                  : undefined,
+                data?.account.chainId ? toChainId(data.account.chainId.toString()) : undefined
               ),
             (err) => {
-              console.warn(
-                'Failed to handle activation on accounts changed',
-                err,
-              )
-            },
+              console.warn('Failed to handle activation on accounts changed', err)
+            }
           )
         }
       }
@@ -96,7 +88,7 @@ export function useEthereum(): [EthereumData | null, () => Promise<void>] {
           },
           (err) => {
             console.warn('Failed to handle activation on accounts changed', err)
-          },
+          }
         )
       }
 

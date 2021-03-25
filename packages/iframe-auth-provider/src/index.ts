@@ -4,7 +4,7 @@ import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { AccountID } from 'caip'
 import type { RPCClient } from 'rpc-utils'
 
-const NAMESPACE = process.env.NAMESPACE || '3id-connect-authprovider' as const
+const NAMESPACE = process.env.NAMESPACE || ('3id-connect-authprovider' as const)
 
 export type AuthProviderMethods = {
   accountId: { result: string }
@@ -22,7 +22,7 @@ export class AuthProviderClient implements AuthProvider {
   client: RPCClient<AuthProviderMethods>
   readonly isAuthProvider = true
 
-  constructor(target?: PostMessageTarget) {
+  constructor(target: PostMessageTarget = window.parent) {
     this.client = createClient<AuthProviderMethods>(NAMESPACE, target)
   }
 

@@ -1,4 +1,4 @@
-import type { Manage3IDs } from '3id-connect'
+import type { Manager } from '@3id/manager'
 import { Box, Text } from 'grommet'
 
 import { notifyDone } from '../data/connect'
@@ -6,7 +6,7 @@ import { notifyDone } from '../data/connect'
 import Button from './Button'
 
 export type Props = {
-  manager: Manage3IDs
+  manager: Manager
 }
 
 export default function LinkNewDID({ manager }: Props) {

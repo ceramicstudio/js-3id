@@ -1,5 +1,6 @@
+import type { Manager } from '@3id/manager'
+import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { BasicProfile } from '@ceramicstudio/idx-constants'
-import type { AuthProvider, EthereumProvider, Manage3IDs } from '3id-connect'
 import type { AccountID } from 'caip'
 
 export type DIDData = {
@@ -10,11 +11,11 @@ export type DIDsData = Record<string, DIDData>
 
 export type EthereumData = {
   account: AccountID
-  manager: Manage3IDs
-  provider: EthereumProvider
+  manager: Manager
+  provider: any
 }
 
 export type RemoteProxy = {
-  manager: Manage3IDs
+  manager: Manager
   provider: AuthProvider
 }

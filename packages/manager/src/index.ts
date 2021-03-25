@@ -1,5 +1,3 @@
 export { AccountStore } from './accountStore'
-export { ManagerError } from './errors'
 export { Manager } from './manager'
 export { Migrate3IDV0 } from './migration'
-export * from './types'

@@ -1,7 +1,6 @@
+import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { expose } from 'postmsg-rpc'
 import type { RPCMethods, RPCRequest } from 'rpc-utils'
-
-import { DisplayConnectClientRPC } from './iframeDisplay'
 
 const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
 const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
@@ -12,7 +11,7 @@ const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
  */
 
 //  TODO can just merge this back with connect service, this will just be init all rpc clients/servers needed
-class IframeService<Methods extends RPCMethods> {
+export class IframeService<Methods extends RPCMethods> {
   display: (isMobile?: boolean, height?: string, width?: string) => Promise<void>
   hide: () => Promise<void>
   iframeDisplay: DisplayConnectClientRPC
@@ -52,5 +51,3 @@ class IframeService<Methods extends RPCMethods> {
     return await this.hide()
   }
 }
-
-export default IframeService

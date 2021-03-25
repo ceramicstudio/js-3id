@@ -1,15 +1,15 @@
+import {
+  createConnectIframe,
+  createDisplayConnectServerRPC,
+  createDisplayManageServerRPC,
+} from '@3id/connect-display'
 import { createAuthProviderServer } from '@3id/iframe-auth-provider'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
 
-import DIDProviderProxy from './didProviderProxy'
-import {
-  DisplayConnectServerRPC,
-  createConnectIframe,
-  DisplayManageServerRPC,
-} from './iframeDisplay'
+import { DidProviderProxy } from './didProviderProxy'
 import type { DIDProvider } from './types'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
@@ -22,7 +22,7 @@ type PostMessage = (
 ) => void
 
 const createRPCProvider = (postMessage: PostMessage): DIDProvider => {
-  const sendRPC = caller<[...any], string>('send', { postMessage })
+  const sendRPC = caller<Array<any>, string>('send', { postMessage })
   return {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     send: async (req: any) => JSON.parse(await sendRPC(req)),
@@ -40,7 +40,7 @@ const assertBrowser = () => {
  *  and provides a 3ID provider interface to send requests to iframe. Acts like
  *  rpc client.
  */
-class ThreeIdConnect {
+export class ThreeIdConnect {
   iframe: HTMLIFrameElement
   iframeLoadedPromise: Promise<void>
   postMessage: PostMessage | undefined
@@ -84,8 +84,8 @@ class ThreeIdConnect {
 
     // TODO: this should only be set if there is a provider injected, also need to stop current subscription
     createAuthProviderServer(provider).subscribe()
-    DisplayConnectServerRPC(this.iframe)
-    DisplayManageServerRPC(this.manageUrl)
+    createDisplayConnectServerRPC(this.iframe).subscribe()
+    createDisplayManageServerRPC(this.manageUrl).subscribe()
 
     // TODO also change this to use transports
     this.RPCProvider = createRPCProvider(this.postMessage)
@@ -105,12 +105,10 @@ class ThreeIdConnect {
   /**
    *  Returns a DID provider, which can send and receive messages from iframe
    *
-   * @return    {DIDProviderProxy}     A DID provider
+   * @return    {DidProviderProxy}     A DID provider
    */
-  getDidProvider(): DIDProviderProxy {
+  getDidProvider(): DidProviderProxy {
     if (!this.authProvider) throw new Error('setAuthProvider required')
-    return new DIDProviderProxy(this.RPCProvider!, this.accountId!)
+    return new DidProviderProxy(this.RPCProvider!, this.accountId!)
   }
 }
-
-export default ThreeIdConnect

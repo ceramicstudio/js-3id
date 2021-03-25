@@ -5,22 +5,22 @@ const plugins = []
 
 const dp = new webpack.DefinePlugin({
   'process.env': {
-    'CONNECT_IFRAME_URL': JSON.stringify('http://localhost:30001'),
-    'CONNECT_MANAGE_URL': JSON.stringify('http://localhost:30001/management')
+    CONNECT_IFRAME_URL: JSON.stringify('http://localhost:30001'),
+    CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management')
   }
 })
 plugins.push(dp)
 
 module.exports = {
-  entry: './example/app.ts',
+  entry: './src/app.ts',
   output: {
     filename: 'build.js',
-    path: path.resolve(__dirname, './'),
+    path: path.resolve(__dirname, './dist'),
     libraryTarget: 'umd',
-    umdNamedDefine: true,
+    umdNamedDefine: true
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js']
   },
   module: {
     rules: [
@@ -34,12 +34,12 @@ module.exports = {
             plugins: [
               ['@babel/plugin-transform-runtime', { regenerator: true }],
               '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-proposal-object-rest-spread',
-            ],
-          },
-        },
-      },
-    ],
+              '@babel/plugin-proposal-object-rest-spread'
+            ]
+          }
+        }
+      }
+    ]
   },
   plugins,
   node: {
@@ -47,6 +47,6 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
-    child_process: 'empty',
-  },
+    child_process: 'empty'
+  }
 }

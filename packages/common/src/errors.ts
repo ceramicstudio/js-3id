@@ -1,19 +1,19 @@
 import { assertAs, createNamespaceError } from 'errors-utils'
 
-export class ConnectError extends createNamespaceError('3IC') {}
+export class ThreeIDError extends createNamespaceError('3ID') {}
 
 export function assert(condition: boolean, code: number, message: string): asserts condition {
-  return assertAs(condition, ConnectError, code, message)
+  return assertAs(condition, ThreeIDError, code, message)
 }
 
-assert.isDefined = function <T = unknown>(
+assert.isDefined = function<T = unknown>(
   value: T,
   message: string
 ): asserts value is NonNullable<T> {
   return assert(value != null, 2, message)
 }
 
-assert.isString = function (
+assert.isString = function(
   value: unknown,
   message = 'Input must be a string'
 ): asserts value is string {

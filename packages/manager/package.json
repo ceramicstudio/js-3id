@@ -21,6 +21,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "@3id/common": "^0.1.0",
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "@ceramicnetwork/http-client": "^0.9.6",
     "@ceramicstudio/idx": "^0.8.0",

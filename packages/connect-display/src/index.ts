@@ -1,13 +1,14 @@
 import { createClient, createServer } from '@3id/iframe-rpc'
+import type { ServerPayload } from '@3id/iframe-rpc'
+import type { Wrapped } from '@ceramicnetwork/transport-subject'
 import type { PostMessageTarget, IncomingMessage } from '@ceramicnetwork/transport-postmessage'
 import { createMessageObservable } from '@ceramicnetwork/transport-postmessage'
-import type { Wrapped } from '@ceramicnetwork/transport-subject'
 import type { RPCClient, RPCMethodTypes } from 'rpc-utils'
-import type { Subscription } from 'rxjs'
+import type { Observable } from 'rxjs'
 import { first } from 'rxjs/operators'
 
-const NAMESPACE = '3id-connect-iframedisplay' as const
-const NAMESPACE_MANAGE = '3id-connect-managedisplay' as const
+const IFRAME_NAMESPACE = '3id-connect-iframedisplay' as const
+const MANAGE_NAMESPACE = '3id-connect-managedisplay' as const
 
 const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:none !important'
 const DISPLAY_IFRAME_STYLE =
@@ -40,11 +41,12 @@ type DisplayConnectMethods = {
     }
   }
 }
+
 export class DisplayConnectClientRPC {
   client: RPCClient<DisplayConnectMethods>
 
-  constructor(target?: PostMessageTarget) {
-    this.client = createClient<DisplayConnectMethods>(NAMESPACE, target)
+  constructor(target: PostMessageTarget = window.parent) {
+    this.client = createClient<DisplayConnectMethods>(IFRAME_NAMESPACE, target)
   }
 
   async hide(): Promise<void> {
@@ -56,20 +58,18 @@ export class DisplayConnectClientRPC {
   }
 }
 
-export const DisplayConnectServerRPC = (iframe: HTMLIFrameElement): Subscription => {
+export type ConnectPayload = ServerPayload<DisplayConnectMethods, '3id-connect-iframedisplay'>
+
+export function createDisplayConnectServerRPC(iframe: HTMLIFrameElement): Observable<ConnectPayload> {
   const callDisplay = display(iframe)
   const callHide = hide(iframe)
 
-  return createServer<DisplayConnectMethods>(NAMESPACE, {
+  return createServer<DisplayConnectMethods, '3id-connect-iframedisplay'>(IFRAME_NAMESPACE, {
     hide: () => {
       callHide()
     },
     display: (_event, { mobile, height, width }) => {
       callDisplay(mobile, height, width)
-    },
-  }).subscribe({
-    error(msg) {
-      console.error('display server error', msg)
     },
   })
 }
@@ -98,8 +98,8 @@ type DisplayManageMethods = {
 export class DisplayManageClientRPC {
   client: RPCClient<DisplayManageMethods>
 
-  constructor(target?: PostMessageTarget) {
-    this.client = createClient<DisplayManageMethods>(NAMESPACE_MANAGE, target)
+  constructor(target: PostMessageTarget = window.parent) {
+    this.client = createClient<DisplayManageMethods>(MANAGE_NAMESPACE, target)
   }
 
   async display(accountId: string): Promise<void> {
@@ -107,10 +107,12 @@ export class DisplayManageClientRPC {
   }
 }
 
-export const DisplayManageServerRPC = (manageAppUrl: string): Subscription => {
+export type ManagePayload = ServerPayload<DisplayManageMethods, '3id-connect-managedisplay'>
+
+export function createDisplayManageServerRPC(manageAppUrl: string): Observable<ManagePayload> {
   let app: HTMLIFrameElement
 
-  return createServer<DisplayManageMethods>(NAMESPACE_MANAGE, {
+  return createServer<DisplayManageMethods, '3id-connect-managedisplay'>(MANAGE_NAMESPACE, {
     // todo change name
     display: async (_event, { accountId }) => {
       app = createManageIframe(`${manageAppUrl}?accountId=${accountId}`)
@@ -128,10 +130,6 @@ export const DisplayManageServerRPC = (manageAppUrl: string): Subscription => {
       await observer.pipe(first(filterEvent)).toPromise()
 
       app.remove()
-    },
-  }).subscribe({
-    error(msg) {
-      console.error('display manage server error', msg)
     },
   })
 }

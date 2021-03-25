@@ -1,11 +1,8 @@
-import ConnectService from '../src/connectService'
-import type { UserRequestHandler } from '../src/types'
-
 import * as assets from './assets/assets'
 import template from './html/template'
 
-// import ConnectLegacyService from './../src/connectLegacyService.js'
-// const store = require('store')
+import { ConnectService } from './connectService'
+import type { UserRequestHandler } from './types'
 
 /**
  *  UI Window Functions

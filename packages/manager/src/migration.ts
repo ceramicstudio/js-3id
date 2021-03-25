@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
+import { fromHex } from '@3id/common'
 import Resolver from '@ceramicnetwork/3id-did-resolver'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import type { CeramicApi } from '@ceramicnetwork/common'
@@ -10,8 +11,7 @@ import { AccountID } from 'caip'
 import { DagJWS, DID, DIDProvider } from 'dids'
 
 import type { ExcludesBoolean } from './types'
-import { fetchJson } from './utils'
-import { fromHex, jwtDecode } from './utils'
+import { fetchJson, jwtDecode } from './utils'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'

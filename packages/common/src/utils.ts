@@ -1,6 +1,14 @@
 import fetch from 'cross-fetch'
 import { fromString, toString } from 'uint8arrays'
 
+export function fromHex(hex: string): Uint8Array {
+  return fromString(hex, 'base16')
+}
+
+export function toHex(bytes: Uint8Array): string {
+  return toString(bytes, 'base16')
+}
+
 const HTTPError = (status: number, message: string): Error => {
   const e = new Error(message)
   // @ts-ignore
@@ -17,7 +25,7 @@ export const fetchJson = async <T = unknown>(
     opts = {
       body: JSON.stringify(body),
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' }
     }
   }
   const r = await fetch(url, opts)

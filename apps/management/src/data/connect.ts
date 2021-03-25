@@ -3,7 +3,6 @@ import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { AuthProviderClient } from '@3id/iframe-auth-provider'
 import { Manager } from '@3id/manager'
-import type { EthereumProvider } from '@3id/manager'
 
 import type { RemoteProxy } from '../types'
 
@@ -18,11 +17,8 @@ export function notifyDone() {
   notify('done')
 }
 
-export function getManager(provider: EthereumProvider): Manager {
-  const authProvider = new EthereumAuthProvider(
-    provider,
-    (provider as any).selectedAddress,
-  )
+export function getManager(provider: any): Manager {
+  const authProvider = new EthereumAuthProvider(provider, provider.selectedAddress)
   return new Manager(authProvider, { ceramic })
 }
 

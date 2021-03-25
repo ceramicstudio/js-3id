@@ -1,10 +1,10 @@
+import type { Manager } from '@3id/manager'
 import { IDX } from '@ceramicstudio/idx'
 import type {
   BasicProfile,
   ImageMetadata,
   ImageSources,
 } from '@ceramicstudio/idx-constants'
-import type { Manage3IDs } from '3id-connect'
 import { AccountID } from 'caip'
 
 import { IPFS_PREFIX, IPFS_URL } from '../constants'
@@ -98,7 +98,7 @@ export function getImageSrc(
   return toImageSrc(selectImageSource(sources, dimensions, mode))
 }
 
-export async function getDIDsData(manager: Manage3IDs): Promise<DIDsData> {
+export async function getDIDsData(manager: Manager): Promise<DIDsData> {
   const dids = manager.listDIDS() ?? []
   const entries = await Promise.all(
     dids.map(async (did) => {

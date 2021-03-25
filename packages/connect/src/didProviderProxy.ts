@@ -6,7 +6,7 @@ import type { DIDMethodName, DIDRequest, DIDResponse, DIDProvider } from './type
  *  A DID provider proxy, DID provider interface that acts as rpc client, to
  *  relay request to iframe (rpc server)
  */
-class DidProviderProxy implements DIDProvider {
+export class DidProviderProxy implements DIDProvider {
   accountId: string
   provider: DIDProvider
 
@@ -27,5 +27,3 @@ class DidProviderProxy implements DIDProvider {
     return await this.provider.send(msg, origin)
   }
 }
-
-export default DidProviderProxy

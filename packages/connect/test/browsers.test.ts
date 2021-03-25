@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import Ceramic from '@ceramicnetwork/http-client'
 import { publishIDXConfig } from '@ceramicstudio/idx-tools'
 import { IDX } from '@ceramicstudio/idx'
@@ -27,7 +26,6 @@ describe('connect flow', () => {
 
   PROVIDERS.forEach((providerType) => {
     describe(providerType, () => {
-
       test('create account and get DID provider', async () => {
         // Ensure 3ID Connect iframe is present
         const frame = await page.frame('threeid-connect')
@@ -48,7 +46,11 @@ describe('connect flow', () => {
         // Continue button
         const button = await frame.waitForSelector('#accept')
         await button.click()
-        await new Promise((res) => setTimeout(()=> {res()}, 1000))
+        await new Promise((res) =>
+          setTimeout(() => {
+            res()
+          }, 1000)
+        )
 
         // Continue create account
         const buttontwo = await frame.waitForSelector('#accept')
@@ -68,54 +70,60 @@ describe('connect flow', () => {
   })
 
   // requires no prior ceramic document state to run, run in one browser, or clear ceramic node doc set before running in each browser
-  describe.jestPlaywrightSkip({ browsers: ['firefox', 'webkit'] }, 'Ethereum didv0 Migration', () => {
-    //TODO maybe useful to run with all auth provs above as well, though this has diff ui needs at moment
-    test('migrate v0 did to did v0 and 3box to IDX profile', async () => {
-      const frame = await page.frame('threeid-connect')
+  describe.jestPlaywrightSkip(
+    { browsers: ['firefox', 'webkit'] },
+    'Ethereum didv0 Migration',
+    () => {
+      //TODO maybe useful to run with all auth provs above as well, though this has diff ui needs at moment
+      test('migrate v0 did to did v0 and 3box to IDX profile', async () => {
+        const frame = await page.frame('threeid-connect')
 
-      // Get DID and account from in-page calls
-      const didAccountPromise = page.evaluate((type) => {
-        return window.createAuthProvider(type).then((provider) => {
-          return window.authenticateDID(provider).then((did) => {
-            return provider.accountId().then((accountId) => {
-              return [did.id, accountId.toString()]
+        // Get DID and account from in-page calls
+        const didAccountPromise = page.evaluate((type) => {
+          return window.createAuthProvider(type).then((provider) => {
+            return window.authenticateDID(provider).then((did) => {
+              return provider.accountId().then((accountId) => {
+                return [did.id, accountId.toString()]
+              })
             })
           })
-        })
-      }, 'ethereumMockMigration')
+        }, 'ethereumMockMigration')
 
-      // Continue button
-      const button = await frame.waitForSelector('#accept')
-      await button.click()
-      await new Promise((res) => setTimeout(()=> {res()}, 1000))
+        // Continue button
+        const button = await frame.waitForSelector('#accept')
+        await button.click()
+        await new Promise((res) =>
+          setTimeout(() => {
+            res()
+          }, 1000)
+        )
 
-      // Continue migration button
-      const buttontwo = await frame.waitForSelector('#accept')
-      await buttontwo.click()
-      await page.waitForSelector('.threeid-connect', { state: 'hidden' })
+        // Continue migration button
+        const buttontwo = await frame.waitForSelector('#accept')
+        await buttontwo.click()
+        await page.waitForSelector('.threeid-connect', { state: 'hidden' })
 
-      const [did, account] = await didAccountPromise
-      // didv0 cid prefix
-      expect(did.includes('did:3:bafy')).toBeTruthy()
+        const [did, account] = await didAccountPromise
+        // didv0 cid prefix
+        expect(did.includes('did:3:bafy')).toBeTruthy()
 
-      const idx = new IDX({ceramic})
-      const migratedProfile = await idx.get('basicProfile', did)
-      expect(migratedProfile).toMatchSnapshot()
+        const idx = new IDX({ ceramic })
+        const migratedProfile = await idx.get('basicProfile', did)
+        expect(migratedProfile).toMatchSnapshot()
 
-      const links = await idx.get('cryptoAccounts', did)
-      expect(links).toMatchSnapshot()
+        const links = await idx.get('cryptoAccounts', did)
+        expect(links).toMatchSnapshot()
 
-      const aka = await idx.get('alsoKnownAs', did)
-      
-      // twitter & github
-      expect(aka.accounts[0].claim).toMatchSnapshot()
-      expect(aka.accounts[1].claim).toMatchSnapshot()
+        const aka = await idx.get('alsoKnownAs', did)
 
-      // Check localStorage contents
-      const linksState = await frame.evaluate(() => localStorage.getItem('links'))
-      expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
-    })
-  })
+        // twitter & github
+        expect(aka.accounts[0].claim).toMatchSnapshot()
+        expect(aka.accounts[1].claim).toMatchSnapshot()
+
+        // Check localStorage contents
+        const linksState = await frame.evaluate(() => localStorage.getItem('links'))
+        expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
+      })
+    }
+  )
 })
-
-
