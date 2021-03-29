@@ -6,8 +6,8 @@
   "module": "dist/connect.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "lib",
-    "types"
+    "dist",
+    "src"
   ],
   "scripts": {
     "start": "tsdx watch",
@@ -34,31 +34,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/3box/3id-connect.git"
+    "url": "git+https://github.com/ceramicstudio/3id-connect.git"
   },
   "author": "3box <team@3box.io>",
   "license": "(Apache-2.0 OR MIT)",
   "bugs": {
-    "url": "https://github.com/3box/3id-connect/issues"
+    "url": "https://github.com/ceramicstudio/3id-connect/issues"
   },
-  "homepage": "https://github.com/3box/3id-connect#readme",
+  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
   "dependencies": {
     "@3id/iframe-auth-provider": "^0.1.0",
-    "@babel/runtime": "^7.12.13",
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "multicodec": "~2.0.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.3.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.13",
-    "@babel/core": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
-    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
-    "@babel/plugin-transform-runtime": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
-    "@babel/preset-typescript": "^7.12.13",
     "@ceramicnetwork/3id-did-resolver": "^0.6.10",
     "@ceramicnetwork/cli": "^0.20.8",
     "@ceramicnetwork/http-client": "^0.9.6",
@@ -80,15 +71,6 @@
     "caip": "^0.9.2",
     "dids": "^1.1.1",
     "eosjs-ecc": "^4.0.7",
-    "eslint": "^7.19.0",
-    "eslint-config-3box": "^0.2.0",
-    "eslint-plugin-jest-playwright": "^0.2.1",
-    "http-server": "^0.12.3",
-    "ipfs": "^0.52.3",
-    "jest": "^26.6.3",
-    "jest-playwright-jsdom": "^0.0.4",
-    "jest-playwright-preset": "^1.4.5",
-    "prettier": "^2.2.1",
     "rxjs": "^6.6.6",
     "uint8arrays": "^2.1.2"
   },

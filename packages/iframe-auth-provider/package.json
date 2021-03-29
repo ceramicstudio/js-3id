@@ -28,6 +28,7 @@
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "@ceramicnetwork/transport-postmessage": "^0.2.0",
     "rpc-utils": "^0.3.4",
+    "rxjs": "^6.6.6",
     "tslib": "^2.1.0"
   }
 }

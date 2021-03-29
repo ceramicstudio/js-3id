@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build:prod": "webpack --config webpack.config.js --mode=production --output-filename index.js",
+    "build:dev": "webpack --config webpack.config.js --mode=production --output-filename index.js --env develop",
     "dev:build": "webpack --config webpack.config.js --mode=development --watch",
-    "dev:server:start": "http-server -c-1 -p 30001 ../../public",
+    "dev:server": "http-server -c-1 -p 30001 ../../public",
     "start": "run-p dev:**",
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start"
   },
@@ -13,6 +15,7 @@
     "@3id/connect-display": "^0.1.0",
     "@3id/iframe-auth-provider": "^0.1.0",
     "@3id/manager": "^0.1.0",
+    "@babel/runtime": "7.13.9",
     "@ceramicnetwork/http-client": "^0.9.6",
     "@ceramicstudio/idx": "^0.8.0",
     "3id-did-provider": "^0.5.1",

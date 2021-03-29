@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "demo:server:start": "http-server -c-1 -p 30000 .",
-    "demo:build": "webpack --config webpack.config.js --mode=development --watch",
-    "start": "run-p demo:**",
-    "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com run-p demo:**"
+    "server:app": "http-server -c-1 -p 30000 .",
+    "server:connect": "http-server -c-1 -p 30001 ../../public",
+    "build": "webpack --config webpack.config.js --mode=development --watch",
+    "start": "run-p build server:**",
+    "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm start"
   },
   "dependencies": {
     "@3id/connect": "^0.1.0",
+    "@babel/runtime": "7.13.9",
     "@ceramicnetwork/3id-did-resolver": "^0.6.10",
     "@ceramicnetwork/http-client": "^0.9.6",
     "@ceramicstudio/idx": "^0.8.0",
@@ -25,7 +27,6 @@
     "@babel/core": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
-    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
     "@babel/plugin-transform-runtime": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
     "@babel/preset-typescript": "^7.12.13",

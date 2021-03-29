@@ -41,5 +41,13 @@
     "@ceramicstudio/idx-constants": "^0.7.0",
     "did-jwt": "^5.0.1",
     "tslib": "^2.1.0"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    },
+    "testEnvironment": "node"
   }
 }

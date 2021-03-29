@@ -7,10 +7,12 @@
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
-      "@ceramicnetwork/rpc-postmessage": ["packages/rpc-postmessage/src"],
-      "@ceramicnetwork/rpc-transport": ["packages/rpc-transport/src"],
-      "@ceramicnetwork/transport-postmessage": ["packages/transport-postmessage/src"],
-      "@ceramicnetwork/transport-subject": ["packages/transport-subject/src"]
+      "@3id/common": ["packages/common/src"],
+      "@3id/connect": ["packages/connect/src"],
+      "@3id/connect-display": ["packages/connect-display/src"],
+      "@3id/iframe-auth-provider": ["packages/iframe-auth-provider/src"],
+      "@3id/iframe-rpc": ["packages/iframe-rpc/src"],
+      "@3id/manager": ["packages/manager/src"]
     }
   }
 }

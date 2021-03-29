@@ -1,10 +1,12 @@
 import { createClient, createServer } from '@3id/iframe-rpc'
+import type { ServerPayload } from '@3id/iframe-rpc'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { AccountID } from 'caip'
 import type { RPCClient } from 'rpc-utils'
+import type { Observable } from 'rxjs'
 
-const NAMESPACE = process.env.NAMESPACE || ('3id-connect-authprovider' as const)
+const NAMESPACE = process.env.NAMESPACE || '3id-connect-authprovider'
 
 export type AuthProviderMethods = {
   accountId: { result: string }
@@ -18,15 +20,15 @@ export type AuthProviderMethods = {
   }
 }
 
-export class AuthProviderClient implements AuthProvider {
+export class AuthProviderClient<NS extends string> implements AuthProvider {
   client: RPCClient<AuthProviderMethods>
   readonly isAuthProvider = true
 
-  constructor(target: PostMessageTarget = window.parent) {
-    this.client = createClient<AuthProviderMethods>(NAMESPACE, target)
+  constructor(target: PostMessageTarget = window.parent, namespace = NAMESPACE) {
+    this.client = createClient<AuthProviderMethods, NS>(namespace as NS, target)
   }
 
-  async accountId() {
+  async accountId(): Promise<AccountID> {
     const response = await this.client.request('accountId')
     return new AccountID(response)
   }
@@ -44,8 +46,11 @@ export class AuthProviderClient implements AuthProvider {
   }
 }
 
-export function createAuthProviderServer(authProvider: AuthProvider) {
-  return createServer<AuthProviderMethods>(NAMESPACE, {
+export function createAuthProviderServer<NS extends string>(
+  authProvider: AuthProvider,
+  namespace = NAMESPACE
+): Observable<ServerPayload<AuthProviderMethods, NS>> {
+  return createServer<AuthProviderMethods, NS>(namespace as NS, {
     accountId: async () => {
       return (await authProvider.accountId()).toString()
     },
