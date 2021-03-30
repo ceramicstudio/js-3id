@@ -1,7 +1,10 @@
-import { Manager } from '../src'
+import { ThreeIDError, assert, fromHex, toHex } from '../src'
 
-describe('manager', () => {
-  test('exports Manager', () => {
-    expect(Manager).toBeDefined()
+describe('common', () => {
+  test('exports', () => {
+    expect(ThreeIDError).toBeDefined()
+    expect(assert).toBeDefined()
+    expect(fromHex).toBeDefined()
+    expect(toHex).toBeDefined()
   })
 })

@@ -5,14 +5,13 @@ orbs:
 
 jobs:
   test-and-build-connect:
-    working_directory: ~/3id-connect/connect
+    working_directory: ~/3id-connect
     docker:
       - image: mcr.microsoft.com/playwright:focal
         environment:
           NODE_ENV: development
     steps:
-      - checkout:
-          path: ~/3id-connect
+      - checkout
 
       # Download and cache dependencies
       - restore_cache:
@@ -23,8 +22,8 @@ jobs:
           name: install dependencies
           command: |
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
-            npm i -g codecov node-gyp
-            npm ci
+            npm i -g codecov lerna node-gyp
+            lerna bootstrap
 
       - run:
           name: lint
@@ -59,45 +58,6 @@ jobs:
           root: ~/3id-connect
           paths:
             - public
-
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
-  test-and-build-management:
-    working_directory: ~/3id-connect/management
-    docker:
-      - image: circleci/node:lts
-    steps:
-      - checkout:
-          path: ~/3id-connect
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - dependencies-cache-{{ checksum "package.json" }}
-
-      - run:
-          name: install dependencies
-          command: npm ci
-
-      # - run:
-      #     name: lint
-      #     command: npm run lint
-
-      # - run:
-      #     name: test
-      #     command: npm test
-
-      - run:
-          name: build
-          command: npm run build
-
-      - persist_to_workspace:
-          root: ~/3id-connect
-          paths:
-            - public/management
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
@@ -139,19 +99,16 @@ jobs:
 workflows:
   build-deploy:
     jobs:
-      - test-and-build-connect
-      - test-and-build-management
+      - test-and-build
       - deploy-dev:
           requires:
-            - test-and-build-connect
-            - test-and-build-management
+            - test-and-build
           filters:
             branches:
               only: develop
       - deploy-prod:
           requires:
-            - test-and-build-connect
-            - test-and-build-management
+            - test-and-build
           filters:
             branches:
               only: master

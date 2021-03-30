@@ -4,9 +4,8 @@ import { IDX } from '@ceramicstudio/idx'
 
 const PROVIDERS = ['ethereum']
 
-let ceramic
+const ceramic = new Ceramic('http://localhost:7777')
 beforeAll(async () => {
-  ceramic = new Ceramic('http://localhost:7777')
   await publishIDXConfig(ceramic)
 })
 
@@ -44,7 +43,7 @@ describe('connect flow', () => {
         }, providerType)
 
         // Continue button
-        const button = await frame.waitForSelector('#accept')
+        const button = await frame.waitForSelector('#accept', { timeout: 60000 })
         await button.click()
         await new Promise((res) =>
           setTimeout(() => {
@@ -53,7 +52,7 @@ describe('connect flow', () => {
         )
 
         // Continue create account
-        const buttontwo = await frame.waitForSelector('#accept')
+        const buttontwo = await frame.waitForSelector('#accept', { timeout: 60000 })
         await buttontwo.click()
         await page.waitForSelector('.threeid-connect', { state: 'hidden' })
 

@@ -60,7 +60,9 @@ export class DisplayConnectClientRPC {
 
 export type ConnectPayload = ServerPayload<DisplayConnectMethods, '3id-connect-iframedisplay'>
 
-export function createDisplayConnectServerRPC(iframe: HTMLIFrameElement): Observable<ConnectPayload> {
+export function createDisplayConnectServerRPC(
+  iframe: HTMLIFrameElement
+): Observable<ConnectPayload> {
   const callDisplay = display(iframe)
   const callHide = hide(iframe)
 

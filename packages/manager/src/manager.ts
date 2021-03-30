@@ -1,5 +1,5 @@
 import { assert, toHex } from '@3id/common'
-import type { DIDProvider } from '@3id/common'
+import type { AccountsList, DIDProvider } from '@3id/common'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -10,7 +10,7 @@ import { fromString } from 'uint8arrays'
 
 import { AccountStore } from './accountStore'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
-import type { AccountsList, AuthConfig, SeedConfig } from './types'
+import type { AuthConfig, SeedConfig } from './types'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true

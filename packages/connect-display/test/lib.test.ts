@@ -1,7 +1,8 @@
-import { Manager } from '../src'
+import { DisplayConnectClientRPC, createDisplayConnectServerRPC } from '../src'
 
-describe('manager', () => {
-  test('exports Manager', () => {
-    expect(Manager).toBeDefined()
+describe('connect-display', () => {
+  test('exports', () => {
+    expect(DisplayConnectClientRPC).toBeDefined()
+    expect(createDisplayConnectServerRPC).toBeDefined()
   })
 })

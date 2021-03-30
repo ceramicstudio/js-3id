@@ -5,6 +5,6 @@
     "access": "public"
   },
   "useWorkspaces": true,
-  "packages": ["packages/*"],
+  "packages": ["apps/*", "packages/*"],
   "npmClientArgs": ["--legacy-peer-deps"]
 }

@@ -3,4 +3,7 @@ module.exports = {
   parserOptions: {
     project: ['tsconfig.json'],
   },
+  rules: {
+    '@typescript-eslint/ban-ts-comment': 'warn',
+  },
 }

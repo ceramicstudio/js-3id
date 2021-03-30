@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:prod": "webpack --config webpack.config.js --mode=production --output-filename index.js",
-    "build:dev": "webpack --config webpack.config.js --mode=production --output-filename index.js --env develop",
+    "build": "webpack --config webpack.config.js --mode=production --output-filename index.js",
+    "build:dev": "npm run build -- --env develop",
     "dev:build": "webpack --config webpack.config.js --mode=development --watch",
     "dev:server": "http-server -c-1 -p 30001 ../../public",
     "start": "run-p dev:**",

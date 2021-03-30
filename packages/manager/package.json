@@ -17,6 +17,7 @@
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "test": "tsdx test",
+    "test:server": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
     "lint": "tsdx lint src test --fix",
     "prepublish": "npm run build"
   },
@@ -37,17 +38,10 @@
     "uint8arrays": "^2.1.2"
   },
   "devDependencies": {
+    "@3id/test-utils": "^0.1.0",
     "@ceramicnetwork/common": "^0.15.9",
     "@ceramicstudio/idx-constants": "^0.7.0",
     "did-jwt": "^5.0.1",
     "tslib": "^2.1.0"
-  },
-  "jest": {
-    "globals": {
-      "ts-jest": {
-        "diagnostics": false
-      }
-    },
-    "testEnvironment": "node"
   }
 }

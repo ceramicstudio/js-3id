@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
-
-import type { DIDMethodName, DIDRequest, DIDResponse, DIDProvider } from './types'
+import type { DIDMethodName, DIDRequest, DIDResponse, DIDProvider } from '@3id/common'
 
 /**
  *  A DID provider proxy, DID provider interface that acts as rpc client, to

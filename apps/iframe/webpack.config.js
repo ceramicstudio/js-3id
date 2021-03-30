@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
   plugins.push(dp)
 
   return {
-    entry: './src/index.ts',
+    entry: path.resolve(__dirname, 'src', 'index.ts'),
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, '..', '..', 'public'),

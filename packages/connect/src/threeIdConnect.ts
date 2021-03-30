@@ -1,3 +1,4 @@
+import type { DIDProvider } from '@3id/common'
 import {
   createConnectIframe,
   createDisplayConnectServerRPC,
@@ -8,9 +9,9 @@ import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
+import type { Subscription } from 'rxjs'
 
 import { DidProviderProxy } from './didProviderProxy'
-import type { DIDProvider } from './types'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
 const CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || 'https://app.3idconnect.org/management'
@@ -52,6 +53,7 @@ export class ThreeIdConnect {
   accountId: string | undefined
   manageUrl: string
 
+  _authProviderSubscription: Subscription | null = null
   _connected = false
 
   /**

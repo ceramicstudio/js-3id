@@ -4,7 +4,7 @@ module.exports = {
   entry: path.resolve(__dirname, 'app.ts'),
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, './public/build'),
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },

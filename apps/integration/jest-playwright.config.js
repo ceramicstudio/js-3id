@@ -4,7 +4,7 @@ module.exports = {
     headless: true,
   },
   serverOptions: {
-    command: 'npm run test:ceramic | npm run test:app',
+    command: 'npm run test:env',
     debug: true,
     launchTimeout: 60000,
     protocol: 'tcp',

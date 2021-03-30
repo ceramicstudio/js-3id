@@ -56,11 +56,11 @@ export class AccountStore {
   }
 
   getDIDLinksList(): DIDLinksList {
-    return this.store.get(LINK_KEY) || {}
+    return (this.store.get(LINK_KEY) as DIDLinksList) || {}
   }
 
   getDIDs(): Array<string> | null {
-    const val = this.store.get(LINK_KEY)
+    const val = this.store.get(LINK_KEY) as DIDLinksList
     return val ? Object.keys(val) : null
   }
 }

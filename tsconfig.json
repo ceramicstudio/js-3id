@@ -12,7 +12,8 @@
       "@3id/connect-display": ["packages/connect-display/src"],
       "@3id/iframe-auth-provider": ["packages/iframe-auth-provider/src"],
       "@3id/iframe-rpc": ["packages/iframe-rpc/src"],
-      "@3id/manager": ["packages/manager/src"]
+      "@3id/manager": ["packages/manager/src"],
+      "@3id/test-utils": ["packages/test-utils/src"]
     }
   }
 }
