@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf ../../public/management && mv ./build ../../public/management",
-    "build:dev": "CERAMIC_API=https://ceramic-dev.3boxlabs.com npm run build",
+    "build:prod": "react-scripts build && rm -rf ../../public/management && mv ./build ../../public/management",
+    "build:dev": "CERAMIC_API=https://ceramic-dev.3boxlabs.com npm run build:prod",
     "test:app": "react-scripts test",
     "eject": "react-scripts eject"
   },

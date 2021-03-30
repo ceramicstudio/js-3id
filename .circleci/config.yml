@@ -39,7 +39,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: npm run build:dev
+                command: lerna run build:dev
 
       - when:
           condition:
@@ -48,7 +48,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: npm run build
+                command: lerna run build:prod
 
       # - run:
       #     name: code-coverage
