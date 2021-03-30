@@ -12,25 +12,9 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "--test": "tsdx test",
+    "test": "tsdx test",
     "lint": "tsdx lint src test --fix",
-    "prepublish": "npm run build",
-    "test:build:app": "webpack --config ./test/env/webpack.config.js --mode=development",
-    "test:build:iframe": "CERAMIC_API=http://localhost:7777 webpack --config webpack.config.js --mode=development --output-path ./test/env/build --output-filename iframe.js",
-    "test:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
-    "test:server": "http-server -c-1 -p 30001 ./test/env/",
-    "test:app": "run-p test:build:** test:server",
-    "test:run:integration": "jest --config integration.jest.config.js",
-    "test:run:unit": "jest --projects src/__tests__ --detectOpenHandles",
-    "build:dev": "run-p build:prod:es5 build:prod:types build:dev:dist",
-    "prepublishOnly": "npm run build",
-    "dev:iframe:build": "webpack --config webpack.config.js --mode=development --watch",
-    "dev:iframe:server:start": "http-server -c-1 -p 30001 ../../public",
-    "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start",
-    "dev:demo:server:start": "http-server -c-1 -p 30000 example",
-    "dev:demo:build": "webpack --config ./example/webpack.config.js --mode=development --watch",
-    "start:demo": "run-p dev:demo:** start",
-    "start:demo:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com run-p dev:demo:** start:testnet"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

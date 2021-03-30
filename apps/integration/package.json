@@ -8,7 +8,7 @@
     "serve:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
     "serve:app": "http-server -c-1 -p 30001 ./public",
     "test:env": "run-p build:** serve:**",
-    "test": "jest"
+    "test:integration": "jest"
   },
   "dependencies": {
     "@3id/connect": "^0.1.0",

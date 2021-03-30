@@ -7,7 +7,10 @@
   ],
   "scripts": {
     "lerna": "lerna",
-    "test": "lerna run test --",
+    "test:unit": "lerna run test",
+    "test:integration": "(cd apps/integration && npm run test:integration)",
+    "test:manager": "(cd packages/manager && npm run test:integration)",
+    "test": "npm run test:unit && npm run test:manager && npm run test:integration",
     "lint": "lerna run lint",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",

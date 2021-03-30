@@ -16,7 +16,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
+    "test:integration": "tsdx test",
     "test:server": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
     "lint": "tsdx lint src test --fix",
     "prepublish": "npm run build"

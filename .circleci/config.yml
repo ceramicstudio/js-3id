@@ -4,7 +4,7 @@ orbs:
   aws-s3: circleci/aws-s3@1.0.15
 
 jobs:
-  test-and-build-connect:
+  test-and-build:
     working_directory: ~/3id-connect
     docker:
       - image: mcr.microsoft.com/playwright:focal
@@ -22,8 +22,8 @@ jobs:
           name: install dependencies
           command: |
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
-            npm i -g codecov lerna node-gyp
-            lerna bootstrap
+            npm i -g codecov lerna node-gyp npm
+            lerna bootstrap --hoist
 
       - run:
           name: lint
