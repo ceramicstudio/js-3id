@@ -1,6 +1,5 @@
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage'
-import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
 import { Manager } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 
@@ -22,7 +21,7 @@ export function getManager(provider: any): Manager {
   return new Manager(authProvider, { ceramic })
 }
 
-export function createRemoteProxy(target: PostMessageTarget): RemoteProxy {
+export function createRemoteProxy(target: Window): RemoteProxy {
   const provider = new AuthProviderClient(target)
   const manager = new Manager(provider, { ceramic })
   return { manager, provider }
