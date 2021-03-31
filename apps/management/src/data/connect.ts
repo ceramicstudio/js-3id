@@ -1,8 +1,8 @@
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage'
 import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
-import { AuthProviderClient } from '@3id/iframe-auth-provider'
 import { Manager } from '@3id/manager'
+import { AuthProviderClient } from '@3id/window-auth-provider'
 
 import type { RemoteProxy } from '../types'
 

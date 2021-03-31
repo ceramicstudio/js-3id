@@ -13,8 +13,8 @@ import type {
   UserRequestCancel,
 } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import { AuthProviderClient } from '@3id/iframe-auth-provider'
 import { Manager } from '@3id/manager'
+import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import ThreeIdProvider from '3id-did-provider'

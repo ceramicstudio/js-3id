@@ -1,7 +1,7 @@
-import { createClient, createServer } from '@3id/iframe-rpc'
-import type { ServerPayload } from '@3id/iframe-rpc'
+import { createClient, createServer } from '@ceramicnetwork/rpc-window'
+import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Wrapped } from '@ceramicnetwork/transport-subject'
-import type { PostMessageTarget, IncomingMessage } from '@ceramicnetwork/transport-postmessage'
+import type { IncomingMessage } from '@ceramicnetwork/transport-postmessage'
 import { createMessageObservable } from '@ceramicnetwork/transport-postmessage'
 import type { RPCClient, RPCMethodTypes } from 'rpc-utils'
 import type { Observable } from 'rxjs'
@@ -45,7 +45,7 @@ type DisplayConnectMethods = {
 export class DisplayConnectClientRPC {
   client: RPCClient<DisplayConnectMethods>
 
-  constructor(target: PostMessageTarget = window.parent) {
+  constructor(target: Window = window.parent) {
     this.client = createClient<DisplayConnectMethods>(IFRAME_NAMESPACE, target)
   }
 
@@ -100,7 +100,7 @@ type DisplayManageMethods = {
 export class DisplayManageClientRPC {
   client: RPCClient<DisplayManageMethods>
 
-  constructor(target: PostMessageTarget = window.parent) {
+  constructor(target: Window = window.parent) {
     this.client = createClient<DisplayManageMethods>(MANAGE_NAMESPACE, target)
   }
 

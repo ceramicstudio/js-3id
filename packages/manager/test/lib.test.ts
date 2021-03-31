@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { EthereumMigrationMockAuthProvider, createAuthProvider } from '@3id/test-utils'
-import { AuthProviderClient, createAuthProviderServer } from '@3id/iframe-auth-provider'
+import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-provider'
 import Ceramic from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import { publishIDXConfig } from '@ceramicstudio/idx-tools'

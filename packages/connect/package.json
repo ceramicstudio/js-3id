@@ -2,32 +2,42 @@
   "name": "@3id/connect",
   "version": "0.1.0",
   "description": "Account management for 3ID",
-  "main": "dist/index.js",
-  "module": "dist/connect.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
-    "lint": "tsdx lint src test --fix",
-    "prepublish": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ceramicstudio/3id-connect.git"
-  },
   "author": "3box <team@3box.io>",
   "license": "(Apache-2.0 OR MIT)",
   "bugs": {
     "url": "https://github.com/ceramicstudio/3id-connect/issues"
   },
   "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "keywords": [
+    "3id",
+    "connect"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/3id-connect",
+    "directory": "packages/connect"
+  },
+  "main": "dist/index.js",
+  "module": "dist/connect.esm.js",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/connect.esm.js",
+    "default": "./dist/connect.esm.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint src test --fix",
+    "prepublish": "npm run build",
+    "prepublishOnly": "package-check"
+  },
   "dependencies": {
-    "@3id/iframe-auth-provider": "^0.1.0",
+    "@3id/window-auth-provider": "^0.1.0",
     "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
     "multicodec": "~2.0.0",
     "postmsg-rpc": "^2.4.0",

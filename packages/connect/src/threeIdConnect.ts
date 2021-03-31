@@ -4,7 +4,7 @@ import {
   createDisplayConnectServerRPC,
   createDisplayManageServerRPC,
 } from '@3id/connect-display'
-import { createAuthProviderServer } from '@3id/iframe-auth-provider'
+import { createAuthProviderServer } from '@3id/window-auth-provider'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'

@@ -1,7 +1,6 @@
-import { createClient, createServer } from '@3id/iframe-rpc'
-import type { ServerPayload } from '@3id/iframe-rpc'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
-import type { PostMessageTarget } from '@ceramicnetwork/transport-postmessage'
+import { createClient, createServer } from '@ceramicnetwork/rpc-window'
+import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import { AccountID } from 'caip'
 import type { RPCClient } from 'rpc-utils'
 import type { Observable } from 'rxjs'
@@ -24,7 +23,7 @@ export class AuthProviderClient<NS extends string> implements AuthProvider {
   client: RPCClient<AuthProviderMethods>
   readonly isAuthProvider = true
 
-  constructor(target: PostMessageTarget = window.parent, namespace = NAMESPACE) {
+  constructor(target: Window = window.parent, namespace = NAMESPACE) {
     this.client = createClient<AuthProviderMethods, NS>(namespace as NS, target)
   }
 

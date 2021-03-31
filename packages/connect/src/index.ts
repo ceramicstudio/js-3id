@@ -1,10 +1,5 @@
-// Re-exports from blockchain-utils-linking
-export {
-  CosmosAuthProvider,
-  EosioAuthProvider,
-  EthereumAuthProvider,
-  FilecoinAuthProvider,
-} from '@ceramicnetwork/blockchain-utils-linking'
+// Re-exports supported (tested) providers from blockchain-utils-linking
+export { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 export type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 
 export { DidProviderProxy } from './didProviderProxy'

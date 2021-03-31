@@ -3,12 +3,26 @@
   "version": "0.1.0",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
+  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "keywords": [
+    "3id",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/3id-connect",
+    "directory": "packages/test-utils"
+  },
   "main": "dist/index.js",
   "module": "dist/test-utils.esm.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/test-utils.esm.js",
+    "default": "./dist/test-utils.esm.js"
+  },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=12"
@@ -17,7 +31,8 @@
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "lint": "tsdx lint src test --fix",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "prepublishOnly": "package-check"
   },
   "dependencies": {
     "@ceramicnetwork/blockchain-utils-linking": "^0.2.0",
