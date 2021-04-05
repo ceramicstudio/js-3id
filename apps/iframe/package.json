@@ -1,0 +1,48 @@
+{
+  "name": "3id-iframe",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:prod": "webpack --config webpack.config.js --mode=production --output-filename index.js",
+    "build:dev": "npm run build:prod -- --env develop",
+    "dev:build": "webpack --config webpack.config.js --mode=development --watch",
+    "dev:server": "http-server -c-1 -p 30001 ../../public",
+    "start": "run-p dev:**",
+    "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start"
+  },
+  "dependencies": {
+    "@3id/common": "^0.1.0",
+    "@3id/connect-display": "^0.1.0",
+    "@3id/window-auth-provider": "^0.1.0",
+    "@3id/manager": "^0.1.0",
+    "@babel/runtime": "7.13.9",
+    "@ceramicnetwork/http-client": "^0.9.6",
+    "@ceramicstudio/idx": "^0.8.0",
+    "3id-did-provider": "^0.5.1",
+    "errors-utils": "^0.1.0",
+    "postmsg-rpc": "^2.4.0",
+    "rpc-utils": "^0.3.4",
+    "url-parse": "^1.4.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.13",
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-typescript": "^7.12.13",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^2.1.1",
+    "node-sass": "^4.13.1",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.2",
+    "url-loader": "^4.0.0",
+    "webpack": "^4.20.2",
+    "webpack-bundle-analyzer": "^3.9.0",
+    "webpack-cli": "^3.1.2"
+  }
+}

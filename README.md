@@ -6,10 +6,80 @@
 
 ![3ID Connect Image](./assets/3id-connect_readme-image.png)
 
-3ID user account management in a iframe. An easy way to access a did provider, specifically [ThreeIdProvider](https://github.com/ceramicstudio/js-3id-did-provider) in the browser. It allows users to authenticate, manage, link and permission their 3ID keys to applications. The library [js-3id-did-provider](https://github.com/ceramicstudio/js-3id-did-provider) handles most operations and the parent window (application) communicates with the iframe service over an RPC layer. 3id-connect with Ceramic support is only available at 3id-connect@next and 3idconnect.org at the moment.
+3ID Connect provides 3ID user account management in a iframe, an easy way to access a DID provider, specifically [ThreeIdProvider](https://github.com/ceramicstudio/js-3id-did-provider) in the browser.
+It allows users to authenticate, manage, link and permission their 3ID keys to applications.
+
+The library [js-3id-did-provider](https://github.com/ceramicstudio/js-3id-did-provider) handles most operations and the parent window (application) communicates with the iframe service over an RPC layer.
+
+## Getting started
+
+### Installation
+
+```sh
+npm install @3id/connect
+```
+
+### Basic usage
+
+```ts
+import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
+
+// ethProvider is an Ethereum provider and addresses an array of strings
+const authProvider = new EthereumAuthProvider(ethProvider, addresses[0])
+
+const threeIdConnect = new ThreeIdConnect()
+await threeIdConnect.connect(authProvider)
+```
+
+See the [example app](./apps/example) for more details
+
+## Developement
+
+### Prerequisites
+
+npm v7 and lerna v4 should be installed globally:
+
+```sh
+npm install -g lerna npm
+```
+
+### Installation
+
+Run `lerna bootstrap` from the root folder, this will install the dependencies and build the packages
+
+### Scripts
+
+In the root folder:
+
+- `lint`: lints all apps and packages
+- `build`: builds all packages
+- `test:unit`: runs unit test
+- `test:management`: runs integration tests for the [management lib](./packages/management) with a Ceramic server
+- `test:integration`: runs integration tests from the [integration app](./apps/integration) with a Ceramic server
 
 ## Folders
 
-- [`connect`](./connect): 3ID Connect iframe and library
-- [`management`](./management): 3ID accounts management UI
-- [`public`](./public): build assets
+### Packages
+
+- [`@3id/common`](./packages/common): Common types and utilities used by packages
+- [`@3id/connect`](./packages/connect): 3ID Connect library
+- [`@3id/connect-display`](./packages/connect-display): 3ID Connect popup prompts
+- [`@3id/manager`](./packages/manager): 3ID accounts storage and management
+- [`@3id/test-utils`](./packages/test-utils): Testing utilities for apps and packages
+- [`@3id/window-auth-provider`](./packages/window-auth-provider): cross-window AuthProvider
+
+### Apps
+
+- [`example`](./apps/example): Example usage of 3ID Connect with Ceramic and IDX
+- [`iframe`](./apps/iframe): 3ID Connect iframe logic and UI
+- [`integration`](./apps/integration): 3ID Connect integration tests
+- [`management`](./apps/management): 3ID accounts management UI used by 3ID Connect
+
+### Others
+
+- [`public`](./public): build assets for 3idconnect.org
+
+## Licenses
+
+- Apache-2.0 OR MIT for published packages
+- UIs used by 3ID Connect may use dependencies under other licenses

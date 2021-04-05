@@ -1,0 +1,48 @@
+{
+  "name": "@3id/connect-display",
+  "version": "0.1.0",
+  "author": "Ceramic Studio",
+  "license": "(Apache-2.0 OR MIT)",
+  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "keywords": [
+    "3id",
+    "connect"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/3id-connect",
+    "directory": "packages/connect-display"
+  },
+  "main": "dist/index.js",
+  "module": "dist/connect-display.esm.js",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/connect-display.esm.js",
+    "default": "./dist/connect-display.esm.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint src test --fix",
+    "prepublish": "npm run build",
+    "prepublishOnly": "package-check"
+  },
+  "dependencies": {
+    "@ceramicnetwork/rpc-window": "^0.1.0",
+    "@ceramicnetwork/transport-postmessage": "^0.3.0",
+    "rxjs": "^6.6.6"
+  },
+  "devDependencies": {
+    "@ceramicnetwork/transport-subject": "^0.3.0",
+    "rpc-utils": "^0.3.4",
+    "tslib": "^2.1.0"
+  }
+}
