@@ -61,8 +61,8 @@ export class Manager {
       }
     }
 
-    const configId = migrate ? legacyConfig : ({ authSecret, authId: accountId } as AuthConfig)
-    assert.isDefined(configId, 'Identity Config to initialize identity')
+    const configId = migrate ? legacyConfig as SeedConfig : ({ authSecret, authId: accountId } as AuthConfig)
+    assert.isDefined<SeedConfig | AuthConfig>(configId, 'Identity Config to initialize identity')
     const did = await this._initIdentity(configId)
 
     let linkProof

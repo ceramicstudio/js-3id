@@ -76,15 +76,19 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     const authProviderRelay = new AuthProviderClient(window.parent)
     const manage = new Manager(authProviderRelay, { ceramic: this.ceramic })
+    console.log(1)
 
     //TODO if exist in state, return before even looking up links
     const existLocally = manage.linkExist(accountId)
+    console.log(2)
     const existNetwork = await manage.linkExistInNetwork(accountId)
+    console.log(3)
 
     // before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
+    console.log(4)
 
     if (!existLocally && !existNetwork) {
       const createHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
@@ -92,6 +96,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
         await this.manageApp.display(accountId)
       }
     }
+    console.log(5)
 
     const did = await manage.createAccount()
 
