@@ -10,6 +10,7 @@ export default function LinkExistingDID() {
 
   const button = ethereum ? (
     <Button
+      id="add-id"
       label="Add ID"
       onClick={() => {
         console.log('add ID')
@@ -26,6 +27,7 @@ export default function LinkExistingDID() {
     />
   ) : (
     <Button
+      id="connect"
       label="Connect"
       onClick={() => {
         connect()

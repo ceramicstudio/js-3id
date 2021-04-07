@@ -5,9 +5,12 @@
   "scripts": {
     "build:app": "webpack --config webpack.config.js --mode=development",
     "build:iframe": "CERAMIC_API=http://localhost:7777 webpack --config ../iframe/webpack.config.js --mode=development --output-path ./public/build --output-filename iframe.js",
+    "build:management": "CERAMIC_API=http://localhost:7777 rm -rf ./public/management && (cd ../management && npm run build && mv ./build ../integration/public/management)",
     "serve:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --pinset-directory ./test/data --network inmemory",
     "serve:app": "http-server -c-1 -p 30001 ./public",
-    "test:env": "run-p build:** serve:**",
+    "test:build": "run-p build:**",
+    "test:serve": "run-p serve:**",
+    "test:env": "npm run test:build && npm run test:serve",
     "test:integration": "jest"
   },
   "dependencies": {

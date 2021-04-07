@@ -22,6 +22,7 @@ export default function LinkNewDID({ manager }: Props) {
       </Box>
       <Box>
         <Button
+          id="new-did"
           label="New ID"
           onClick={() => {
             manager.createAccount().then(
