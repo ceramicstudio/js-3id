@@ -43,7 +43,7 @@
     "@ceramicstudio/idx": "^0.10.0",
     "@ethersproject/hdnode": "^5.0.8",
     "@stablelib/sha256": "^1.0.0",
-    "3id-did-provider": "^0.6.0-rc.0",
+    "3id-did-provider": "^0.6.0",
     "caip": "^0.9.2",
     "cross-fetch": "^3.0.6",
     "dids": "^2.0.1",

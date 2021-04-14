@@ -18,7 +18,7 @@
     "@babel/runtime": "7.13.9",
     "@ceramicnetwork/http-client": "^0.10.1",
     "@ceramicstudio/idx": "^0.10.0",
-    "3id-did-provider": "^0.6.0-rc.0",
+    "3id-did-provider": "^0.6.0",
     "errors-utils": "^0.1.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.3.4",
