@@ -13,8 +13,8 @@ import type { Subscription } from 'rxjs'
 
 import { DidProviderProxy } from './didProviderProxy'
 
-const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app.3idconnect.org'
-const CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || 'https://app.3idconnect.org/management'
+const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app-clay.3idconnect.org'
+const CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management'
 
 type PostMessage = (
   message: any,

@@ -39,7 +39,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: lerna run build:dev
+                command: lerna run build:prod
 
       - when:
           condition:
@@ -96,6 +96,22 @@ jobs:
           name: 'Invalidate CloudFront Cache'
           command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /*
 
+  deploy-clay:
+    working_directory: ~/3id-connect
+    docker:
+      - image: 'circleci/python:3.8'
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-s3/sync:
+          arguments: '--acl public-read --cache 604800'
+          from: public
+          overwrite: true
+          to: 's3://3id-connect-clay-ceramic'
+      - run:
+          name: 'Invalidate CloudFront Cache'
+          command: aws cloudfront create-invalidation --distribution-id E11EBQ4LUR3PLA --paths /*
+
 workflows:
   build-deploy:
     jobs:
@@ -106,9 +122,15 @@ workflows:
           filters:
             branches:
               only: develop
-      - deploy-prod:
+      # - deploy-prod:
+      #     requires:
+      #       - test-and-build
+      #     filters:
+      #       branches:
+      #         only: master
+      - deploy-clay:
           requires:
             - test-and-build
           filters:
             branches:
-              only: master
+              only: develop
