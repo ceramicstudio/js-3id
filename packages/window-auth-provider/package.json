@@ -45,5 +45,8 @@
     "rpc-utils": "^0.3.4",
     "rxjs": "^6.6.6",
     "tslib": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

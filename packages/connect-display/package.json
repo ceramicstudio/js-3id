@@ -44,5 +44,8 @@
     "@ceramicnetwork/transport-subject": "^0.3.0",
     "rpc-utils": "^0.3.4",
     "tslib": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

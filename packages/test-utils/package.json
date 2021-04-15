@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
+  "private": true,
   "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
   "keywords": [
     "3id",

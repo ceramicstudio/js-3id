@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:prod": "webpack --config webpack.config.js --mode=production --output-filename index.js",
+    "build:prod": "webpack --config webpack.config.js --mode=production",
+    "build:clay": "webpack --config webpack.config.js --mode=production --output-path ../../public-clay --env clay && cp ../../public/index.html ../../public-clay/index.html",
     "build:dev": "npm run build:prod -- --env develop",
     "dev:build": "webpack --config webpack.config.js --mode=development --watch",
     "dev:server": "http-server -c-1 -p 30001 ../../public",

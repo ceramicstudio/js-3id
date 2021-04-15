@@ -59,6 +59,9 @@
     "rxjs": "^6.6.6",
     "uint8arrays": "^2.1.2"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "eslintIgnore": [
     "src/__tests__/"
   ]

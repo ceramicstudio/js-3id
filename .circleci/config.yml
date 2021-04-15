@@ -39,7 +39,7 @@ jobs:
           steps:
             - run:
                 name: build
-                command: lerna run build:prod
+                command: lerna run build:dev
 
       - when:
           condition:
@@ -50,6 +50,15 @@ jobs:
                 name: build
                 command: lerna run build:prod
 
+      - when:
+          condition:
+            not:
+              equal: [develop, << pipeline.git.branch >>]
+          steps:
+            - run:
+                name: build
+                command: lerna run build:clay
+
       # - run:
       #     name: code-coverage
       #     command: bash <(curl -s https://codecov.io/bash)
@@ -58,6 +67,7 @@ jobs:
           root: ~/3id-connect
           paths:
             - public
+            - public-clay
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
@@ -105,7 +115,7 @@ jobs:
           at: .
       - aws-s3/sync:
           arguments: '--acl public-read --cache 604800'
-          from: public
+          from: public-clay
           overwrite: true
           to: 's3://3id-connect-clay-ceramic'
       - run:
@@ -133,4 +143,4 @@ workflows:
             - test-and-build
           filters:
             branches:
-              only: develop
+              only: master

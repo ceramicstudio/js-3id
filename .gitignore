@@ -3,3 +3,4 @@ dist
 coverage
 /public
 !/public/index.html
+/public-clay
