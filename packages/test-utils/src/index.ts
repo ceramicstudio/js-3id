@@ -47,7 +47,7 @@ export class EthereumMigrationMockAuthProvider implements AuthProvider {
   }
 
   authenticate(message: string): Promise<string> {
-    if (message === 'Add this account as a Ceramic authentication method') {
+    if (message === 'Allow this account to control your identity') {
       return Promise.resolve('0xe80f049f93bd9ad99b24ba7cea21271eea92e493bf01e0633821c29760f69381')
     } else if (message === 'This app wants to view and update your 3Box profile.') {
       return Promise.resolve('0xda87c0f5ff9d1237f0cf7eeb0d6507e8144038d56ccac1c7479df7bf95f20015')

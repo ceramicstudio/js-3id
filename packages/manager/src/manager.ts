@@ -112,7 +112,7 @@ export class Manager {
 
   async _authCreate(): Promise<Uint8Array> {
     const accountId = (await this.authProvider.accountId()).toString()
-    const message = 'Add this account as a Ceramic authentication method'
+    const message = 'Allow this account to control your identity'
     const authSecret = await this.authProvider.authenticate(message)
     const entropy = hash(fromString(authSecret.slice(2)))
     this.store.storeAccount(accountId, toHex(entropy))
