@@ -37,10 +37,10 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "3id-did-provider": "^0.6.0",
+    "3id-did-provider": "^0.7.0",
     "@3id/common": "^0.1.1",
-    "@ceramicnetwork/blockchain-utils-linking": "^0.3.0",
-    "@ceramicnetwork/http-client": "^0.10.1",
+    "@ceramicnetwork/blockchain-utils-linking": "^0.3.1",
+    "@ceramicnetwork/http-client": "^0.10.2",
     "@ceramicstudio/idx": "^0.10.0",
     "@ethersproject/hdnode": "^5.0.8",
     "@stablelib/sha256": "^1.0.0",
@@ -54,7 +54,10 @@
   },
   "devDependencies": {
     "@3id/test-utils": "^0.1.1",
-    "@ceramicnetwork/common": "^0.17.0",
+    "@ceramicnetwork/common": "^0.17.1",
+    "@ceramicnetwork/cli": "^0.22.1",
+    "ipfs-repo": "^9.1.1",
+    "prom-client": "^13.1.0",
     "@ceramicstudio/idx-constants": "^1.0.0",
     "@ceramicstudio/idx-tools": "^0.9.0",
     "did-jwt": "^5.1.2",
