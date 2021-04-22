@@ -81,6 +81,3 @@ export type DIDResponse<K extends DIDMethodName = DIDMethodName> = RPCResponse<
 >
 
 export type DIDProvider = RPCConnection<DIDProviderMethods, [string | null | undefined]>
-
-export type AccountsList = Array<string>
-export type DIDLinksList = Record<string, AccountsList>
