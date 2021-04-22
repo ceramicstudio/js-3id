@@ -41,7 +41,7 @@
     "caip": "^0.9.2"
   },
   "devDependencies": {
-    "@ceramicnetwork/blockchain-utils-linking": "^0.1.0",
+    "@ceramicnetwork/blockchain-utils-linking": "^0.3.1",
     "rpc-utils": "^0.3.4",
     "rxjs": "^6.6.6",
     "tslib": "^2.1.0"

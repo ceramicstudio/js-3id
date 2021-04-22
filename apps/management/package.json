@@ -14,9 +14,9 @@
   "dependencies": {
     "@3id/manager": "^0.1.1",
     "@3id/window-auth-provider": "^0.1.1",
-    "@ceramicnetwork/blockchain-utils-linking": "^0.3.0",
-    "@ceramicnetwork/http-client": "^0.10.1",
-    "@ceramicnetwork/transport-postmessage": "^0.2.0",
+    "@ceramicnetwork/blockchain-utils-linking": "^0.3.1",
+    "@ceramicnetwork/http-client": "^0.10.2",
+    "@ceramicnetwork/transport-postmessage": "^0.3.0",
     "@ceramicstudio/idx": "^0.10.0",
     "@web3-react/core": "^6.1.1",
     "@web3-react/injected-connector": "^6.0.7",
