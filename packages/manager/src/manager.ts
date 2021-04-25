@@ -115,7 +115,7 @@ export class Manager {
 
     const threeId = await ThreeIdProvider.create(threeIdConfig)
     this.threeIdProviders[threeId.id] = await ThreeIdProvider.create(threeIdConfig)
-    void this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
+    await this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
     return threeId.id
   }
 
@@ -176,7 +176,7 @@ export class Manager {
 
     const links = Object.assign(existing, { [accountId]: linkDoc.id.toUrl() })
     await this.idx.set('cryptoAccounts', links)
-    void this.cache.setLinkedDid(accountId, did)
+    await this.cache.setLinkedDid(accountId, did)
   }
 
   // add an AccountID to an existing DID (auth method and link)
@@ -191,7 +191,7 @@ export class Manager {
     try {
       const did = await this.idx.caip10ToDid(accountId)
       if (await this.didExist(did)) {
-        void this.cache.setLinkedDid(accountId, did)
+        await this.cache.setLinkedDid(accountId, did)
       }
       return did
     } catch (e) {

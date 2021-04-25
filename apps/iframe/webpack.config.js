@@ -23,6 +23,12 @@ module.exports = (env, argv) => {
         CONNECT_IFRAME_URL: JSON.stringify('https://app-clay.3idconnect.org'),
         MIGRATION: JSON.stringify('true')
       }
+    } else if (env === 'test') {
+      config = {
+        CERAMIC_API: JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7777'),
+        CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management'),
+        MIGRATION: JSON.stringify('true')
+      }
     } else {
       //production, main branch, default this so that npm releases dont accidently configure differently
       config = {
@@ -36,7 +42,6 @@ module.exports = (env, argv) => {
   if (argv.mode === 'development') {
     config = {
       CERAMIC_API: JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7007'),
-      CONNECT_IFRAME_URL: JSON.stringify('http://localhost:30001'),
       CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management'),
       MIGRATION: JSON.stringify('true')
     }

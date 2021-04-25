@@ -30,7 +30,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test:integration": "tsdx test",
+    "test": "tsdx test",
     "test:server": "rm -rf ./test/data && ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
     "lint": "tsdx lint src test --fix",
     "prepublish": "npm run build",

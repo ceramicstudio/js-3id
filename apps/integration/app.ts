@@ -47,7 +47,7 @@ import { DID } from 'dids'
 const ceramic = new Ceramic('http://localhost:7777')
 window.ceramic = ceramic
 
-const threeIdConnect = new ThreeIdConnect('http://localhost:30001/iframe.html')
+const threeIdConnect = new ThreeIdConnect('http://localhost:30001/index.html')
 window.threeIdConnect = threeIdConnect
 
 // function createCosmosAuthProvider(mnemonic?: string): Promise<CosmosAuthProvider> {
