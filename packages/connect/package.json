@@ -59,8 +59,8 @@
     "@types/store": "^2.0.2",
     "@types/url-parse": "^1.4.3",
     "caip": "^0.9.2",
-    "dids": "^2.0.1",
-    "uint8arrays": "^2.1.2"
+    "dids": "^2.1.0",
+    "uint8arrays": "^2.1.5"
   },
   "publishConfig": {
     "access": "public"

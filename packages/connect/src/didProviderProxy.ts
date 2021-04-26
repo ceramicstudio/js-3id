@@ -1,14 +1,19 @@
-import type { DIDMethodName, DIDRequest, DIDResponse, DIDProvider } from '@3id/common'
+import type { DIDMethodName, DIDRequest, DIDResponse, DIDProvider, DIDProviderMethods } from 'dids'
+import type { SendRequestFunc } from 'rpc-utils'
+
+type DIDProviderWithOrigin = DIDProvider & {
+  send: SendRequestFunc<DIDProviderMethods, [string | null | undefined]>
+}
 
 /**
  *  A DID provider proxy, DID provider interface that acts as rpc client, to
  *  relay request to iframe (rpc server)
  */
-export class DidProviderProxy implements DIDProvider {
+export class DidProviderProxy implements DIDProviderWithOrigin {
   accountId: string
-  provider: DIDProvider
+  provider: DIDProviderWithOrigin
 
-  constructor(provider: DIDProvider, accountId: string) {
+  constructor(provider: DIDProviderWithOrigin, accountId: string) {
     this.provider = provider
     this.accountId = accountId
   }
@@ -17,10 +22,10 @@ export class DidProviderProxy implements DIDProvider {
     return true
   }
 
-  async send<K extends DIDMethodName>(
-    msg: DIDRequest<K>,
+  async send<Name extends DIDMethodName>(
+    msg: DIDRequest<Name>,
     origin?: string | null
-  ): Promise<DIDResponse<K> | null> {
+  ): Promise<DIDResponse<Name> | null> {
     msg.params = Object.assign({}, msg.params, { accountId: this.accountId })
     return await this.provider.send(msg, origin)
   }
