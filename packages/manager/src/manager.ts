@@ -1,5 +1,5 @@
 import { assert } from '@3id/common'
-import type { DIDProvider } from '@3id/common'
+import type { DIDProvider } from 'dids'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
