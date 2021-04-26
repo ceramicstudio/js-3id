@@ -78,8 +78,8 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const manage = new Manager(authProviderRelay, { ceramic: this.ceramic })
 
     //TODO if exist in state, return before even looking up links
-    const existLocally = manage.linkExist(accountId)
-    const existNetwork = await manage.linkExistInNetwork(accountId)
+    const existLocally = await manage.cache.getLinkedDid(accountId)
+    const existNetwork = await manage.linkInNetwork(accountId)
 
     // before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {

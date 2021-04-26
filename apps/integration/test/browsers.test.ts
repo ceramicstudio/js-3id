@@ -14,7 +14,7 @@ describe('connect flow', () => {
 
   beforeEach(async () => {
     await jestPlaywright.resetContext()
-    await page.goto('http://localhost:30001/app.html')
+    await page.goto('http://localhost:30000/app.html')
     // page.on('console', (consoleObj) => console.log(consoleObj.text()))
   })
 
@@ -59,11 +59,11 @@ describe('connect flow', () => {
         const [did, account] = await didAccountPromise
 
         // Check localStorage contents
-        const linksState = await frame.evaluate(() => localStorage.getItem('links'))
-        expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
+        const linksState = await frame.evaluate((key) => localStorage.getItem(key), `LINK_${account}`)
+        expect(JSON.parse(linksState)).toBe(did)
 
-        const accountsState = await frame.evaluate(() => localStorage.getItem('accounts'))
-        expect(JSON.parse(accountsState)).toEqual({ [account]: expect.any(String) })
+        const accountsState = await frame.evaluate((key) => localStorage.getItem(key), `ACC_${did}`)
+        expect(accountsState).toBeTruthy()
       })
     })
   })
@@ -120,8 +120,8 @@ describe('connect flow', () => {
         expect(aka.accounts[1].claim).toMatchSnapshot()
 
         // Check localStorage contents
-        const linksState = await frame.evaluate(() => localStorage.getItem('links'))
-        expect(linksState).toBe(JSON.stringify({ [did]: [account] }))
+        const linksState = await frame.evaluate((key) => localStorage.getItem(key), `LINK_${account}`)
+        expect(JSON.parse(linksState)).toBe(did)
       })
     }
   )

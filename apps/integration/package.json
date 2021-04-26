@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "build:app": "webpack --config webpack.config.js --mode=development",
-    "build:iframe": "CERAMIC_API=http://localhost:7777 webpack --config ../iframe/webpack.config.js --mode=development --output-path ./public/build --output-filename iframe.js",
     "serve:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
-    "serve:app": "http-server -c-1 -p 30001 ./public",
+    "serve:app": "http-server -c-1 -p 30000 ./public",
+    "serve:3id-connect": "http-server -c-1 -p 30001 ../../public",
     "test:env": "run-p build:** serve:**",
-    "test:integration": "jest"
+    "test:integration": "CERAMIC_API=http://localhost:7777 lerna run build:test && jest"
   },
   "dependencies": {
     "@3id/connect": "^0.1.2",

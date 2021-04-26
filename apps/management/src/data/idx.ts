@@ -99,10 +99,11 @@ export function getImageSrc(
 }
 
 export async function getDIDsData(manager: Manager): Promise<DIDsData> {
-  const dids = manager.listDIDS() ?? []
+  const dids = await manager.listDIDS() ?? []
   const entries = await Promise.all(
     dids.map(async (did) => {
-      const accounts = manager.accountLinks(did) ?? []
+      const accountsObj = await idx.get<Map<string, string>>('cryptoAccounts', did)
+      const accounts = accountsObj ? Object.keys(accountsObj) : []
       return {
         did,
         accounts: accounts.map((account) => new AccountID(account)),

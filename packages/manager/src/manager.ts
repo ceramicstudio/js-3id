@@ -1,5 +1,5 @@
-import { assert, toHex } from '@3id/common'
-import type { AccountsList, DIDProvider } from '@3id/common'
+import { assert } from '@3id/common'
+import type { DIDProvider } from '@3id/common'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -8,7 +8,7 @@ import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
 import { fromString } from 'uint8arrays'
 
-import { AccountStore } from './accountStore'
+import { DIDStore, LinkCache } from './stores'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
 import type { AuthConfig, SeedConfig } from './types'
 
@@ -17,15 +17,20 @@ const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' :
 
 export class Manager {
   authProvider: AuthProvider
-  store: AccountStore
+  store: DIDStore
+  cache: LinkCache
   idx: IDX
   ceramic: CeramicClient
   threeIdProviders: Record<string, ThreeIdProvider>
 
   // needs work on wording for "account", did, caip10 etc
-  constructor(authprovider: AuthProvider, opts: { store?: AccountStore; ceramic?: CeramicClient }) {
+  constructor(
+    authprovider: AuthProvider,
+    opts: { store?: DIDStore; ceramic?: CeramicClient; cache?: LinkCache }
+  ) {
     this.authProvider = authprovider
-    this.store = opts.store || new AccountStore()
+    this.store = opts.store || new DIDStore()
+    this.cache = opts.cache || new LinkCache()
     this.ceramic = opts.ceramic || new CeramicClient(CERAMIC_API)
     this.idx = new IDX({ ceramic: this.ceramic })
     this.threeIdProviders = {}
@@ -37,31 +42,42 @@ export class Manager {
     const accountId = (await this.authProvider.accountId()).toString()
     if (this.threeIdProviders[accountId]) return this.threeIdProviders[accountId].id
 
-    // If in state store, get
-    let authSecret = this.store.getStoredAccount(accountId)
-    const accountAlreadyExist = Boolean(authSecret)
-
-    // Otherwise request from user
-    if (!authSecret) {
-      authSecret = await this._authCreate()
+    try {
+      const provider = await this.setDidByAccountId(accountId)
+      return provider.id
+    } catch (e) {
+      // if not available, continue
     }
+
+    const didNetwork = await this.linkInNetwork(accountId)
+
+    try {
+      assert.isDefined(didNetwork, 'Expects didNetwork Link')
+      const provider = await this.setDid(didNetwork)
+      return provider.id
+    } catch (e) {
+      // if not available, continue
+    }
+
+    // Account not local if not loaded already by now
+
+    const authSecret = await this._authCreate()
 
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrate, authSecretAdd
-    if (!accountAlreadyExist && DID_MIGRATION) {
+    if (DID_MIGRATION) {
       legacyDid = await legacyDIDLinkExist(accountId)
-      if (legacyDid) {
-        const existInNetwork = Boolean(await this.linkExistInNetwork())
-        if (!existInNetwork) {
-          seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
-          authSecretAdd = authSecret
-          legacyConfig = { v03ID: legacyDid, seed } as SeedConfig
-          migrate = true
-        }
+      if (legacyDid && !didNetwork) {
+        seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
+        authSecretAdd = authSecret
+        legacyConfig = { v03ID: legacyDid, seed } as SeedConfig
+        migrate = true
       }
     }
 
-    const configId = migrate ? legacyConfig as SeedConfig : ({ authSecret, authId: accountId } as AuthConfig)
+    const configId = migrate
+      ? (legacyConfig as SeedConfig)
+      : ({ authSecret, authId: accountId } as AuthConfig)
     assert.isDefined<SeedConfig | AuthConfig>(configId, 'Identity Config to initialize identity')
     const did = await this._initIdentity(configId)
 
@@ -99,6 +115,7 @@ export class Manager {
 
     const threeId = await ThreeIdProvider.create(threeIdConfig)
     this.threeIdProviders[threeId.id] = await ThreeIdProvider.create(threeIdConfig)
+    await this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
     return threeId.id
   }
 
@@ -111,31 +128,29 @@ export class Manager {
   }
 
   async _authCreate(): Promise<Uint8Array> {
-    const accountId = (await this.authProvider.accountId()).toString()
     const message = 'Allow this account to control your identity'
     const authSecret = await this.authProvider.authenticate(message)
     const entropy = hash(fromString(authSecret.slice(2)))
-    this.store.storeAccount(accountId, toHex(entropy))
     return entropy
   }
 
-  // TODO maybe setByAccountID as well
   async setDid(did: string): Promise<ThreeIdProvider> {
     if (!this.threeIdProviders[did]) {
-      // todo, use assert
-      const didLinks = this.store.getDIDLinks(did)
-      if (!didLinks) throw new Error('Account does not exist')
-      const accountId = didLinks[0]
-      if (!accountId) throw new Error('Account does not exist')
-      const authSecret = this.store.getStoredAccount(accountId)
-      if (!authSecret) throw new Error('Account does not exist')
-      await this._initIdentity({ authSecret, authId: accountId })
+      const seed = await this.store.getStoredDID(did)
+      assert.isDefined(seed, 'Account does not exist')
+      await this._initIdentity({ seed } as SeedConfig)
     }
 
     const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
     await this.ceramic.setDIDProvider(didProvider as any)
 
     return this.threeIdProviders[did]
+  }
+
+  async setDidByAccountId(accountId: string): Promise<ThreeIdProvider> {
+    const did = await this.cache.getLinkedDid(accountId)
+    assert.isDefined(did, 'Account does not exist')
+    return this.setDid(did)
   }
 
   // internal for now, until auth/link not strictly required together
@@ -161,7 +176,7 @@ export class Manager {
 
     const links = Object.assign(existing, { [accountId]: linkDoc.id.toUrl() })
     await this.idx.set('cryptoAccounts', links)
-    this.store.storeDIDLinks(did, Object.keys(links))
+    await this.cache.setLinkedDid(accountId, did)
   }
 
   // add an AccountID to an existing DID (auth method and link)
@@ -171,37 +186,28 @@ export class Manager {
     await this._addAuthMethod(did, authSecret)
   }
 
-  // return true if a link exist for AccountId/caip10 in network
-  async linkExistInNetwork(accountId?: string): Promise<LinkProof | undefined> {
-    accountId = accountId || (await this.authProvider.accountId()).toString()
-    const doc = await this.ceramic.createDocument(
-      'caip10-link',
-      { metadata: { controllers: [accountId] } },
-      { anchor: false, publish: false }
-    )
-    const linkDoc = await this.ceramic.loadDocument(doc.id)
-    return linkDoc.content as LinkProof | undefined
+  // return did if a link exist for AccountId/caip10 in network, otherwise null
+  async linkInNetwork(accountId: string): Promise<string | null> {
+    try {
+      const did = await this.idx.caip10ToDid(accountId)
+      if (await this.didExist(did)) {
+        await this.cache.setLinkedDid(accountId, did)
+      }
+      return did
+    } catch (e) {
+      return null
+    }
   }
 
   // returns a list of dids of available in store
-  listDIDS(): Array<string> | null {
+  async listDIDS(): Promise<Array<string>> {
     return this.store.getDIDs()
   }
 
-  // returns a list of accountIds linked to given did
-  accountLinks(did: string): AccountsList | undefined {
-    return this.store.getDIDLinks(did)
-  }
-
   // return true if did account exist in store
-  didExist(did: string): boolean {
-    const list = this.listDIDS()
+  async didExist(did: string): Promise<boolean> {
+    const list = await this.listDIDS()
     return Boolean(list && list.includes(did))
-  }
-
-  // return true if a link/did exist for AccountId/caip10 in store
-  linkExist(accountId: string): boolean {
-    return Boolean(this.store.getStoredAccount(accountId))
   }
 
   didProvider(did: string): DIDProvider | undefined {

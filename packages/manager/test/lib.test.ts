@@ -121,8 +121,7 @@ describe('3ID Manager', () => {
     expect(links[accountId1]).toBeTruthy()
     expect(links[accountId2]).toBeTruthy()
 
-    // expect 1 did in, may not work in moment
-    const didlist = manager2.listDIDS()
+    const didlist = await manager2.listDIDS()
     expect(didlist?.length === 1).toBeTruthy()
     expect(didlist?.includes(did1)).toBeTruthy()
   })
