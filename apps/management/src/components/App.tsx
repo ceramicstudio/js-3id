@@ -1,4 +1,4 @@
-import { Web3ReactProvider } from '@web3-react/core'
+import { Provider } from '@ceramicstudio/multiauth'
 import { Box, Grommet, Text } from 'grommet'
 
 import { useRemoteProxy, useDIDsData } from '../hooks'
@@ -7,30 +7,22 @@ import { theme } from '../theme'
 
 import IdentitySelect from './IdentitySelect'
 
-function getLibrary(provider: any): any {
-  return provider
-}
-
 export default function App() {
   const proxy = useRemoteProxy()
   const data = useDIDsData()
 
   const contents =
-    data && proxy ? (
-      <IdentitySelect dids={data} manager={proxy.manager} />
-    ) : (
-      <Text>Loading...</Text>
-    )
+    data && proxy ? <IdentitySelect dids={data} manager={proxy.manager} /> : <Text>Loading...</Text>
 
   return (
     <Grommet full theme={theme}>
-      <Web3ReactProvider getLibrary={getLibrary}>
+      <Provider>
         <Box>
           <Box alignSelf="center" margin="large" width="large">
             {contents}
           </Box>
         </Box>
-      </Web3ReactProvider>
+      </Provider>
     </Grommet>
   )
 }

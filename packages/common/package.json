@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "errors-utils": "^0.1.0",
-    "uint8arrays": "^2.1.2"
+    "uint8arrays": "^2.1.5"
   },
   "devDependencies": {
     "did-jwt": "^5.0.1",

@@ -1,27 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 
 import { ThreeIDError, assert } from '@3id/common'
-import type {
-  DIDMethodName,
-  DIDProvider,
-  DIDProviderMethods,
-  DIDRequest,
-  DIDResponse,
-  UserAuthenticateRequest,
-  UserRequestHandler,
-  UserRequestErrorCallback,
-  UserRequestCancel,
-} from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import { Manager } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
 import ThreeIdProvider from '3id-did-provider'
+import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
 
 import { IframeService } from './iframeService'
+import type {
+  UserAuthenticateRequest,
+  UserRequestHandler,
+  UserRequestErrorCallback,
+  UserRequestCancel,
+} from './types'
 import { rpcError } from './utils'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'

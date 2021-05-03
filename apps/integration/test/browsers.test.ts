@@ -10,11 +10,12 @@ beforeAll(async () => {
 })
 
 describe('connect flow', () => {
-  jest.setTimeout(60000)
+  jest.setTimeout(120000)
 
   beforeEach(async () => {
     await jestPlaywright.resetContext()
     await page.goto('http://localhost:30000/app.html')
+    page.setDefaultTimeout(120000)
     // page.on('console', (consoleObj) => console.log(consoleObj.text()))
   })
 
@@ -43,7 +44,7 @@ describe('connect flow', () => {
         }, providerType)
 
         // Continue button
-        const button = await frame.waitForSelector('#accept', { timeout: 60000 })
+        const button = await frame.waitForSelector('#accept')
         await button.click()
         await new Promise((res) =>
           setTimeout(() => {
@@ -52,14 +53,17 @@ describe('connect flow', () => {
         )
 
         // Continue create account
-        const buttontwo = await frame.waitForSelector('#accept', { timeout: 60000 })
+        const buttontwo = await frame.waitForSelector('#accept')
         await buttontwo.click()
         await page.waitForSelector('.threeid-connect', { state: 'hidden' })
 
         const [did, account] = await didAccountPromise
 
         // Check localStorage contents
-        const linksState = await frame.evaluate((key) => localStorage.getItem(key), `LINK_${account}`)
+        const linksState = await frame.evaluate(
+          (key) => localStorage.getItem(key),
+          `LINK_${account}`
+        )
         expect(JSON.parse(linksState)).toBe(did)
 
         const accountsState = await frame.evaluate((key) => localStorage.getItem(key), `ACC_${did}`)
@@ -120,7 +124,10 @@ describe('connect flow', () => {
         expect(aka.accounts[1].claim).toMatchSnapshot()
 
         // Check localStorage contents
-        const linksState = await frame.evaluate((key) => localStorage.getItem(key), `LINK_${account}`)
+        const linksState = await frame.evaluate(
+          (key) => localStorage.getItem(key),
+          `LINK_${account}`
+        )
         expect(JSON.parse(linksState)).toBe(did)
       })
     }

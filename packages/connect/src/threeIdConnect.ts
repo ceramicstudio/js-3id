@@ -1,4 +1,3 @@
-import type { DIDProvider } from '@3id/common'
 import {
   createConnectIframe,
   createDisplayConnectServerRPC,
@@ -6,6 +5,7 @@ import {
 } from '@3id/connect-display'
 import { createAuthProviderServer } from '@3id/window-auth-provider'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
+import type { DIDProvider } from 'dids'
 import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
@@ -14,7 +14,8 @@ import type { Subscription } from 'rxjs'
 import { DidProviderProxy } from './didProviderProxy'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app-clay.3idconnect.org'
-const CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management'
+const CONNECT_MANAGE_URL =
+  process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management'
 
 type PostMessage = (
   message: any,
@@ -111,6 +112,6 @@ export class ThreeIdConnect {
    */
   getDidProvider(): DidProviderProxy {
     if (!this.authProvider) throw new Error('setAuthProvider required')
-    return new DidProviderProxy(this.RPCProvider!, this.accountId!)
+    return new DidProviderProxy(this.RPCProvider as DIDProvider, this.accountId!)
   }
 }
