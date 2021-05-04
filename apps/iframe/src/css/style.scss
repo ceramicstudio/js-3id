@@ -1,15 +1,5 @@
 @import './variables.scss';
 
-@font-face {
-  font-family: 'JetBrains';
-  src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/web/eot/JetBrainsMono-Regular.eot') format('embedded-opentype'),
-    url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/web/woff2/JetBrainsMono-Regular.woff2') format('woff2'),
-    url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/web/woff/JetBrainsMono-Regular.woff') format('woff'),
-    url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/ttf/JetBrainsMono-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
 h1,
 h2,
 h3,
@@ -32,10 +22,6 @@ p {
   margin: 0;
 }
 
-// p, span {
-//   font-family: 'JetBrains';
-// }
-
 button {
   width: 100%;
   height: 40px;
@@ -45,46 +31,46 @@ button {
   justify-content: center;
   align-items: center;
   border: none;
-  box-shadow: 2px 3px 8px 0px #00000025;
 
   &:active:focus {
     outline: none !important;
     border: none;
-    box-shadow: inset 1px 1px 4px #0000001a;
   }
 
   &:active {
     outline: none !important;
     border: none;
-    box-shadow: 2px 3px 8px 0px #00000025;
   }
 
   &:focus {
     outline: none !important;
     border: none;
-    box-shadow: 2px 3px 8px 0px #00000025;
   }
-}
 
-.primaryButton {
-  color: $threeBoxBlue;
-  background-color: white;
-  border: none;
-}
-
-.primaryButtonHalf {
-  color: $threeBoxBlue;
-  background-color: white;
-  border: none;
-  width: 46%;
-}
-
-button {
   svg {
     width: 24px;
     height: 24px;
     margin-left: 6px;
   }
+}
+
+.primaryButton {
+  color: white;
+  background-color: black;
+  border: none;
+  font-weight: 300;
+  box-shadow: none;
+  font-size: 13px;
+}
+
+.secondaryButton {
+  color: $textColor;
+  background-color: white;
+  border: none;
+  margin: 5px 0px 10px 0px;
+  font-weight: 300;
+  box-shadow: none;
+  font-size: 13px;
 }
 
 @keyframes slideInFromLeft {
@@ -94,7 +80,6 @@ button {
   100% {
     transform: translateX(0);
   }
-
 }
 
 @keyframes slideInFromBottom {
@@ -104,11 +89,10 @@ button {
   100% {
     transform: translateY(0);
   }
-
 }
 
 .card {
-  width: 420px;
+  width: 380px;
   border: 1px solid $borderColor;
   border-radius: $radius;
   display: flex;
@@ -149,7 +133,6 @@ button {
 
 .content {
   width: 100%;
-  padding-top: 5px;
 }
 
 .contentMobile {
@@ -161,7 +144,6 @@ button {
 .controls {
   width: 100%;
   height: 55px;
-  // border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -181,8 +163,8 @@ button {
     align-items: center;
 
     svg {
-      height: 30px;
-      width: 30px;
+      height: 25px;
+      width: 25px;
       cursor: pointer;
       // transition: $transition;
 
@@ -199,30 +181,22 @@ button {
     }
   }
 
-  .close {
+  .headerLeft {
+    font-weight: 300;
+    color: $textColor;
+    font-size: 13px;
     padding: 0 10px;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    &:hover {
+    a {
+      color: $textColor;
+    }
+
+    a:hover {
       cursor: pointer;
-
-      .close_line {
-        background-color: $threeBoxBlack;
-      }
-    }
-
-    .close_line {
-      width: 2px;
-      height: 16px;
-      background-color: $symbolGrey;
-      transform: rotate(45deg);
-    }
-
-    .close_line.flip {
-      position: absolute;
-      transform: rotate(135deg) !important;
+      color: black;
     }
   }
 }
@@ -235,123 +209,19 @@ button {
   align-items: center;
 }
 
-.headerLogo {
-  width: 50px;
-  height: 50px;
-  border-radius: $radius;
-  background-color: transparent;
-  box-shadow: $dropShadow;
-  margin-top: 25px;
-}
-
-.headerLogo_empty {
-  width: 50px;
-  height: 50px;
-  border-radius: $radius;
-  background-color: $threeBoxBlue;
-  box-shadow: $dropShadow;
-}
-
 .walletSelect_error {
-  color: $threeBoxRed;
+  color: $errorRed;
   font-size: 13px;
   font-weight: 600;
-  height: 40px;
-  padding-top: 11px;
-}
-
-.headerText {
-  padding: 30px 0px;
-  width: 100%;
-
-  .primary {
-    color: #2a4afe;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    // font-family: 'Marcher';
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  .sub {
-    text-align: center;
-    font-size: 14px;
-    font-weight: 400;
-    color: #585c60;
-  }
-}
-
-.headerProfile {
-  margin-top: 20px;
-  width: 200px;
-  min-height: 50px;
-  background-color: white;
-  border-radius: 25px;
-  border: solid #dfdfdf 2px;
-  margin-left: auto;
-  margin-right: auto;
-
-  .img {
-    height: 41px;
-    width: 41px;
-    margin: 2px;
-    background-color: black;
-    border-radius: 23px;
-    float: left;
-  }
-
-  .name {
-    float: left;
-    padding: 12px 15px;
-    font-weight: 500;
-  }
-}
-
-.walletSelect {
-  border: 1px solid $borderColor;
-  box-shadow: $dropShadow;
-  height: 62px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 36px;
-  border-radius: $radius;
-  cursor: pointer;
-  padding: 6px;
-}
-
-.walletSelectMobile {
-  margin-bottom: 86px;
-}
-
-.walletSelect_content {
-  margin-left: 8px;
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  h5 {
-    width: 100%;
-    color: $threeBoxBlue;
-  }
-
-  svg {
-    margin-right: 12px;
-    margin-left: 6px;
-    height: 28px;
-    width: 30px;
-  }
+  height: 50px;
+  text-align: center;
 }
 
 .actions {
-  display: flex;
-  // flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 0 30px 0px 30px;
+  padding: 0 20px 0px 20px;
   position: relative;
 }
 
@@ -366,35 +236,12 @@ button {
 }
 
 .promptText {
-  .primaryText {
-    color: #2a4afe
-  }
-
-  .subText {
-    position: relative;
-
-    span {
-      color: $threeBoxBlue;
-    }
-  }
-}
-
-.promptHeader {
-  width: 100%;
-  float: left;
-}
-
-.promptText {
-  padding: 15px 30px 30px 30px;
+  padding: 10px 30px 25px 30px;
 
   .primaryText {
     color: #63686d;
     font-weight: 600;
     font-size: 15px;
-  }
-
-  .primaryHighlight {
-    color: #2a4afe;
   }
 
   .subText {
@@ -403,176 +250,3 @@ button {
     font-size: 13px;
   }
 }
-
-.onClickOutside {
-  display: none;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.divider {
-  width: 100%;
-  border-top: solid #dfdfdf 1px;
-}
-
-.providerBox {
-  width: 100%;
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  background-color: white;
-  border: 1px solid $borderColor;
-  box-shadow: $dropShadow;
-  top: -150px;
-  border-radius: $radius;
-
-  grid-template-columns: repeat(1, 100% [col-start]);
-  grid-row-gap: 6px;
-  z-index: 1;
-
-  .providerRow {
-    width: 100%;
-    float: left;
-    padding-top: 15px;
-  }
-
-  .provider {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    border-radius: $radius;
-    padding: 6px;
-
-    &:hover {
-      cursor: pointer;
-      background-color: $hoverBackground;
-    }
-
-    .providerText {
-      font-weight: 500;
-    }
-  }
-}
-
-.providerBoxMobile {
-  top: -110px !important;
-}
-
-.providerImage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  svg {
-    background-color: transparent;
-    width: 40px;
-    height: 40px;
-    border-radius: $radius;
-    object-fit: contain;
-    margin-right: 15px;
-  }
-}
-
-.providerImageText {
-  font-size: 18px;
-}
-
-.providerBox.open {
-  display: flex;
-}
-
-.spaceLine {
-  width: 100%;
-  padding: 10px 10px;
-
-  .spaceName {}
-
-  .access {
-    float: right;
-    color: #2a4afe;
-    font-weight: 500;
-  }
-}
-
-.footerText {
-  font-size: 9px;
-  padding: 25px 30px 20px 30px;
-  color: #817972a6;
-  text-align: center;
-
-  a {
-    color: #817972a6;
-    &:hover {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  }
-}
-
-.buttonFooter {
-  width: 100%;
-  float: left;
-  margin-top: 17px;
-
-  .btnAllow {
-    background-color: #2a4afe;
-    border-color: #2e6da4;
-    color: #ffffff;
-    float: right;
-    padding: 6px 25px;
-  }
-
-  .btnDecline {
-    color: #2a4afe;
-    float: left;
-    margin: 7px;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-}
-
-.marginTop25 {
-  margin-top: 25px;
-}
-
-.secondaryButton {
-  background-color: white;
-  border: none;
-}
-
-#requestBox {}
-
-#requestHeader {}
-
-// @media only screen and (max-width: 600px) {
-//   // .card {
-//   //   width: 100vw;
-//   //   height: 100vh;
-//   //   border: none;
-//   //   justify-content: flex-start;
-//   // }
-
-//   // .providerBox {
-//   //   top: -110px;
-//   // }
-
-//   // .content {
-//   //   width: 100%;
-//   //   height: 80%;
-//   //   padding-top: 125px;
-//   //   display: flex;
-//   //   flex-direction: column;
-//   //   justify-content: space-between;
-//   // }
-
-//   // .walletSelect {
-//   //   margin-bottom: 86px;
-//   // }
-// }

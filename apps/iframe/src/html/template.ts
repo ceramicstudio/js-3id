@@ -16,12 +16,11 @@ const template = (data, isMobile) => `
         >
           ${assets.Logo}
         </a>
-        <span> Connect your data </span>
+        <span> 3ID Connect </span>
       </div>
 
-      <div class='${style.close}' onClick="hideIframe()">
-        <div class='${style.close_line} ${style.flip}'></div>
-        <div class='${style.close_line}'></div>
+      <div class='${style.headerLeft}'>
+        ${header(data)}
       </div>
     </div>
 
@@ -39,25 +38,34 @@ const template = (data, isMobile) => `
           ${data.error ? error(data) : ''}
         </div>
       </div>
-      <div class='${style.footerText}'>
-        <p> This site uses Ceramic and 3ID to give you control of your data.
-          <a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
-            What is this?
-          </a>
-        </p>
-      </div>
     </div>
   </div>
 `
 
+const header = (data) => {
+  if (data.request.type === 'authenticate') {
+    if (data.request.did) {
+      const did = data.request.did
+      return `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+    } 
+    return ``
+  }
+  if (data.request.type === 'account') {
+    return `<a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
+    What is this?
+  </a>`
+  }
+}
+
+
 const content = (data) => {
   if (data.request.type === 'authenticate') {
-    return `This site wants to access your profile${
+    return `This site wants to access your personal data${
       data.request.paths.length === 0 ? '' : ' and ' + data.request.paths.length + ' data source'
     }${data.request.paths.length > 1 ? 's. ' : '.'}`
   }
   if (data.request.type === 'account') {
-    return `You have not used this account with 3ID, do you want to create a new account or link to existing?`
+    return `Connect your wallet to a decentralized ID.`
   }
   // may not use 
   if (data.request.type === 'migration') {
@@ -73,19 +81,24 @@ const actions = (data) => {
     } >
         Continue
       </button>
+      <button id='decline' class='${style.secondaryButton}' ${
+        data.error ? 'style="display:none;"' : ''
+      } >
+        Cancel
+      </button>
     `
   }
   if (data.request.type === 'account') {
     return `
-      <button id='accept' style='margin-right:8%;' class='${style.primaryButtonHalf}' ${
+    <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''
     } >
-        Create
+        Connect to existing ID
       </button>
-      <button id='decline' class='${style.primaryButtonHalf}' ${
+      <button id='decline' class='${style.secondaryButton}' ${
       data.error ? 'style="display:none;"' : ''
     } >
-        Link
+        Create a new ID
       </button>
     `
   }

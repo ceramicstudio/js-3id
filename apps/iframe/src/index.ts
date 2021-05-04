@@ -45,7 +45,7 @@ const requestHandler: UserRequestHandler = async (req) => {
     })
     if (req.type === 'account') {
       decline.addEventListener('click', () => {
-        resolve(false)
+        resolve(true)
       })
     }
   })
@@ -79,4 +79,6 @@ const closing = (cb) => {
 connectService.start(requestHandler, errorCb, closing)
 
 // For testing, uncomment one line to see static view
-// render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","spaces":["metamask", "3Box", "thingspace"], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}}`))
+// render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","paths":[], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}, "did":"did:3:bafyreihacllrcwagdqv7xn6yzw2xdy6wh2r6vsymbrd66vnh2o32dxpc6u"}`))
+// render(JSON.parse(`{"type":"account","origin":"localhost:30001"}`))
+

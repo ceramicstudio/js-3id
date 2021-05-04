@@ -49,11 +49,11 @@ describe('connect flow', () => {
         await new Promise((res) =>
           setTimeout(() => {
             res()
-          }, 1000)
+          }, 2000)
         )
 
         // Continue create account
-        const buttontwo = await frame.waitForSelector('#accept')
+        const buttontwo = await frame.waitForSelector('#decline')
         await buttontwo.click()
         await page.waitForSelector('.threeid-connect', { state: 'hidden' })
 
