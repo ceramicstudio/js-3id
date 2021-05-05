@@ -38,18 +38,11 @@ export type UserAuthenticateRequest = {
   type: 'authenticate'
   paths: Array<string>
   origin?: string | null
+  did?: string
 }
 export type UserAccountRequest = {
   type: 'account'
   accounts: Array<string>
-}
-export type UserCreateRequest = {
-  type: 'create'
-}
-export type UserLinkRequest = {
-  type: 'link'
-  baseDid: string
-  accountId: string
 }
 export type UserMigrationRequest = {
   type: 'migration'
@@ -58,8 +51,6 @@ export type UserMigrationRequest = {
 export type UserRequest =
   | UserAuthenticateRequest
   | UserAccountRequest
-  | UserCreateRequest
-  | UserLinkRequest
   | UserMigrationRequest
 export type UserRequestWithError = UserRequest & { error?: string }
 

@@ -96,14 +96,14 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     // after since 3id-did-provider permissions may exist
     if (existLocally && !existNetwork) {
-      await this.userPermissionRequest(authReq, domain)
+      await this.userPermissionRequest(authReq, domain, did)
     }
   }
 
-  async userPermissionRequest(authReq: DIDRequest, domain?: string | null): Promise<void> {
+  async userPermissionRequest(authReq: DIDRequest, domain?: string | null, did?:string): Promise<void> {
     assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
 
-    const userReq = this._createUserRequest(authReq, domain)
+    const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
     const userPermission = userReq ? await this.userRequestHandler(userReq) : null
     if (!userPermission) throw new Error('3id-connect: Request not authorized')
@@ -188,7 +188,8 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
   _createUserRequest<K extends keyof DIDProviderMethods>(
     req: RPCRequest<DIDProviderMethods, K>,
-    origin?: string | null
+    origin?: string | null,
+    did?: string
   ): UserAuthenticateRequest | null {
     assert.isDefined(req.params, 'Request parameters must be provided')
     const params = req.params as DIDProviderMethods[K]['params'] & { paths?: Array<string> }
@@ -202,6 +203,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       type: 'authenticate',
       origin,
       paths: params.paths || [],
+      did: did || ''
     }
   }
 }
