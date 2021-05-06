@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
+    "target": "ES5",
     "lib": ["dom", "esnext"],
     "keyofStringsOnly": true,
     "importHelpers": true,
