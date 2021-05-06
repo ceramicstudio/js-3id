@@ -1,5 +1,6 @@
 import { assert } from '@3id/common'
 import type { DIDProvider } from 'dids'
+import { DID } from 'dids'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -7,10 +8,14 @@ import type { CryptoAccounts } from '@ceramicstudio/idx-constants'
 import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
 import { fromString } from 'uint8arrays'
+import KeyDidResolver from 'key-did-resolver'
+import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
+import { Resolver } from 'did-resolver'
 
 import { DIDStore, LinkCache } from './stores'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
 import type { AuthConfig, SeedConfig } from './types'
+import { Caip10Link } from '@ceramicnetwork/stream-caip10-link'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
@@ -141,8 +146,16 @@ export class Manager {
       await this._initIdentity({ seed } as SeedConfig)
     }
 
-    const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-    await this.ceramic.setDIDProvider(didProvider as any)
+    const didProvider = this.threeIdProviders[did].getDidProvider()
+    const keyDidResolver = KeyDidResolver.getResolver()
+    const threeIdResolver = ThreeIdResolver.getResolver(this.ceramic)
+    const resolver = new Resolver({
+      ...threeIdResolver,
+      ...keyDidResolver,
+    })
+    const didInstance = new DID({ provider: didProvider, resolver: resolver })
+    await didInstance.authenticate()
+    await this.ceramic.setDID(didInstance)
 
     return this.threeIdProviders[did]
   }
@@ -155,28 +168,26 @@ export class Manager {
 
   // internal for now, until auth/link not strictly required together
   async _addLink(did: string, linkProof?: LinkProof | null): Promise<void> {
-    const accountId = (await this.authProvider.accountId()).toString()
+    const accountId = await this.authProvider.accountId()
     await this.setDid(did)
 
     const existing: CryptoAccounts = (await this.idx.get('cryptoAccounts')) || {}
-    if (existing && existing[accountId]) return
+    if (existing && existing[accountId.toString()]) return
 
     if (!linkProof) {
       linkProof = await this.authProvider.createLink(did)
     }
 
-    const linkDoc = await this.ceramic.createDocument(
-      'caip10-link',
-      { metadata: { controllers: [accountId] } },
-      { anchor: false, publish: false }
-    )
+    const accountLink = await Caip10Link.fromAccount(this.ceramic, accountId, {
+      anchor: false,
+      publish: false,
+    })
+    await accountLink.setDidProof(linkProof)
+    await this.ceramic.pin.add(accountLink.id)
 
-    await linkDoc.change({ content: linkProof })
-    await this.ceramic.pin.add(linkDoc.id)
-
-    const links = Object.assign(existing, { [accountId]: linkDoc.id.toUrl() })
+    const links = Object.assign(existing, { [accountId.toString()]: accountLink.id.toUrl() })
     await this.idx.set('cryptoAccounts', links)
-    await this.cache.setLinkedDid(accountId, did)
+    await this.cache.setLinkedDid(accountId.toString(), did)
   }
 
   // add an AccountID to an existing DID (auth method and link)

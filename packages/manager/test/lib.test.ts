@@ -9,7 +9,7 @@ import { publishIDXConfig } from '@ceramicstudio/idx-tools'
 import { Manager } from '../src'
 
 describe('3ID Manager', () => {
-  jest.setTimeout(30000)
+  jest.setTimeout(60000)
 
   const ceramic = new Ceramic('http://localhost:7777')
   const idx = new IDX({ ceramic })
