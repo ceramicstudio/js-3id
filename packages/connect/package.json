@@ -52,7 +52,7 @@
     "@ceramicnetwork/http-client": "^1.0.0-rc.6",
     "@ceramicnetwork/transport-postmessage": "^0.3.0",
     "@ceramicstudio/idx": "^0.11.0-rc.0",
-    "@ceramicstudio/idx-tools": "^0.9.0",
+    "@ceramicstudio/idx-tools": "^0.10.0-rc.0",
     "@ethersproject/hdnode": "^5.0.8",
     "@ethersproject/wallet": "^5.0.11",
     "@types/create-hash": "^1.2.2",
