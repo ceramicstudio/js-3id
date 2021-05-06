@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`3ID Manager creates/loads and migrates a 3IDV0 did 1`] = `
+Object {
+  "affiliations": Array [
+    "3Box",
+    "MySchool",
+  ],
+  "background": Object {
+    "original": Object {
+      "height": 175,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmXKHtXTJwEVqd3YH9SfBpahCViNPBx72vHdJYyA1QepWU",
+      "width": 1000,
+    },
+  },
+  "description": "Computer make code.",
+  "emoji": "👻",
+  "homeLocation": "NYC",
+  "image": Object {
+    "original": Object {
+      "height": 170,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmeHYKP73jcJ9UboZQ5VHsaoqJRT9Y7R98To7whiv8Sd7g",
+      "width": 170,
+    },
+  },
+  "name": "Zach",
+  "url": "mysite.com",
+}
+`;
+
+exports[`3ID Manager creates/loads and migrates a 3IDV0 did 2`] = `
+Object {
+  "0x5314846209d781caad6258b0de7c13acb99ef692@eip155:1": "ceramic://k2t6wyse1ukyg526sxjhqe9oqvmsrpe2qoo0ee4jklo424ybz3kn9y7lt0xnvl",
+}
+`;
+
+exports[`3ID Manager creates/loads and migrates a 3IDV0 did 3`] = `"https://twitter.com/hipsense/status/1362509494824091651"`;
+
+exports[`3ID Manager creates/loads and migrates a 3IDV0 did 4`] = `"https://gist.githubusercontent.com/zachferland/57e5225fe315a9b8d89a9557949d8bf8/raw/3fa1ad4da46a007f453f3ed8534ccfc3b160e203/did.txt"`;
+
+exports[`3ID Manager setDid returns with did from store 1`] = `
+Object {
+  "affiliations": Array [
+    "3Box",
+    "MySchool",
+  ],
+  "background": Object {
+    "original": Object {
+      "height": 175,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmXKHtXTJwEVqd3YH9SfBpahCViNPBx72vHdJYyA1QepWU",
+      "width": 1000,
+    },
+  },
+  "description": "Computer make code.",
+  "emoji": "👻",
+  "homeLocation": "NYC",
+  "image": Object {
+    "original": Object {
+      "height": 170,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmeHYKP73jcJ9UboZQ5VHsaoqJRT9Y7R98To7whiv8Sd7g",
+      "width": 170,
+    },
+  },
+  "name": "Zach",
+  "url": "mysite.com",
+}
+`;
+
+exports[`3ID Manager setDid returns with did from store 2`] = `null`;
+
+exports[`3ID Manager setDid returns with did from store 3`] = `"https://twitter.com/hipsense/status/1362509494824091651"`;
+
+exports[`3ID Manager setDid returns with did from store 4`] = `"https://gist.githubusercontent.com/zachferland/57e5225fe315a9b8d89a9557949d8bf8/raw/3fa1ad4da46a007f453f3ed8534ccfc3b160e203/did.txt"`;
+
+exports[`3ID Manager setDid returns with in memory did 1`] = `
+Object {
+  "affiliations": Array [
+    "3Box",
+    "MySchool",
+  ],
+  "background": Object {
+    "original": Object {
+      "height": 175,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmXKHtXTJwEVqd3YH9SfBpahCViNPBx72vHdJYyA1QepWU",
+      "width": 1000,
+    },
+  },
+  "description": "Computer make code.",
+  "emoji": "👻",
+  "homeLocation": "NYC",
+  "image": Object {
+    "original": Object {
+      "height": 170,
+      "mimeType": "application/octet-stream",
+      "src": "ipfs://QmeHYKP73jcJ9UboZQ5VHsaoqJRT9Y7R98To7whiv8Sd7g",
+      "width": 170,
+    },
+  },
+  "name": "Zach",
+  "url": "mysite.com",
+}
+`;
+
+exports[`3ID Manager setDid returns with in memory did 2`] = `
+Object {
+  "0x5314846209d781caad6258b0de7c13acb99ef692@eip155:1": "ceramic://k2t6wyse1ukyg526sxjhqe9oqvmsrpe2qoo0ee4jklo424ybz3kn9y7lt0xnvl",
+}
+`;
+
+exports[`3ID Manager setDid returns with in memory did 3`] = `"https://twitter.com/hipsense/status/1362509494824091651"`;
+
+exports[`3ID Manager setDid returns with in memory did 4`] = `"https://gist.githubusercontent.com/zachferland/57e5225fe315a9b8d89a9557949d8bf8/raw/3fa1ad4da46a007f453f3ed8534ccfc3b160e203/did.txt"`;
