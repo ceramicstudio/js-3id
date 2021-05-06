@@ -14,8 +14,8 @@
     "@3id/connect": "^0.1.2",
     "@3id/test-utils": "^0.1.1",
     "@babel/runtime": "7.13.9",
-    "@ceramicnetwork/3id-did-resolver": "^1.2.0-rc.9",
-    "@ceramicnetwork/http-client": "^1.0.0-rc.6",
+    "@ceramicnetwork/3id-did-resolver": "^1.2.0",
+    "@ceramicnetwork/http-client": "^1.0.0",
     "dids": "^2.1.0"
   },
   "devDependencies": {
@@ -26,7 +26,7 @@
     "@babel/plugin-transform-runtime": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
     "@babel/preset-typescript": "^7.12.13",
-    "@ceramicstudio/idx-tools": "^0.10.0-rc.0",
+    "@ceramicstudio/idx-tools": "^0.10.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^2.1.1",

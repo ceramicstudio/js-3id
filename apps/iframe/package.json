@@ -13,14 +13,14 @@
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start"
   },
   "dependencies": {
-    "3id-did-provider": "^1.0.0-rc.0",
+    "3id-did-provider": "^1.0.0",
     "@3id/common": "^0.1.1",
     "@3id/connect-display": "^0.1.1",
     "@3id/manager": "^0.1.1",
     "@3id/window-auth-provider": "^0.1.1",
     "@babel/runtime": "7.13.9",
-    "@ceramicnetwork/http-client": "^1.0.0-rc.6",
-    "@ceramicstudio/idx": "^0.11.0-rc.0",
+    "@ceramicnetwork/http-client": "^1.0.0",
+    "@ceramicstudio/idx": "^0.11.0",
     "errors-utils": "^0.1.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.3.4",
