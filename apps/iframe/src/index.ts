@@ -45,7 +45,7 @@ const requestHandler: UserRequestHandler = async (req) => {
     })
     if (req.type === 'account') {
       decline.addEventListener('click', () => {
-        resolve(true)
+        resolve(false)
       })
     }
   })

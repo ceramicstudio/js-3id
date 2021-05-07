@@ -83,8 +83,8 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     if (!existLocally && !existNetwork) {
-      const createHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
-      if (!createHuh) {
+      const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
+      if (LinkHuh) {
         await this.manageApp.display(accountId)
       }
     }
