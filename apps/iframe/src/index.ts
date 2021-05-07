@@ -39,12 +39,12 @@ const requestHandler: UserRequestHandler = async (req) => {
 
   const result: boolean = await new Promise((resolve) => {
     accept.addEventListener('click', () => {
-      accept.innerHTML = `Confirm in your wallet ${assets.Loading}`
-      accept.style.boxShadow = 'none'
       resolve(true)
     })
     if (req.type === 'account') {
       decline.addEventListener('click', () => {
+        decline.innerHTML = `Creating account ${assets.Loading}`
+        decline.style.boxShadow = 'none'
         resolve(false)
       })
     }
