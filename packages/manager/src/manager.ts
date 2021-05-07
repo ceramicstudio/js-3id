@@ -119,7 +119,7 @@ export class Manager {
     })
 
     const threeId = await ThreeIdProvider.create(threeIdConfig)
-    this.threeIdProviders[threeId.id] = await ThreeIdProvider.create(threeIdConfig)
+    this.threeIdProviders[threeId.id] = threeId
     await this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
     return threeId.id
   }
