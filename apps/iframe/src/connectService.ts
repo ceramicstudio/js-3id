@@ -2,7 +2,7 @@
 
 import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import { Manager } from '@3id/manager'
+import { Manager, legacyDIDLinkExist } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -77,19 +77,28 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
+    // await during prompt
+    const legacyDidPromise = legacyDIDLinkExist(accountId)
+
     // before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
 
-    if (!existLocally && !existNetwork) {
+    const legacyDid = await legacyDidPromise
+
+    if (!legacyDid && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
         await this.manageApp.display(accountId)
       }
     }
 
-    const did = await manage.createAccount()
+    if (legacyDid && (!existLocally && !existNetwork)) {
+      await this.userRequestHandler({ type: 'migration', legacyDid })
+    }
+
+    const did = await manage.createAccount({ legacyDid })
 
     this.threeId = manage.threeIdProviders[did]
     this.provider = this.threeId.getDidProvider() as DIDProvider
