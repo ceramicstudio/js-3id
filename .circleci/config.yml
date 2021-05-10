@@ -52,8 +52,7 @@ jobs:
 
       - when:
           condition:
-            not:
-              equal: [develop, << pipeline.git.branch >>]
+            equal: [develop, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
@@ -143,4 +142,4 @@ workflows:
             - test-and-build
           filters:
             branches:
-              only: master
+              only: develop
