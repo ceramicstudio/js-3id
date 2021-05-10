@@ -15,7 +15,7 @@ import { DidProviderProxy } from './didProviderProxy'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app-clay.3idconnect.org'
 const CONNECT_MANAGE_URL =
-  process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management'
+  process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management/index.html'
 
 type PostMessage = (
   message: any,
