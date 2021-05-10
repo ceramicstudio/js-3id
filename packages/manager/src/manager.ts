@@ -42,7 +42,7 @@ export class Manager {
   }
 
   // Create DID
-  async createAccount(): Promise<string> {
+  async createAccount(opts?: {legacyDid?:string}): Promise<string> {
     // If in memory return
     const accountId = (await this.authProvider.accountId()).toString()
     if (this.threeIdProviders[accountId]) return this.threeIdProviders[accountId].id
@@ -71,7 +71,7 @@ export class Manager {
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrate, authSecretAdd
     if (DID_MIGRATION) {
-      legacyDid = await legacyDIDLinkExist(accountId)
+      legacyDid = opts?.legacyDid || await legacyDIDLinkExist(accountId)
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret
@@ -119,7 +119,7 @@ export class Manager {
     })
 
     const threeId = await ThreeIdProvider.create(threeIdConfig)
-    this.threeIdProviders[threeId.id] = await ThreeIdProvider.create(threeIdConfig)
+    this.threeIdProviders[threeId.id] = threeId
     await this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
     return threeId.id
   }

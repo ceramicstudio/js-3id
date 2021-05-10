@@ -37,11 +37,11 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "3id-did-provider": "^1.0.0-rc.0",
+    "3id-did-provider": "^1.0.0",
     "@3id/common": "^0.1.1",
-    "@ceramicnetwork/blockchain-utils-linking": "^1.0.0-rc.2",
-    "@ceramicnetwork/http-client": "^1.0.0-rc.6",
-    "@ceramicstudio/idx": "^0.11.0-rc.0",
+    "@ceramicnetwork/blockchain-utils-linking": "^1.0.0",
+    "@ceramicnetwork/http-client": "^1.0.0",
+    "@ceramicstudio/idx": "^0.11.0",
     "@ethersproject/hdnode": "^5.0.8",
     "@stablelib/sha256": "^1.0.0",
     "caip": "^0.9.2",
@@ -54,13 +54,13 @@
   },
   "devDependencies": {
     "@3id/test-utils": "^0.1.1",
-    "@ceramicnetwork/stream-caip10-link": "^1.0.0-rc.6",
-    "@ceramicnetwork/common": "^1.0.0-rc.6",
-    "@ceramicnetwork/cli": "^1.0.0-rc.13",
+    "@ceramicnetwork/stream-caip10-link": "^1.0.0",
+    "@ceramicnetwork/common": "^1.0.0",
+    "@ceramicnetwork/cli": "^1.0.0",
     "ipfs-repo": "^9.1.1",
     "prom-client": "^13.1.0",
     "@ceramicstudio/idx-constants": "^1.0.0",
-    "@ceramicstudio/idx-tools": "^0.10.0-rc.0",
+    "@ceramicstudio/idx-tools": "^0.10.0",
     "did-jwt": "^5.1.2",
     "tslib": "^2.1.0"
   },

@@ -2,6 +2,8 @@ import * as assets from './../assets/assets'
 
 const style = require('style-loader!../css/style.scss')
 
+const didShorten = (did:string):string =>  `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+
 const template = (data, isMobile) => `
   <div class='${style.card} ${isMobile ? style.cardMobile : ''} ${
   isMobile && !data.error ? style.slideBottom : !data.error ? style.slideLeft : ''
@@ -46,7 +48,7 @@ const header = (data) => {
   if (data.request.type === 'authenticate') {
     if (data.request.did) {
       const did = data.request.did
-      return `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+      return didShorten(did)
     } 
     return ``
   }
@@ -69,12 +71,12 @@ const content = (data) => {
   }
   // may not use 
   if (data.request.type === 'migration') {
-    return `Migrate ${data.request.legacyDid.substring(0, 18)}... ?`
+    return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate') {
+  if (data.request.type === 'authenticate' || data.request.type === 'migration') {
     return `
       <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''
