@@ -20,7 +20,7 @@ import type {
 } from './types'
 import { rpcError } from './utils'
 
-const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-private.3boxlabs.com'
 
 // Any other supported method?
 type Methods = DIDProviderMethods

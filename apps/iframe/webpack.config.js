@@ -13,13 +13,13 @@ module.exports = (env, argv) => {
     if (env === 'develop') {
       // develop, develop branch
       config = {
-        CERAMIC_API: JSON.stringify('https://ceramic-dev.3boxlabs.com'),
+        CERAMIC_API: JSON.stringify('https://ceramic-private-dev.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app-dev.3idconnect.org'),
         MIGRATION: JSON.stringify('true')
       }
     } else if (env === 'clay') {
       config = {
-        CERAMIC_API: JSON.stringify('https://ceramic-clay.3boxlabs.com'),
+        CERAMIC_API: JSON.stringify('https://ceramic-private-clay.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app-clay.3idconnect.org'),
         MIGRATION: JSON.stringify('true')
       }
@@ -32,7 +32,7 @@ module.exports = (env, argv) => {
     } else {
       //production, main branch, default this so that npm releases dont accidently configure differently
       config = {
-        CERAMIC_API: JSON.stringify('https://ceramic.3boxlabs.com'),
+        CERAMIC_API: JSON.stringify('https://ceramic-private.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app.3idconnect.org'),
         MIGRATION: JSON.stringify('false')
       }
