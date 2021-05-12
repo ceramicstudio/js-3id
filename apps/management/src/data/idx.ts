@@ -1,10 +1,6 @@
 import type { Manager } from '@3id/manager'
 import { IDX } from '@ceramicstudio/idx'
-import type {
-  BasicProfile,
-  ImageMetadata,
-  ImageSources,
-} from '@ceramicstudio/idx-constants'
+import type { BasicProfile, ImageMetadata, ImageSources } from '@ceramicstudio/idx-constants'
 import { AccountID } from 'caip'
 
 import { IPFS_PREFIX, IPFS_URL } from '../constants'
@@ -29,9 +25,13 @@ export function formatDID(did: string): string {
   return did.length <= 20 ? did : `${did.slice(0, 10)}...${did.slice(-6, -1)}`
 }
 
+export function longFormatDID(did: string): string {
+  return `${did.slice(0, 10)}...${did.slice(-20, -1)}`
+}
+
 function selectCover(
   options: Array<ImageMetadata>,
-  { height, width }: Dimensions,
+  { height, width }: Dimensions
 ): ImageMetadata | null {
   let selected: ImageMetadata | null = null
   for (const option of options) {
@@ -39,9 +39,7 @@ function selectCover(
       option.height >= height &&
       option.width >= width &&
       (selected === null ||
-        (selected.size != null &&
-          option.size != null &&
-          option.size < selected.size) ||
+        (selected.size != null && option.size != null && option.size < selected.size) ||
         option.height * option.width < selected.height * selected.width)
     ) {
       selected = option
@@ -52,7 +50,7 @@ function selectCover(
 
 function selectContain(
   options: Array<ImageMetadata>,
-  { height, width }: Dimensions,
+  { height, width }: Dimensions
 ): ImageMetadata | null {
   let selected: ImageMetadata | null = null
   for (const option of options) {
@@ -60,9 +58,7 @@ function selectContain(
       option.height <= height &&
       option.width <= width &&
       (selected === null ||
-        (selected.size != null &&
-          option.size != null &&
-          option.size < selected.size) ||
+        (selected.size != null && option.size != null && option.size < selected.size) ||
         option.height * option.width > selected.height * selected.width)
     ) {
       selected = option
@@ -74,7 +70,7 @@ function selectContain(
 export function selectImageSource(
   sources: ImageSources,
   dimensions: Dimensions,
-  mode: SizeMode = 'cover',
+  mode: SizeMode = 'cover'
 ): ImageMetadata {
   let alternative: ImageMetadata | null = null
   if (Array.isArray(sources.alternatives)) {
@@ -90,16 +86,12 @@ export function toImageSrc(image: ImageMetadata): string {
   return image.src.replace(IPFS_PREFIX, IPFS_URL)
 }
 
-export function getImageSrc(
-  sources: ImageSources,
-  dimensions: Dimensions,
-  mode?: SizeMode,
-) {
+export function getImageSrc(sources: ImageSources, dimensions: Dimensions, mode?: SizeMode) {
   return toImageSrc(selectImageSource(sources, dimensions, mode))
 }
 
 export async function getDIDsData(manager: Manager): Promise<DIDsData> {
-  const dids = await manager.listDIDS() ?? []
+  const dids = (await manager.listDIDS()) ?? []
   const entries = await Promise.all(
     dids.map(async (did) => {
       const accountsObj = await idx.get<Map<string, string>>('cryptoAccounts', did)
@@ -109,7 +101,7 @@ export async function getDIDsData(manager: Manager): Promise<DIDsData> {
         accounts: accounts.map((account) => new AccountID(account)),
         profile: await loadProfile(did),
       }
-    }),
+    })
   )
   return entries.reduce((acc, { did, ...entry }) => {
     acc[did] = entry

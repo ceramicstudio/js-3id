@@ -3,7 +3,7 @@ import { Avatar, Box, Text } from 'grommet'
 import { useMemo } from 'react'
 
 import { notifyDone } from '../data/connect'
-import { formatDID, getImageSrc } from '../data/idx'
+import { formatDID, getImageSrc, longFormatDID } from '../data/idx'
 import { useEthereum } from '../hooks'
 import avatarPlaceholder from '../images/avatar-placeholder.png'
 import { ACCENT_COLOR } from '../theme'
@@ -32,25 +32,34 @@ function IdentityItem({ data, did, manager }: ItemProps) {
     const isConnectedAccount = account.address === ethereum?.account.address
     hasConnectedAccount = hasConnectedAccount || isConnectedAccount
     return (
-      <Text
-        key={account.address}
-        color={isConnectedAccount ? 'brand' : 'neutral-3'}>
-        {account.address}
+      <Text key={account.toString()} color={isConnectedAccount ? 'brand' : 'neutral-3'}>
+        {account.toString()}
       </Text>
     )
   })
 
+  const renderName = () => {
+    if (profile?.name) {
+      return (
+        <>
+          <Text weight="bold">{profile.name}</Text>
+          <Text color="neutral-4">{formatDID(did)}</Text>
+        </>
+      )
+    } else {
+      return (
+        <>
+          <Text color="neutral-4">{longFormatDID(did)}</Text>
+        </>
+      )
+    }
+  }
+
   return (
-    <Box
-      border={{ color: 'neutral-5' }}
-      margin={{ bottom: 'medium' }}
-      round="small">
+    <Box border={{ color: 'neutral-5' }} margin={{ bottom: 'medium' }} round="small">
       <Box direction="row" gap="small" pad="medium">
         <Avatar size="65px" src={avatarSrc} />
-        <Box flex>
-          <Text weight="bold">{profile?.name ?? '(no name)'}</Text>
-          <Text color="neutral-4">{formatDID(did)}</Text>
-        </Box>
+        <Box flex>{renderName()}</Box>
         <Box>
           <Button
             primary
@@ -65,7 +74,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
                 },
                 (err) => {
                   console.warn('link creation error', err)
-                },
+                }
               )
             }}
           />
