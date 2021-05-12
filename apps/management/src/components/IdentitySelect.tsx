@@ -15,14 +15,18 @@ export type Props = {
 export default function IdentitySelect({ dids, manager }: Props) {
   const options = Object.keys(dids).length ? (
     <>
-      <Heading textAlign="center">Choose an identity</Heading>
+      <Heading textAlign="center" size={'small'}>
+        Choose an identity
+      </Heading>
       <IdentitiesList dids={dids} manager={manager} />
       <Box margin={{ top: 'medium' }}>
         <Text color="neutral-4">Don’t see an identity on this list?</Text>
       </Box>
     </>
   ) : (
-    <Heading textAlign="center">Add an identity</Heading>
+    <Heading textAlign="center" size={'small'}>
+      Add an identity
+    </Heading>
   )
 
   return (
