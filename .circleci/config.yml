@@ -132,12 +132,12 @@ workflows:
           filters:
             branches:
               only: develop
-      # - deploy-prod:
-      #     requires:
-      #       - test-and-build
-      #     filters:
-      #       branches:
-      #         only: master
+      - deploy-prod:
+          requires:
+            - test-and-build
+          filters:
+            branches:
+              only: master
       - deploy-clay:
           requires:
             - test-and-build
