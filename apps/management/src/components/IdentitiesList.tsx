@@ -32,7 +32,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
     const isConnectedAccount = account.address === ethereum?.account.address
     hasConnectedAccount = hasConnectedAccount || isConnectedAccount
     return (
-      <Text key={account.toString()} color={isConnectedAccount ? 'brand' : 'neutral-3'}>
+      <Text key={account.toString()} color={'neutral-3'}>
         {account.toString()}
       </Text>
     )
@@ -49,7 +49,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
     } else {
       return (
         <>
-          <Text color="neutral-4">{longFormatDID(did)}</Text>
+          <Text weight="bold">{longFormatDID(did)}</Text>
         </>
       )
     }

@@ -26,7 +26,7 @@ export function formatDID(did: string): string {
 }
 
 export function longFormatDID(did: string): string {
-  return `${did.slice(0, 10)}...${did.slice(-20, -1)}`
+  return `${did.slice(0, 10)}...${did.slice(-10, -1)}`
 }
 
 function selectCover(
