@@ -85,7 +85,7 @@ const actions = (data) => {
       </button>
       <button id='decline' class='${style.secondaryButton}' ${
         data.error ? 'style="display:none;"' : ''
-      } >
+      } onClick="hideIframe()">
         Cancel
       </button>
     `

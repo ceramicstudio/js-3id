@@ -111,7 +111,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
   async userPermissionRequest(authReq: DIDRequest, domain?: string | null, did?:string): Promise<void> {
     assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
-
+    this.cancel!(() => {throw new Error('3id-connect: Request not authorized')})
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
     const userPermission = userReq ? await this.userRequestHandler(userReq) : null
