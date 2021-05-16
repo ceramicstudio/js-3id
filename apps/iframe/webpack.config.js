@@ -34,7 +34,7 @@ module.exports = (env, argv) => {
       config = {
         CERAMIC_API: JSON.stringify('https://ceramic-private.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app.3idconnect.org'),
-        MIGRATION: JSON.stringify('false')
+        MIGRATION: JSON.stringify('true')
       }
     }
   }
