@@ -57,6 +57,9 @@ const header = (data) => {
     What is this?
   </a>`
   }
+  if (data.request.type === 'migration') { 
+    return ''
+  }
 }
 
 

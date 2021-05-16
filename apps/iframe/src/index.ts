@@ -48,6 +48,11 @@ const requestHandler: UserRequestHandler = async (req) => {
         resolve(false)
       })
     }
+    if (req.type === 'migration') {
+      accept.addEventListener('click', () => {
+        accept.innerHTML = `Migrating ${assets.Loading}`
+      })
+    }
   })
 
   return result
