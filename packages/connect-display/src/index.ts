@@ -14,7 +14,7 @@ const HIDE_IFRAME_STYLE = 'position: fixed; width:0; height:0; border:0; border:
 const DISPLAY_IFRAME_STYLE =
   'border:none; border:0; z-index: 500; position: fixed; max-width: 100%;'
 const DISPLAY_MANAGE_STYLE =
-  'border:none; border:0; z-index: 500; position: fixed; width: 100%; height:100%'
+  'border:none; border:0; z-index: 501; position: fixed; width: 100%; height: 100%; top: 0; left: 0;'
 const IFRAME_TOP = `top: 10px; right: 10px`
 const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
