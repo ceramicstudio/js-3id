@@ -48,10 +48,15 @@ export type UserMigrationRequest = {
   type: 'migration'
   legacyDid: string
 }
+export type UserMigrationFailRequest = {
+  type: 'migration_fail'
+  legacyDid: string
+}
 export type UserRequest =
   | UserAuthenticateRequest
   | UserAccountRequest
   | UserMigrationRequest
+  | UserMigrationFailRequest
 export type UserRequestWithError = UserRequest & { error?: string }
 
 export type UserRequestHandler = (req: UserRequest) => Promise<boolean>

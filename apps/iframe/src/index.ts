@@ -53,6 +53,11 @@ const requestHandler: UserRequestHandler = async (req) => {
         accept.innerHTML = `Migrating ${assets.Loading}`
       })
     }
+    if (req.type === 'migration_fail') {
+      accept.addEventListener('click', () => {
+        accept.innerHTML = `Creating account ${assets.Loading}`
+      })
+    }
   })
 
   return result

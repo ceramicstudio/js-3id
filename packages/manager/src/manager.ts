@@ -42,7 +42,8 @@ export class Manager {
   }
 
   // Create DID
-  async createAccount(opts?: {legacyDid?:string}): Promise<string> {
+  async createAccount(opts?: {legacyDid?:string, skipMigration?:string}): Promise<string> {
+    const migrate = DID_MIGRATION && !opts?.skipMigration
     // If in memory return
     const accountId = (await this.authProvider.accountId()).toString()
     if (this.threeIdProviders[accountId]) return this.threeIdProviders[accountId].id
@@ -57,7 +58,7 @@ export class Manager {
     const didNetwork = await this.linkInNetwork(accountId)
 
     try {
-      assert.isDefined(didNetwork, 'Expects didNetwork Link')
+      if (!didNetwork) throw new Error('Expects didNetwork Link')
       const provider = await this.setDid(didNetwork)
       return provider.id
     } catch (e) {
@@ -65,38 +66,42 @@ export class Manager {
     }
 
     // Account not local if not loaded already by now
-
     const authSecret = await this._authCreate()
 
     // Look up if migration neccessary, if so auth create migration
-    let legacyDid, seed, legacyConfig, migrate, authSecretAdd
-    if (DID_MIGRATION) {
+    let legacyDid, seed, legacyConfig, migrating, authSecretAdd
+    if (migrate) {
       legacyDid = opts?.legacyDid || await legacyDIDLinkExist(accountId)
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret
         legacyConfig = { v03ID: legacyDid, seed } as SeedConfig
-        migrate = true
+        migrating = true
       }
     }
 
-    const configId = migrate
+    const configId = migrating
       ? (legacyConfig as SeedConfig)
       : ({ authSecret, authId: accountId } as AuthConfig)
     assert.isDefined<SeedConfig | AuthConfig>(configId, 'Identity Config to initialize identity')
     const did = await this._initIdentity(configId)
 
     let linkProof
-    if (migrate && legacyDid) {
-      const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-      const migration = new Migrate3IDV0(didProvider as any, this.idx)
-      const promChain = async (): Promise<void> => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const profile3Box = await migration.migrate3BoxProfile(did)
-        await migration.migrateAKALinks(did, profile3Box)
+    if (migrating && legacyDid) {
+      // if data or link fails, continue, can create new link instead and add data later if necessary
+      try {
+        const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
+        const migration = new Migrate3IDV0(didProvider as any, this.idx)
+        const promChain = async (): Promise<void> => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const profile3Box = await migration.migrate3BoxProfile(did)
+          await migration.migrateAKALinks(did, profile3Box)
+        }
+        const res = await Promise.all([get3BoxLinkProof(did), promChain()])
+        linkProof = res[0]
+      } catch (e) {
+        console.error(e)
       }
-      const res = await Promise.all([get3BoxLinkProof(did), promChain()])
-      linkProof = res[0]
     }
 
     // if auth secrete add
