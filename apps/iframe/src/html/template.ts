@@ -57,11 +57,10 @@ const header = (data) => {
     What is this?
   </a>`
   }
-  if (data.request.type === 'migration') { 
+  if (data.request.type === 'migration' || data.request.type === 'migration_fail') { 
     return ''
   }
 }
-
 
 const content = (data) => {
   if (data.request.type === 'authenticate') {
@@ -76,10 +75,14 @@ const content = (data) => {
   if (data.request.type === 'migration') {
     return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
+
+  if (data.request.type === 'migration_fail') {
+    return `Your 3Box account could not be migrated, create a new account?`
+  }
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate' || data.request.type === 'migration') {
+  if (data.request.type === 'authenticate' || data.request.type === 'migration' || data.request.type === 'migration_fail') {
     return `
       <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''

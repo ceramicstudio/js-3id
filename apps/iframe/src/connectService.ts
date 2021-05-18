@@ -21,6 +21,7 @@ import type {
 import { rpcError } from './utils'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-private.3boxlabs.com'
+const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
 // Any other supported method?
 type Methods = DIDProviderMethods
@@ -94,11 +95,22 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
-    if (legacyDid && (!existLocally && !existNetwork)) {
+    if (DID_MIGRATION && legacyDid && (!existLocally && !existNetwork)) {
       await this.userRequestHandler({ type: 'migration', legacyDid })
     }
 
-    const did = await manage.createAccount({ legacyDid })
+    let did
+    try {
+      did = await manage.createAccount({ legacyDid })
+    } catch(e) {
+      if (legacyDid) {
+        await this.userRequestHandler({ type: 'migration_fail', legacyDid })
+        did = await manage.createAccount({ skipMigration: true })
+      } else {
+        console.error(e)
+        throw new Error(e)
+      }
+    }
 
     this.threeId = manage.threeIdProviders[did]
     this.provider = this.threeId.getDidProvider() as DIDProvider
