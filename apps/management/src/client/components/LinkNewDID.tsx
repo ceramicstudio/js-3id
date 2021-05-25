@@ -1,9 +1,9 @@
 import type { Manager } from '@3id/manager'
 import { Box, Text } from 'grommet'
 
-import { notifyDone } from '../data/connect'
+import Button from '../../components/Button'
 
-import Button from './Button'
+import { notifyDone } from '../connect'
 
 export type Props = {
   manager: Manager
@@ -31,7 +31,7 @@ export default function LinkNewDID({ manager }: Props) {
               },
               (err) => {
                 console.warn('ID creation error', err)
-              },
+              }
             )
           }}
         />

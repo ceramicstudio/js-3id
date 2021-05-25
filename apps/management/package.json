@@ -3,16 +3,15 @@
   "version": "0.1.4",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build:prod": "react-scripts build && rm -rf ../../public/management && mv ./build ../../public/management",
-    "dev:build": "REACT_APP_CERAMIC_API=http://localhost:7007 npm run build:prod",
-    "build:dev": "REACT_APP_CERAMIC_API=https://ceramic-private-dev.3boxlabs.com npm run build:prod",
-    "build:test": "REACT_APP_CERAMIC_API=http://localhost:7777 npm run build:prod",
-    "build:clay": "REACT_APP_CERAMIC_API=https://ceramic-private-clay.3boxlabs.com react-scripts build && rm -rf ../../public-clay/management && mv ./build ../../public-clay/management",
-    "test:app": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "next dev",
+    "build": "next build && next export",
+    "start": "next start",
+    "build:prod": "npm run build && rm -rf ../../public/management && mv ./out ../../public/management",
+    "dev:build": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7007 npm run build:prod",
+    "build:dev": "NEXT_PUBLIC_CERAMIC_API=https://ceramic-private-dev.3boxlabs.com npm run build:prod",
+    "build:test": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7777 npm run build:prod",
+    "build:clay": "NEXT_PUBLIC_CERAMIC_API=https://ceramic-private-clay.3boxlabs.com npm run build && rm -rf ../../public-clay/management && mv ./out ../../public-clay/management"
   },
-  "homepage": "./",
   "dependencies": {
     "3id-did-provider": "^1.0.0",
     "@3id/manager": "^0.1.4",
@@ -20,19 +19,20 @@
     "@ceramicnetwork/blockchain-utils-linking": "^1.0.0",
     "@ceramicnetwork/http-client": "^1.0.0",
     "@ceramicnetwork/transport-postmessage": "^0.3.0",
-    "@ceramicstudio/idx": "^0.11.0",
+    "@ceramicstudio/idx": "^0.12.0",
     "@ceramicstudio/multiauth": "^0.2.2",
     "caip": "^0.9.2",
     "grommet": "^2.16.3",
     "jotai": "^0.16.3",
+    "next": "10.2.3",
     "polished": "^4.1.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "styled-components": "^5.2.1",
-    "web-vitals": "^1.1.0"
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@ceramicstudio/idx-constants": "^1.0.0",
+    "@next/bundle-analyzer": "^10.2.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.2",
@@ -40,25 +40,11 @@
     "@types/node": "^14.14.32",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "typescript": "^4.2.3"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@types/styled-components": "^5.1.9",
+    "babel-plugin-styled-components": "^1.12.0",
+    "next-compose-plugins": "^2.2.1",
+    "next-images": "^1.7.0",
+    "rxjs": "^6.6.6",
+    "typescript": "4.2.4"
   }
 }

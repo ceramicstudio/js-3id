@@ -1,15 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 
-const plugins = []
-
-const dp = new webpack.DefinePlugin({
-  'process.env': {
-    CONNECT_IFRAME_URL: JSON.stringify('http://localhost:30001'),
-    CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management')
-  }
-})
-plugins.push(dp)
+const LOCAL_URL = 'http://localhost:30001'
 
 module.exports = {
   entry: './src/app.ts',
@@ -17,10 +9,17 @@ module.exports = {
     filename: 'build.js',
     path: path.resolve(__dirname, './dist'),
     libraryTarget: 'umd',
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
+    fallback: {
+      crypto: false,
+      http: false,
+      https: false,
+      os: false,
+      stream: false,
+    },
   },
   module: {
     rules: [
@@ -34,19 +33,20 @@ module.exports = {
             plugins: [
               ['@babel/plugin-transform-runtime', { regenerator: true }],
               '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-proposal-object-rest-spread'
-            ]
-          }
-        }
-      }
-    ]
+              '@babel/plugin-proposal-object-rest-spread',
+            ],
+          },
+        },
+      },
+    ],
   },
-  plugins,
-  node: {
-    console: false,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty'
-  }
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        CONNECT_IFRAME_URL: JSON.stringify(LOCAL_URL),
+        CONNECT_MANAGE_URL: JSON.stringify(`${LOCAL_URL}/management`),
+      },
+    }),
+    new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }),
+  ],
 }

@@ -2,9 +2,10 @@ import { useMultiAuth } from '@ceramicstudio/multiauth'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
 
-import { getManager } from './data/connect'
+import type { DIDsData, EthereumData, RemoteProxy } from '../types'
+
+import { getManager } from './connect'
 import { didsDataAtom, ethereumDataAtom, remoteProxyAtom } from './state'
-import type { DIDsData, EthereumData, RemoteProxy } from './types'
 
 export function useEthereum(): [EthereumData | null, () => Promise<EthereumData | null>] {
   const connectWallet = useMultiAuth()[1]
