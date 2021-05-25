@@ -58,7 +58,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     this.cancel = cancel
     this.errorCb = errorCb
     this.userRequestHandler = userRequestHandler
-    this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30000 })
+    this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
     super.start(this.requestHandler.bind(this))
     this.manageApp = new DisplayManageClientRPC()
   }
