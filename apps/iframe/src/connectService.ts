@@ -2,7 +2,7 @@
 
 import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import { Manager, legacyDIDLinkExist } from '@3id/manager'
+import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -80,13 +80,27 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     // await during prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
+  
 
     // before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
 
-    const legacyDid = await legacyDidPromise
+    let legacyDid = await legacyDidPromise
+    let muportDid
+
+    // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
+    if (legacyDid && legacyDid.includes('muport')) {
+      muportDid = legacyDid
+      legacyDid = null
+    }
+
+    // For known failure cases, skip migrations prompts, can not easily resolve issues here
+    if (legacyDid) {
+      const willFail = await willMigrationFail(legacyDid)
+      if (willFail) legacyDid = null
+    }
 
     if (!legacyDid && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
@@ -95,8 +109,9 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
+    // TODO if muport, may show different message, or communicate other migration info here
     if (DID_MIGRATION && legacyDid && (!existLocally && !existNetwork)) {
-      await this.userRequestHandler({ type: 'migration', legacyDid })
+      await this.userRequestHandler({ type: 'migration', legacyDid, muportDid })
     }
 
     let did
@@ -114,6 +129,12 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     this.threeId = manage.threeIdProviders[did]
     this.provider = this.threeId.getDidProvider() as DIDProvider
+
+    if (muportDid) {
+      //migrate profile data still
+      const migration = new Migrate3IDV0(this.provider , manage.idx)
+      await migration.migrate3BoxProfile(muportDid)
+    }
 
     // after since 3id-did-provider permissions may exist
     if (existLocally && !existNetwork) {

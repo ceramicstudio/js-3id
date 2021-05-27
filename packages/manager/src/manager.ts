@@ -42,7 +42,7 @@ export class Manager {
   }
 
   // Create DID
-  async createAccount(opts?: { legacyDid?: string; skipMigration?: string }): Promise<string> {
+  async createAccount(opts?: { legacyDid?: string; skipMigration?: boolean }): Promise<string> {
     const migrate = DID_MIGRATION && !opts?.skipMigration
     // If in memory return
     const accountId = (await this.authProvider.accountId()).toString()

@@ -10,7 +10,7 @@ import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
 import { AccountID } from 'caip'
 import { DagJWS, DID, DIDProvider } from 'dids'
 
-import type { ExcludesBoolean } from './types'
+import type { ExcludesBoolean, LinksArray } from './types'
 import { fetchJson, jwtDecode } from './utils'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
@@ -157,10 +157,11 @@ export const get3BoxProfile = async (did: string): Promise<any> => {
   }
 }
 
+// TODO links pass opt, to reduce network requests
 export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> => {
   try {
     const url = `${THREEBOX_PROFILE_API}/config?did=${encodeURIComponent(did)}`
-    const { links } = await fetchJson<{ links: Array<any> }>(url)
+    const { links } = await get3BoxConfig(url)
     const link = links.filter((e) => e.type === 'ethereum-eoa')[0]
     if (!link) return null
     //v1 to v2 link proof
@@ -177,6 +178,34 @@ export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> =
     if (errorNotFound(err)) return null
     throw new Error(`Error while fetching 3Box Config`)
   }
+}
+
+export const get3BoxConfig = async (did:string):Promise<LinksArray> => {
+  const url = `${THREEBOX_PROFILE_API}/config?did=${encodeURIComponent(did)}`
+  return fetchJson<LinksArray>(url)
+}
+
+// returns ipfs json object, not a valid did doc
+export const getLegacyDidDoc = async (did:string):Promise<any> => {
+  const cid = did.split(':').pop() as string
+  const url = `${THREEBOX_PROFILE_API}/did-doc?cid=${encodeURIComponent(cid)}`
+  const { value } = await fetchJson<{value: any}>(url)
+  return value
+}
+
+// return true if migration is expectedt to fail
+export const willMigrationFail = async (accountId:string, did:string):Promise<boolean> => {
+  const address = new AccountID(accountId).address.toLowerCase()
+  // Case 1, more than one account linked to did and address server link does not match did doc link
+  const doc = await getLegacyDidDoc(did)
+  let managementAddress
+  try {
+    const managementEntry = doc.publicKey.findIndex((e:any) => e.id.endsWith('managementKey'))
+    managementAddress = doc.publicKey[managementEntry].ethereumAddress
+  } catch (e) {
+    return true
+  }
+  return address !== managementAddress
 }
 
 // Validation for BasicProfile
