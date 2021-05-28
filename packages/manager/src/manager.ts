@@ -148,7 +148,7 @@ export class Manager {
     if (!this.threeIdProviders[did]) {
       const seed = await this.store.getStoredDID(did)
       assert.isDefined(seed, 'Account does not exist')
-      await this._initIdentity({ seed } as SeedConfig)
+      await this._initIdentity({ seed, did } as SeedConfig)
     }
 
     const didProvider = this.threeIdProviders[did].getDidProvider()
