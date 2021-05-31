@@ -7,6 +7,7 @@ import {
 } from '@3id/connect'
 import ThreeIDResolver from '@ceramicnetwork/3id-did-resolver'
 import Ceramic from '@ceramicnetwork/http-client'
+import KeyResolver from 'key-did-resolver'
 // import { Wallet as EthereumWallet } from '@ethersproject/wallet'
 
 // These cause Webpack loading to fail at runtime
@@ -26,8 +27,6 @@ import { DID } from 'dids'
 // import ecc from 'eosjs-ecc'
 // import { fromString, toString } from 'uint8arrays'
 // import { AccountID } from "caip"
-
-
 
 // const FILECOIN_PRIVATE_KEY =
 //   '7b2254797065223a22736563703235366b31222c22507269766174654b6579223a2257587362654d5176487a366f5668344b637262633045642b31362b3150766a6a554f3753514931355031343d227d'
@@ -103,7 +102,10 @@ async function createAuthProvider<T extends keyof Providers>(
 window.createAuthProvider = createAuthProvider
 
 function createDID(provider): DID {
-  return new DID({ provider, resolver: ThreeIDResolver.getResolver(ceramic) })
+  return new DID({
+    provider,
+    resolver: { ...KeyResolver.getResolver(), ...ThreeIDResolver.getResolver(ceramic) },
+  })
 }
 window.createDID = createDID
 

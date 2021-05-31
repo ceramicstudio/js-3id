@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   entry: path.resolve(__dirname, 'app.ts'),
@@ -30,11 +31,5 @@ module.exports = {
       },
     ],
   },
-  node: {
-    console: false,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty',
-  },
+  plugins: [new webpack.DefinePlugin({ 'process.env': {} })],
 }

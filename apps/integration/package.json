@@ -8,7 +8,8 @@
     "serve:app": "http-server -c-1 -p 30000 ./public",
     "serve:3id-connect": "http-server -c-1 -p 30001 ../../public",
     "test:env": "run-p build:** serve:**",
-    "test:integration": "CERAMIC_API=http://localhost:7777 lerna run build:test && jest"
+    "test:run": "jest --config=./jest.config.js",
+    "test:integration": "CERAMIC_API=http://localhost:7777 lerna run build:test && npm run test:run"
   },
   "dependencies": {
     "@3id/connect": "^0.1.4",
@@ -16,7 +17,8 @@
     "@babel/runtime": "7.14.0",
     "@ceramicnetwork/3id-did-resolver": "^1.2.0",
     "@ceramicnetwork/http-client": "^1.0.0",
-    "dids": "^2.1.0"
+    "dids": "^2.1.0",
+    "key-did-resolver": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.13",

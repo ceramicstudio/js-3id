@@ -5,20 +5,20 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 module.exports = (env, argv) => {
   let config
   if (argv.mode === 'production') {
-    if (env === 'develop') {
+    if (env.CERAMIC_ENV === 'develop') {
       // develop, develop branch
       config = {
         CERAMIC_API: JSON.stringify('https://ceramic-private-dev.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app-dev.3idconnect.org'),
         MIGRATION: JSON.stringify('true'),
       }
-    } else if (env === 'clay') {
+    } else if (env.CERAMIC_ENV === 'clay') {
       config = {
         CERAMIC_API: JSON.stringify('https://ceramic-private-clay.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app-clay.3idconnect.org'),
         MIGRATION: JSON.stringify('true'),
       }
-    } else if (env === 'test') {
+    } else if (env.CERAMIC_ENV === 'test') {
       config = {
         CERAMIC_API: JSON.stringify(process.env.CERAMIC_API || 'http://localhost:7777'),
         CONNECT_MANAGE_URL: JSON.stringify('http://localhost:30001/management'),
