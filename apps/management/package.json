@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "build:prod": "npm run build && rm -rf ../../public/management && mv ./out ../../public/management",
+    "build:prod": "npm run build && rm -rf ../../public/management && mkdir ../../public && mv ./out ../../public/management",
     "dev:build": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7007 npm run build:prod",
     "build:dev": "NEXT_PUBLIC_CERAMIC_API=https://ceramic-private-dev.3boxlabs.com npm run build:prod",
     "build:test": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7777 npm run build:prod",
-    "build:clay": "NEXT_PUBLIC_CERAMIC_API=https://ceramic-private-clay.3boxlabs.com npm run build && rm -rf ../../public-clay/management && mv ./out ../../public-clay/management"
+    "build:clay": "NEXT_PUBLIC_CERAMIC_API=https://ceramic-private-clay.3boxlabs.com npm run build && rm -rf ../../public-clay/management && mkdir ../../public-clay && mv ./out ../../public-clay/management"
   },
   "dependencies": {
     "3id-did-provider": "^1.0.2",
