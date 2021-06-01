@@ -97,8 +97,9 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     // For known failure cases, skip migrations prompts, can not easily resolve issues here
+    let willFail
     if (legacyDid) {
-      const willFail = await willMigrationFail(legacyDid)
+      willFail = await willMigrationFail(accountId, legacyDid)
       if (willFail) legacyDid = null
     }
 
@@ -116,7 +117,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     let did
     try {
-      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid) })
+      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
         await this.userRequestHandler({ type: 'migration_fail', legacyDid })
