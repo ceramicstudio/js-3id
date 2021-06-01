@@ -116,7 +116,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     let did
     try {
-      did = await manage.createAccount({ legacyDid })
+      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid) })
     } catch(e) {
       if (legacyDid) {
         await this.userRequestHandler({ type: 'migration_fail', legacyDid })
@@ -131,9 +131,13 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     this.provider = this.threeId.getDidProvider() as DIDProvider
 
     if (muportDid) {
-      //migrate profile data still
-      const migration = new Migrate3IDV0(this.provider , manage.idx)
-      await migration.migrate3BoxProfile(muportDid)
+      //try to migrate profile data still
+      try {
+        const migration = new Migrate3IDV0(this.provider , manage.idx)
+        await migration.migrate3BoxProfile(muportDid)
+      } catch (e) {
+        // if not available, continue
+      }
     }
 
     // after since 3id-did-provider permissions may exist
