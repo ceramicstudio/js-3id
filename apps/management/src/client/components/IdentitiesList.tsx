@@ -2,14 +2,14 @@ import type { Manager } from '@3id/manager'
 import { Avatar, Box, Text } from 'grommet'
 import { useMemo } from 'react'
 
-import { notifyDone } from '../data/connect'
-import { formatDID, getImageSrc, longFormatDID } from '../data/idx'
-import { useEthereum } from '../hooks'
-import avatarPlaceholder from '../images/avatar-placeholder.png'
-import { ACCENT_COLOR } from '../theme'
-import type { DIDData, DIDsData } from '../types'
+import Button from '../../components/Button'
+import { formatDID, getImageSrc, longFormatDID } from '../../data/idx'
+import avatarPlaceholder from '../../images/avatar-placeholder.png'
+import { ACCENT_COLOR } from '../../theme'
+import type { DIDData, DIDsData } from '../../types'
 
-import Button from './Button'
+import { notifyDone } from '../connect'
+import { useEthereum } from '../hooks'
 
 type ItemProps = {
   data: DIDData

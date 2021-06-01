@@ -1,11 +1,11 @@
 import type { Manager } from '@3id/manager'
 import { Box, Heading, Text } from 'grommet'
 
+import type { DIDsData } from '../../types'
+
 import IdentitiesList from './IdentitiesList'
 import LinkExistingDID from './LinkExistingDID'
 import LinkNewDID from './LinkNewDID'
-
-import type { DIDsData } from '../types'
 
 export type Props = {
   dids: DIDsData

@@ -42,7 +42,7 @@ export class Manager {
   }
 
   // Create DID
-  async createAccount(opts?: {legacyDid?:string, skipMigration?:string}): Promise<string> {
+  async createAccount(opts?: { legacyDid?: string; skipMigration?: string }): Promise<string> {
     const migrate = DID_MIGRATION && !opts?.skipMigration
     // If in memory return
     const accountId = (await this.authProvider.accountId()).toString()
@@ -71,7 +71,7 @@ export class Manager {
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrating, authSecretAdd
     if (migrate) {
-      legacyDid = opts?.legacyDid || await legacyDIDLinkExist(accountId)
+      legacyDid = opts?.legacyDid || (await legacyDIDLinkExist(accountId))
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret
@@ -148,7 +148,7 @@ export class Manager {
     if (!this.threeIdProviders[did]) {
       const seed = await this.store.getStoredDID(did)
       assert.isDefined(seed, 'Account does not exist')
-      await this._initIdentity({ seed } as SeedConfig)
+      await this._initIdentity({ seed, did } as SeedConfig)
     }
 
     const didProvider = this.threeIdProviders[did].getDidProvider()

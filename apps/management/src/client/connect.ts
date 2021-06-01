@@ -3,9 +3,8 @@ import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage
 import { Manager } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 
+import { ceramic } from '../data/ceramic'
 import type { RemoteProxy } from '../types'
-
-import { ceramic } from './ceramic'
 
 const observer = createPostMessageObserver(window.parent, '*')
 export function notify(msg: string, data?: any) {

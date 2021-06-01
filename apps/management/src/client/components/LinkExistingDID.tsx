@@ -1,11 +1,11 @@
 import { Box, Text } from 'grommet'
-
-import { notifyDone } from '../data/connect'
-import { useEthereum } from '../hooks'
-
-import Button from './Button'
-import { didsDataAtom } from '../state'
 import { useAtom } from 'jotai'
+
+import Button from '../../components/Button'
+
+import { notifyDone } from '../connect'
+import { useEthereum } from '../hooks'
+import { didsDataAtom } from '../state'
 
 export default function LinkExistingDID() {
   const [ethereum, connect] = useEthereum()

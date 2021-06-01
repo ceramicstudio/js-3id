@@ -1,8 +1,9 @@
 import * as assets from './../assets/assets'
 
-const style = require('style-loader!../css/style.scss')
+import style from '../css/style.scss'
 
-const didShorten = (did:string):string =>  `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+const didShorten = (did: string): string =>
+  `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
 
 const template = (data, isMobile) => `
   <div class='${style.card} ${isMobile ? style.cardMobile : ''} ${
@@ -49,7 +50,7 @@ const header = (data) => {
     if (data.request.did) {
       const did = data.request.did
       return didShorten(did)
-    } 
+    }
     return ``
   }
   if (data.request.type === 'account') {
@@ -57,7 +58,7 @@ const header = (data) => {
     What is this?
   </a>`
   }
-  if (data.request.type === 'migration' || data.request.type === 'migration_fail') { 
+  if (data.request.type === 'migration' || data.request.type === 'migration_fail') {
     return ''
   }
 }
@@ -71,7 +72,7 @@ const content = (data) => {
   if (data.request.type === 'account') {
     return `Connect your wallet to a decentralized ID.`
   }
-  // may not use 
+  // may not use
   if (data.request.type === 'migration') {
     return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
@@ -82,7 +83,11 @@ const content = (data) => {
 }
 
 const actions = (data) => {
-  if (data.request.type === 'authenticate' || data.request.type === 'migration' || data.request.type === 'migration_fail') {
+  if (
+    data.request.type === 'authenticate' ||
+    data.request.type === 'migration' ||
+    data.request.type === 'migration_fail'
+  ) {
     return `
       <button id='accept' class='${style.primaryButton}' ${
       data.error ? 'style="display:none;"' : ''
@@ -90,8 +95,8 @@ const actions = (data) => {
         Continue
       </button>
       <button id='decline' class='${style.secondaryButton}' ${
-        data.error ? 'style="display:none;"' : ''
-      } onClick="hideIframe()">
+      data.error ? 'style="display:none;"' : ''
+    } onClick="hideIframe()">
         Cancel
       </button>
     `
