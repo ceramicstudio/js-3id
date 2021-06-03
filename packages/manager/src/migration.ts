@@ -160,8 +160,7 @@ export const get3BoxProfile = async (did: string): Promise<any> => {
 // TODO links pass opt, to reduce network requests
 export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> => {
   try {
-    const url = `${THREEBOX_PROFILE_API}/config?did=${encodeURIComponent(did)}`
-    const { links } = await get3BoxConfig(url)
+    const { links } = await get3BoxConfig(did)
     const link = links.filter((e) => e.type === 'ethereum-eoa')[0]
     if (!link) return null
     //v1 to v2 link proof
