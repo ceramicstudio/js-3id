@@ -192,10 +192,11 @@ export const getLegacyDidDoc = async (did:string):Promise<any> => {
   return value
 }
 
-// return true if migration is expectedt to fail
+// return true if migration is expected to fail, can added additional known cases here
 export const willMigrationFail = async (accountId:string, did:string):Promise<boolean> => {
   const address = new AccountID(accountId).address.toLowerCase()
-  // Case 1, more than one account linked to did and address server link does not match did doc link
+  // Case 1: more than one account linked to did and address server link does not match did doc link
+  // Reference: https://github.com/ceramicstudio/3id-connect/issues/67
   const doc = await getLegacyDidDoc(did)
   let managementAddress
   try {

@@ -78,11 +78,10 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
-    // await during prompt
+    // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
   
-
-    // before to give context, and no 3id-did-provider permission exist
+    // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
@@ -96,13 +95,14 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       legacyDid = null
     }
 
-    // For known failure cases, skip migrations prompts, can not easily resolve issues here
+    // For known failure cases, skip migrations prompts
     let willFail
     if (legacyDid) {
       willFail = await willMigrationFail(accountId, legacyDid)
       if (willFail) legacyDid = null
     }
-
+    
+    // If new account (and not migration), ask user to link or create
     if (!legacyDid && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
@@ -115,12 +115,14 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       await this.userRequestHandler({ type: 'migration', legacyDid, muportDid })
     }
 
-    let did
+    let did:string
     try {
+      // Skip migration if muport or known failure
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
         await this.userRequestHandler({ type: 'migration_fail', legacyDid })
+        // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {
         console.error(e)
@@ -132,16 +134,16 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     this.provider = this.threeId.getDidProvider() as DIDProvider
 
     if (muportDid) {
-      //try to migrate profile data still
+      //Try to migrate profile data still for muport did
       try {
         const migration = new Migrate3IDV0(this.provider , manage.idx)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
-        // if not available, continue
+        // If not available, continue
       }
     }
 
-    // after since 3id-did-provider permissions may exist
+    // After since 3id-did-provider permissions may exist
     if (existLocally && !existNetwork) {
       await this.userPermissionRequest(authReq, domain, did)
     }

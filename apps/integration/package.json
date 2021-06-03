@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build:app": "webpack --config webpack.config.js --mode=development",
-    "serve:ceramic": "rm -rf ./test/data && ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
+    "serve:ceramic": "rm -rf ./test/data && rm -rf ./ipfs && ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
     "serve:app": "http-server -c-1 -p 30000 ./public",
     "serve:3id-connect": "http-server -c-1 -p 30001 ../../public",
     "test:env": "run-p build:** serve:**",
