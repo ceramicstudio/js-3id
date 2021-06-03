@@ -37,15 +37,15 @@ See the [example app](./apps/example) for more details
 
 ### Prerequisites
 
-npm v7 and lerna v4 should be installed globally:
+yarn v1 and lerna v4 should be installed globally:
 
 ```sh
-npm install -g lerna npm
+npm install -g lerna yarn
 ```
 
 ### Installation
 
-Run `lerna bootstrap` from the root folder, this will install the dependencies and build the packages
+Run `yarn install` from the root folder, this will install the dependencies and build the packages
 
 ### Scripts
 
