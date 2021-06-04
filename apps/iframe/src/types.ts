@@ -47,6 +47,7 @@ export type UserAccountRequest = {
 export type UserMigrationRequest = {
   type: 'migration'
   legacyDid: string
+  muportDid: string
 }
 export type UserMigrationFailRequest = {
   type: 'migration_fail'

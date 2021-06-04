@@ -2,7 +2,7 @@
 
 import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import { Manager, legacyDIDLinkExist } from '@3id/manager'
+import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
 import { IDX } from '@ceramicstudio/idx'
@@ -78,16 +78,31 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
-    // await during prompt
+    // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
-
-    // before to give context, and no 3id-did-provider permission exist
+  
+    // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally || existNetwork) {
       await this.userPermissionRequest(authReq, domain)
     }
 
-    const legacyDid = await legacyDidPromise
+    let legacyDid = await legacyDidPromise
+    let muportDid
 
+    // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
+    if (legacyDid && legacyDid.includes('muport')) {
+      muportDid = legacyDid
+      legacyDid = null
+    }
+
+    // For known failure cases, skip migrations prompts
+    let willFail
+    if (legacyDid) {
+      willFail = await willMigrationFail(accountId, legacyDid)
+      if (willFail) legacyDid = null
+    }
+    
+    // If new account (and not migration), ask user to link or create
     if (!legacyDid && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
@@ -95,16 +110,19 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
+    // TODO if muport, may show different message, or communicate other migration info here
     if (DID_MIGRATION && legacyDid && (!existLocally && !existNetwork)) {
-      await this.userRequestHandler({ type: 'migration', legacyDid })
+      await this.userRequestHandler({ type: 'migration', legacyDid, muportDid })
     }
 
-    let did
+    let did:string
     try {
-      did = await manage.createAccount({ legacyDid })
+      // Skip migration if muport or known failure
+      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
         await this.userRequestHandler({ type: 'migration_fail', legacyDid })
+        // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {
         console.error(e)
@@ -115,7 +133,17 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     this.threeId = manage.threeIdProviders[did]
     this.provider = this.threeId.getDidProvider() as DIDProvider
 
-    // after since 3id-did-provider permissions may exist
+    if (muportDid) {
+      //Try to migrate profile data still for muport did
+      try {
+        const migration = new Migrate3IDV0(this.provider , manage.idx)
+        await migration.migrate3BoxProfile(muportDid)
+      } catch (e) {
+        // If not available, continue
+      }
+    }
+
+    // After since 3id-did-provider permissions may exist
     if (existLocally && !existNetwork) {
       await this.userPermissionRequest(authReq, domain, did)
     }
