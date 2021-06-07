@@ -22,11 +22,11 @@ export async function loadProfile(did: string): Promise<BasicProfile | null> {
 }
 
 export function formatDID(did: string): string {
-  return did.length <= 20 ? did : `${did.slice(0, 10)}...${did.slice(-6, -1)}`
+  return did.length <= 20 ? did : `${did.slice(0, 10)}…${did.slice(-5)}`
 }
 
 export function longFormatDID(did: string): string {
-  return `${did.slice(0, 10)}...${did.slice(-10, -1)}`
+  return `${did.slice(0, 10)}…${did.slice(-9)}`
 }
 
 function selectCover(
