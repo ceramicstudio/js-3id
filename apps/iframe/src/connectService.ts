@@ -110,9 +110,13 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
-    // TODO if muport, may show different message, or communicate other migration info here
-    if (DID_MIGRATION && legacyDid && (!existLocally && !existNetwork)) {
-      await this.userRequestHandler({ type: 'migration', legacyDid, muportDid })
+    if (DID_MIGRATION && (!existLocally && !existNetwork)){
+      if (willFail || muportDid) {
+        await this.userRequestHandler({ type: 'migration_skip' })
+      }
+      if(legacyDid) {
+        await this.userRequestHandler({ type: 'migration', legacyDid })
+      }
     }
 
     let did:string

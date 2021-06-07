@@ -58,8 +58,10 @@ const header = (data) => {
     What is this?
   </a>`
   }
-  if (data.request.type === 'migration' || data.request.type === 'migration_fail') {
-    return ''
+  if (data.request.type === 'migration') {
+    return `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
+    How migration works?
+  </a>`
   }
 }
 
@@ -72,13 +74,20 @@ const content = (data) => {
   if (data.request.type === 'account') {
     return `Connect your wallet to a decentralized ID.`
   }
-  // may not use
   if (data.request.type === 'migration') {
-    return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
+      return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
-
   if (data.request.type === 'migration_fail') {
-    return `Your 3Box account could not be migrated, create a new account?`
+    return `Your 3Box account could not be migrated, continue with a new account?` + 
+    `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
+      Learn More
+    </a>`
+  }
+  if (data.request.type === 'migration_skip') {
+    return `You have a 3Box account we are unable to migrate, continue with a new account?` + 
+    `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
+      Learn More
+    </a>`
   }
 }
 
@@ -117,10 +126,9 @@ const actions = (data) => {
   }
 }
 
-export default template
-
 const error = (data) => `
   <p class='${style.walletSelect_error}'>${data.error}</p>
 `
 
+export default template
 //  This site wants to access your profile${data.request.spaces.length === 0 ? '. ' : ' and ' + data.request.spaces.length + ' data source'}${data.request.spaces.length > 1 ? 's. ' : '.'}
