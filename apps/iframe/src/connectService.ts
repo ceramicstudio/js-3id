@@ -103,16 +103,20 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
     
     // If new account (and not migration), ask user to link or create
-    if (!legacyDid && (!existLocally && !existNetwork)) {
+    if (!(legacyDid || muportDid || willFail) && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
         await this.manageApp.display(accountId)
       }
     }
 
-    // TODO if muport, may show different message, or communicate other migration info here
-    if (DID_MIGRATION && legacyDid && (!existLocally && !existNetwork)) {
-      await this.userRequestHandler({ type: 'migration', legacyDid, muportDid })
+    if (DID_MIGRATION && (!existLocally && !existNetwork)){
+      if (willFail || muportDid) {
+        await this.userRequestHandler({ type: 'migration_skip' })
+      }
+      if(legacyDid) {
+        await this.userRequestHandler({ type: 'migration', legacyDid })
+      }
     }
 
     let did:string
