@@ -47,17 +47,20 @@ export type UserAccountRequest = {
 export type UserMigrationRequest = {
   type: 'migration'
   legacyDid: string
-  muportDid: string
 }
 export type UserMigrationFailRequest = {
   type: 'migration_fail'
   legacyDid: string
+}
+export type UserMigrationSkipRequest = {
+  type: 'migration_skip'
 }
 export type UserRequest =
   | UserAuthenticateRequest
   | UserAccountRequest
   | UserMigrationRequest
   | UserMigrationFailRequest
+  | UserMigrationSkipRequest
 export type UserRequestWithError = UserRequest & { error?: string }
 
 export type UserRequestHandler = (req: UserRequest) => Promise<boolean>

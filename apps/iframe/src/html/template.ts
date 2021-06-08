@@ -63,6 +63,7 @@ const header = (data) => {
     How migration works?
   </a>`
   }
+  return ``
 }
 
 const content = (data) => {
@@ -78,15 +79,15 @@ const content = (data) => {
       return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
   if (data.request.type === 'migration_fail') {
-    return `Your 3Box account could not be migrated, continue with a new account?` + 
+    return `Your 3Box account could not be migrated, continue with a new account?  ` + 
     `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
-      Learn More
+    Learn More
     </a>`
   }
   if (data.request.type === 'migration_skip') {
-    return `You have a 3Box account we are unable to migrate, continue with a new account?` + 
+    return `You have a 3Box account we are unable to migrate, continue with a new account?  ` + 
     `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
-      Learn More
+    Learn More
     </a>`
   }
 }
@@ -95,7 +96,8 @@ const actions = (data) => {
   if (
     data.request.type === 'authenticate' ||
     data.request.type === 'migration' ||
-    data.request.type === 'migration_fail'
+    data.request.type === 'migration_fail' ||
+    data.request.type === 'migration_skip'
   ) {
     return `
       <button id='accept' class='${style.primaryButton}' ${

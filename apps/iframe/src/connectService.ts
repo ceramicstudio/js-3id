@@ -103,7 +103,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
     
     // If new account (and not migration), ask user to link or create
-    if (!legacyDid && (!existLocally && !existNetwork)) {
+    if (!(legacyDid || muportDid || willFail) && (!existLocally && !existNetwork)) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
         await this.manageApp.display(accountId)
