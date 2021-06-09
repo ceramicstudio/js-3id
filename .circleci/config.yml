@@ -7,7 +7,7 @@ jobs:
   test-and-build:
     working_directory: ~/3id-connect
     docker:
-      - image: mcr.microsoft.com/playwright:focal
+      - image: mcr.microsoft.com/playwright@sha256:9ed647342dba733508fdf102ae13b669b3e3ad11f16045e42b1af50a29d4b871
         environment:
           NODE_ENV: development
     steps:
@@ -23,15 +23,15 @@ jobs:
           command: |
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
             npm i -g codecov lerna node-gyp
-            yarn install
+            yarn install --frozen-lockfile
 
       - run:
           name: lint
-          command: npm run lint
+          command: yarn run lint
 
       - run:
           name: test
-          command: npm test
+          command: yarn test
 
       - when:
           condition:
