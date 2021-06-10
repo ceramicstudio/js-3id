@@ -13,9 +13,36 @@ import type { Subscription } from 'rxjs'
 
 import { DidProviderProxy } from './didProviderProxy'
 
-const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || 'https://app-clay.3idconnect.org'
+export type NetworkConfig = {
+  connect_iframe: string
+  manage_iframe: string
+}
+export type NetworkList = Record<string, NetworkConfig>
+
+// Base iframe urls by network
+const BASE_DEV_URL = 'https://app-dev.3idconnect.org'
+const BASE_CLAY_URL = 'https://app-clay.3idconnect.org'
+const BASE_MAIN_URL = 'https://app.3idconnect.org'
+const BASE_LOCAL_URL = `http://localhost:30001`
+const DEFAULT_MANAGE_PATH = `/management/index.html`
+
+const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL
 const CONNECT_MANAGE_URL =
-  process.env.CONNECT_MANAGE_URL || 'https://app-clay.3idconnect.org/management/index.html'
+  process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`
+
+const networkConfig = (base:string):NetworkConfig => {
+  return {
+    connect_iframe: base,
+    manage_iframe: `${base}${DEFAULT_MANAGE_PATH }`
+  }
+}
+// Configuration for each network
+const networks: NetworkList = {
+  'dev-unstable': networkConfig(BASE_DEV_URL),
+  'clay': networkConfig(BASE_CLAY_URL),
+  'main': networkConfig(BASE_MAIN_URL),
+  'local': networkConfig(BASE_LOCAL_URL)
+}
 
 type PostMessage = (
   message: any,
@@ -61,10 +88,20 @@ export class ThreeIdConnect {
    *  Creates ThreeIdConnect. Create and loads iframe. Should be instantiated
    *  on page load.
    *
-   * @param     {String}    iframeUrl   iframe url, defaults to 3id-connect iframe service
+   * @param     {String}    network     network name, or iframe url, clay, dev-unstable, local and main are supported
+   * @param     {String}    iframeUrl   manage iframe url
    */
-  constructor(iframeUrl?: string, manageUrl?: string) {
+
+  constructor(network?: string, manageUrl?: string) {
     assertBrowser()
+    let iframeUrl
+
+    if (network && Object.keys(networks).includes(network)) {
+      iframeUrl = networks[network].connect_iframe
+      manageUrl = networks[network].manage_iframe
+    } else {
+      iframeUrl = network
+    }
 
     this.iframe = createConnectIframe(iframeUrl || CONNECT_IFRAME_URL)
     this.manageUrl = manageUrl || CONNECT_MANAGE_URL
