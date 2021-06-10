@@ -33,3 +33,4 @@ export interface EOSIOProvider {
   getChainId(): Promise<string>
   signArbitrary(publicKey: string, data: string): Promise<string>
 }
+
