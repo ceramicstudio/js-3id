@@ -39,8 +39,8 @@ const networkConfig = (base:string):NetworkConfig => {
 // Configuration for each network
 const networks: NetworkList = {
   'dev-unstable': networkConfig(BASE_DEV_URL),
-  'clay': networkConfig(BASE_CLAY_URL),
-  'main': networkConfig(BASE_MAIN_URL),
+  'testnet-clay': networkConfig(BASE_CLAY_URL),
+  'mainnet': networkConfig(BASE_MAIN_URL),
   'local': networkConfig(BASE_LOCAL_URL)
 }
 
@@ -88,7 +88,7 @@ export class ThreeIdConnect {
    *  Creates ThreeIdConnect. Create and loads iframe. Should be instantiated
    *  on page load.
    *
-   * @param     {String}    network     network name, or iframe url, clay, dev-unstable, local and main are supported
+   * @param     {String}    network     network name, or iframe url, testnet-clay, dev-unstable, local and mainnet are supported
    * @param     {String}    iframeUrl   manage iframe url
    */
 
