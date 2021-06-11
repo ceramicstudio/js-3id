@@ -33,7 +33,7 @@ const CONNECT_MANAGE_URL =
 const networkConfig = (base:string):NetworkConfig => {
   return {
     connect_iframe: base,
-    manage_iframe: `${base}${DEFAULT_MANAGE_PATH }`
+    manage_iframe: `${base}${DEFAULT_MANAGE_PATH}`
   }
 }
 // Configuration for each network

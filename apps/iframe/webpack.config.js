@@ -16,6 +16,7 @@ module.exports = (env, argv) => {
       config = {
         CERAMIC_API: JSON.stringify('https://ceramic-private-clay.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app-clay.3idconnect.org'),
+        VERIFICATION_SERVICE: JSON.stringify('https://verifications-clay.3boxlabs.com'),
         MIGRATION: JSON.stringify('true'),
       }
     } else if (env.CERAMIC_ENV === 'test') {
@@ -29,6 +30,7 @@ module.exports = (env, argv) => {
       config = {
         CERAMIC_API: JSON.stringify('https://ceramic-private.3boxlabs.com'),
         CONNECT_IFRAME_URL: JSON.stringify('https://app.3idconnect.org'),
+        VERIFICATION_SERVICE: JSON.stringify('https://verifications.3boxlabs.com'),
         MIGRATION: JSON.stringify('true'),
       }
     }
