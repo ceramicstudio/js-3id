@@ -15,7 +15,7 @@ import { fetchJson, jwtDecode } from './utils'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'
-const VERIFICATION_SERVICE = 'https://verifications.3boxlabs.com'
+const VERIFICATION_SERVICE = process.env.VERIFICATION_SERVICE || 'https://verifications-clay.3boxlabs.com'
 
 export class Migrate3IDV0 {
   private idx: IDX
