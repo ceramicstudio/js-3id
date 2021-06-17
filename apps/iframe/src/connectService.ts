@@ -80,11 +80,13 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
     // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
-  
+
     // Before to give context, and no 3id-did-provider permission exist
-    if (!existLocally || existNetwork) {
+    if (!existLocally) {
       await this.userPermissionRequest(authReq, domain)
     }
+
+    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create 
 
     let legacyDid = await legacyDidPromise
     let muportDid
@@ -148,7 +150,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     // After since 3id-did-provider permissions may exist
-    if (existLocally && !existNetwork) {
+    if (existLocally) {
       await this.userPermissionRequest(authReq, domain, did)
     }
   }
