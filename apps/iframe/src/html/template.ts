@@ -68,12 +68,12 @@ const header = (data) => {
 
 const content = (data) => {
   if (data.request.type === 'authenticate') {
-    return `This site wants to access your personal data${
+    return `This site is requesting permission to interact with your decentralized identity${
       data.request.paths.length === 0 ? '' : ' and ' + data.request.paths.length + ' data source'
     }${data.request.paths.length > 1 ? 's. ' : '.'}`
   }
   if (data.request.type === 'account') {
-    return `Connect your wallet to a decentralized ID.`
+    return `This site is requesting permission to interact with your decentralized ID. Connect your wallet.`
   }
   if (data.request.type === 'migration') {
       return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`

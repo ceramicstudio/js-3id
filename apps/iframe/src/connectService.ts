@@ -78,16 +78,24 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
+    const newAccount = !existNetwork && !existNetwork
+
     // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
-  
+
     // Before to give context, and no 3id-did-provider permission exist
-    if (!existLocally || existNetwork) {
+    if (!existLocally && !newAccount) {
       await this.userPermissionRequest(authReq, domain)
     }
 
+    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create 
+
     let legacyDid = await legacyDidPromise
     let muportDid
+
+    if (legacyDid) {
+      await this.userPermissionRequest(authReq, domain)
+    }
 
     // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
     if (legacyDid && legacyDid.includes('muport')) {
@@ -103,14 +111,14 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
     
     // If new account (and not migration), ask user to link or create
-    if (!(legacyDid || muportDid || willFail) && (!existLocally && !existNetwork)) {
+    if (!(legacyDid || muportDid || willFail) && newAccount) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
         await this.manageApp.display(accountId)
       }
     }
 
-    if (DID_MIGRATION && (!existLocally && !existNetwork)){
+    if (DID_MIGRATION && newAccount){
       if (willFail || muportDid) {
         await this.userRequestHandler({ type: 'migration_skip' })
       }
@@ -135,7 +143,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     this.threeId = manage.threeIdProviders[did]
-    this.provider = this.threeId.getDidProvider() as DIDProvider
+    this.provider = this.threeId.getDidProvider(domain) as DIDProvider
 
     if (muportDid) {
       //Try to migrate profile data still for muport did
@@ -148,7 +156,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     // After since 3id-did-provider permissions may exist
-    if (existLocally && !existNetwork) {
+    if (existLocally) {
       await this.userPermissionRequest(authReq, domain, did)
     }
   }
