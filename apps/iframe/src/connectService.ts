@@ -78,11 +78,13 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
+    const newAccount = !existNetwork && !existNetwork
+
     // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
 
     // Before to give context, and no 3id-did-provider permission exist
-    if (!existLocally) {
+    if (!existLocally && !newAccount) {
       await this.userPermissionRequest(authReq, domain)
     }
 
@@ -105,7 +107,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
     
     // If new account (and not migration), ask user to link or create
-    if (!(legacyDid || muportDid || willFail) && (!existLocally && !existNetwork)) {
+    if (!(legacyDid || muportDid || willFail) && newAccount) {
       const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
       if (LinkHuh) {
         await this.manageApp.display(accountId)
