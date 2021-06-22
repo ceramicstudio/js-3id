@@ -137,7 +137,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
 
     this.threeId = manage.threeIdProviders[did]
-    this.provider = this.threeId.getDidProvider() as DIDProvider
+    this.provider = this.threeId.getDidProvider(domain) as DIDProvider
 
     if (muportDid) {
       //Try to migrate profile data still for muport did
