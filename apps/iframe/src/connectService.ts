@@ -93,6 +93,10 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     let legacyDid = await legacyDidPromise
     let muportDid
 
+    if (legacyDid) {
+      await this.userPermissionRequest(authReq, domain)
+    }
+
     // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
     if (legacyDid && legacyDid.includes('muport')) {
       muportDid = legacyDid
@@ -114,7 +118,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
-    if (DID_MIGRATION && (!existLocally && !existNetwork)){
+    if (DID_MIGRATION && newAccount){
       if (willFail || muportDid) {
         await this.userRequestHandler({ type: 'migration_skip' })
       }

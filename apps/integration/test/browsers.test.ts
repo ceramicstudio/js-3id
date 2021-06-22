@@ -43,15 +43,6 @@ describe('connect flow', () => {
           })
         }, providerType)
 
-        // Continue button
-        const button = await frame.waitForSelector('#accept')
-        await button.click()
-        await new Promise((res) =>
-          setTimeout(() => {
-            res()
-          }, 2000)
-        )
-
         // Continue create account
         const buttontwo = await frame.waitForSelector('#decline')
         await buttontwo.click()
