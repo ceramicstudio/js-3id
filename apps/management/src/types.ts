@@ -3,6 +3,8 @@ import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { BasicProfile } from '@ceramicstudio/idx-constants'
 import type { AccountID } from 'caip'
 
+export type Network = 'dev-unstable' | 'testnet-clay' | 'mainnet' | 'local'
+
 export type DIDData = {
   accounts: Array<AccountID>
   profile: BasicProfile | null
