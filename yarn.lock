@@ -19858,6 +19858,11 @@ rpc-utils@^0.3.4:
   dependencies:
     nanoid "^3.1.21"
 
+"rpc-utils@file:../js-rpc-utils":
+  version "0.3.4"
+  dependencies:
+    nanoid "^3.1.21"
+
 rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"
