@@ -18,19 +18,22 @@ import { UIProvider, ThreeIDManagerUI } from '@ceramicstudio/ui-provider'
 
 // Implement the following UI Handlers 
 const UIMethods: UIProviderHandlers = {
-  prompt_migration: async () => {
+  prompt_migration: async (ctx, params) => {
     //...
   },
-  prompt_migration_skip: async () => {
+  prompt_migration_skip: async (ctx, params) => {
     //...
   },
-  prompt_account: async () => {
+  prompt_migration_fail: async (ctx, params) => {
     //...
   },
-  prompt_authenticate: async () => {
+  prompt_account: async (ctx, params) => {
     //...
   },
-  inform_error: async () => {
+  prompt_authenticate: async (ctx, params) => {
+    //...
+  },
+  inform_error: async (ctx, params) => {
     //...
   }
 }
