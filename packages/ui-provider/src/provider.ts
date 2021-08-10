@@ -52,6 +52,10 @@ import type {
     async promptMigrationSkip(params: {}) {
       return this._client.request('prompt_migration_skip', params)
     }
+
+    async promptMigrationFail(params: {}) {
+      return this._client.request('prompt_migration_fail', params)
+    }
   
     async promptAuthenticate(params: AuthParams) {
       return this._client.request('prompt_authenticate', {

@@ -1,6 +1,6 @@
 {
   "name": "@3id/ui-provider",
-  "version": "0.1.0",
+  "version": "0.0.2",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
@@ -14,12 +14,12 @@
     "directory": "packages/ui-provider"
   },
   "main": "dist/index.js",
-  "module": "dist/common.esm.js",
+  "module": "dist/ui-provider.esm.js",
   "typings": "dist/index.d.ts",
   "exports": {
     "require": "./dist/index.js",
-    "import": "./dist/common.esm.js",
-    "default": "./dist/common.esm.js"
+    "import": "./dist/ui-provider.esm.js",
+    "default": "./dist/ui-provider.esm.js"
   },
   "files": [
     "dist"
@@ -36,9 +36,8 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "rpc-utils": "file:../../../js-rpc-utils"
+    "rpc-utils": "^0.4.0"
   },
-  "devDependencies": { },
   "publishConfig": {
     "access": "public"
   }
