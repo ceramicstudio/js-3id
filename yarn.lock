@@ -27,6 +27,11 @@
     store "^2.0.12"
     uint8arrays "^2.1.5"
 
+"@3id/ui-provider@file:packages/ui-provider":
+  version "0.0.2"
+  dependencies:
+    rpc-utils "^0.4.0"
+
 "@achingbrain/electron-fetch@^1.7.2":
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/@achingbrain/electron-fetch/-/electron-fetch-1.7.2.tgz#df48e7e33b217520be1abb5bef151828fef7cf73"

@@ -49,11 +49,11 @@ import type {
       })
     }
   
-    async promptMigrationSkip(params: {}) {
+    async promptMigrationSkip(params = {}) {
       return this._client.request('prompt_migration_skip', params)
     }
 
-    async promptMigrationFail(params: {}) {
+    async promptMigrationFail(params = {}) {
       return this._client.request('prompt_migration_fail', params)
     }
   
@@ -65,7 +65,7 @@ import type {
       })
     }
   
-    async promptAccount(params: {}) {
+    async promptAccount(params = {}) {
       return this._client.request('prompt_account', params)
     }
   

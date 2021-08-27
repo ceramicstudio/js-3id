@@ -120,7 +120,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
         await this.uiManager.promptMigrationSkip()
       }
       if(legacyDid) {
-        await this.uiManager.promptMigration()
+        await this.uiManager.promptMigration({legacyDid})
       }
     }
 

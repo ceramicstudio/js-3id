@@ -21,7 +21,6 @@ const error = (error) => `
 // Given a request will render UI module templates
 const render = async (params, type) => {
   const request = Object.assign({}, params, { type })
-  console.log({ request })
   document.getElementById('root').innerHTML = template({ request }, checkIsMobile())
 }
 
