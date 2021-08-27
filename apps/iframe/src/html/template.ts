@@ -76,19 +76,23 @@ const content = (data) => {
     return `This site is requesting permission to interact with your decentralized ID. Connect your wallet.`
   }
   if (data.request.type === 'migration') {
-      return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
+    return `Your 3Box DID ${didShorten(data.request.legacyDid)} will be migrated.`
   }
   if (data.request.type === 'migration_fail') {
-    return `Your 3Box account could not be migrated, continue with a new account?  ` + 
-    `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
+    return (
+      `Your 3Box account could not be migrated, continue with a new account?  ` +
+      `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
     Learn More
     </a>`
+    )
   }
   if (data.request.type === 'migration_skip') {
-    return `You have a 3Box account we are unable to migrate, continue with a new account?  ` + 
-    `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
+    return (
+      `You have a 3Box account we are unable to migrate, continue with a new account?  ` +
+      `<a href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration" rel="noopener noreferrer" target="_blank">
     Learn More
     </a>`
+    )
   }
 }
 
