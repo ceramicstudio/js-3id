@@ -10,12 +10,11 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
+import { UIProvider, ThreeIDManagerUI } from '../../../packages/ui-provider/src/index'
 
 import { IframeService } from './iframeService'
 import type {
   UserAuthenticateRequest,
-  UserRequestHandler,
-  UserRequestErrorCallback,
   UserRequestCancel,
 } from './types'
 import { rpcError } from './utils'
@@ -31,9 +30,8 @@ type Methods = DIDProviderMethods
  *  bindings to receive and relay rpc messages to identity wallet
  */
 export class ConnectService extends IframeService<DIDProviderMethods> {
-  userRequestHandler: UserRequestHandler | undefined
+  uiManager: ThreeIDManagerUI | undefined
   cancel: UserRequestCancel | undefined
-  errorCb: UserRequestErrorCallback | undefined
 
   ceramic: CeramicClient | undefined
   threeId: ThreeIdProvider | undefined
@@ -45,19 +43,16 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
   /**
    *  Start connect service. Once returns ready to receive rpc requests
    *
-   * @param     {Function}    userRequestHandler   Function to handle request for user (in user interface/modal)
-   * @param     {Function}    errorCB              Function to handle errors, function consumes error string (err) => {...}, called on errors
+   * @param     {Function}    uiProvider           A uiProvider instance
    * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
    */
   // @ts-ignore method override
   start(
-    userRequestHandler: UserRequestHandler,
-    errorCb: UserRequestErrorCallback,
+    uiProvider : UIProvider,
     cancel: UserRequestCancel
   ): void {
     this.cancel = cancel
-    this.errorCb = errorCb
-    this.userRequestHandler = userRequestHandler
+    this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
     super.start(this.requestHandler.bind(this))
     this.manageApp = new DisplayManageClientRPC()
@@ -68,7 +63,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     authReq: DIDRequest<'did_authenticate'>,
     domain?: string | null
   ): Promise<void> {
-    assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
+    assert.isDefined(this.uiManager, 'UI Manager must be defined')
     assert.isDefined(this.manageApp, 'manageApp must be defined')
 
     const authProviderRelay = new AuthProviderClient(window.parent)
@@ -112,18 +107,18 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
-      const LinkHuh = await this.userRequestHandler({ type: 'account', accounts: [] })
-      if (LinkHuh) {
+      const createNew = (await this.uiManager.promptAccount()).createNew
+      if (!createNew) {
         await this.manageApp.display(accountId)
       }
     }
 
     if (DID_MIGRATION && newAccount){
       if (willFail || muportDid) {
-        await this.userRequestHandler({ type: 'migration_skip' })
+        await this.uiManager.promptMigrationSkip()
       }
       if(legacyDid) {
-        await this.userRequestHandler({ type: 'migration', legacyDid })
+        await this.uiManager.promptMigration({legacyDid})
       }
     }
 
@@ -133,7 +128,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
-        await this.userRequestHandler({ type: 'migration_fail', legacyDid })
+        await this.uiManager.promptMigrationFail()
         // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {
@@ -162,11 +157,11 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
   }
 
   async userPermissionRequest(authReq: DIDRequest, domain?: string | null, did?:string): Promise<void> {
-    assert.isDefined(this.userRequestHandler, 'User request handler must be defined')
+    assert.isDefined(this.uiManager, 'User request handler must be defined')
     this.cancel!(() => {throw new Error('3id-connect: Request not authorized')})
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
-    const userPermission = userReq ? await this.userRequestHandler(userReq) : null
+    const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
     if (!userPermission) throw new Error('3id-connect: Request not authorized')
   }
 
@@ -218,7 +213,6 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     | null
     | void
   > {
-    assert.isDefined(this.errorCb, 'Error callback must be defined')
     assert.isDefined(message.params, 'Message parameters must be defined')
 
     try {
@@ -235,7 +229,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
         await this.hideIframe()
         return rpcError(message.id!)
       }
-      this.errorCb(e, 'Error: Unable to connect')
+      this.uiManager.noftifyError({ code: 0, data:e, message: 'Error: Unable to connect'})
     }
   }
 

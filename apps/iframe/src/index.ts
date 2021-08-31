@@ -1,8 +1,7 @@
 import * as assets from './assets/assets'
 import template from './html/template'
-
 import { ConnectService } from './connectService'
-import type { UserRequestHandler } from './types'
+import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 /**
  *  UI Window Functions
@@ -16,7 +15,8 @@ const error = (error) => `
 `
 
 // Given a request will render UI module templates
-const render = async (request) => {
+const render = async (params, type) => {
+  const request = Object.assign({}, params, { type })
   document.getElementById('root').innerHTML = template({ request }, checkIsMobile())
 }
 
@@ -24,59 +24,85 @@ const render = async (request) => {
  *  Identity Wallet Service configuration and start
  */
 
-//  TODO RUN BOTH SERVICES HERE
-// const connectService = new ThreeIdConnectService()
 const connectService = new ConnectService()
 
-// IDW getConsent function. Consume IDW request, renders request to user, and resolve selection
-const requestHandler: UserRequestHandler = async (req) => {
+const modalView = async (params, type) => {
   await connectService.displayIframe()
-  // @ts-ignore
-  if (req.spaces) req.paths = req.spaces
-  await render(req)
-  const accept = document.getElementById('accept')
-  const decline = document.getElementById('decline')
+  await render(params, type)
+  const acceptNode = document.getElementById('accept')
+  const declineNode = document.getElementById('decline')
 
-  const result: boolean = await new Promise((resolve) => {
-    accept.addEventListener('click', () => {
+  const accepted = new Promise((resolve) => {
+    acceptNode.addEventListener('click', () => {
       resolve(true)
     })
-    if (req.type === 'account') {
-      decline.addEventListener('click', () => {
-        decline.innerHTML = `Creating account ${assets.Loading}`
-        decline.style.boxShadow = 'none'
+    if (declineNode) {
+      declineNode.addEventListener('click', () => {
         resolve(false)
       })
     }
-    if (req.type === 'migration') {
-      accept.addEventListener('click', () => {
-        accept.innerHTML = `Migrating ${assets.Loading}`
-      })
-    }
-    if (req.type === 'authenticate') {
-      accept.addEventListener('click', () => {
-        accept.innerHTML = `Continue ${assets.Loading}`
-      })
-    }
-    if (req.type === 'migration_fail' || req.type === 'migration_skip') {
-      accept.addEventListener('click', () => {
-        accept.innerHTML = `Creating account ${assets.Loading}`
-      })
-    }
   })
-
-  return result
+  return {
+    accepted,
+    acceptNode,
+    declineNode
+  }
 }
 
-// Service calls on error, renders error to UI
-const errorCb = (err, msg, req) => {
-  if (!msg) msg = err.toString()
-  msg = 'Error: Unable to connect'
-  console.log(err)
-  document.getElementById('action').innerHTML = error(msg)
+const UIMethods: UIProviderHandlers = {
+  prompt_migration: async (ctx={}, params) => {
+    const modal = await modalView(params, 'migration')
+    modal.acceptNode.addEventListener('click', () => {
+      modal.acceptNode.innerHTML = `Migrating ${assets.Loading}`
+    })
+    const migration = await modal.accepted
+    return { migration }
+  },
+  prompt_migration_skip: async (ctx={}, params)  => {
+    const modal = await modalView(params, 'migration_skip')
+    modal.acceptNode.addEventListener('click', () => {
+      modal.acceptNode.innerHTML = `Creating account ${assets.Loading}`
+    })
+    const skip = await modal.accepted
+    return { skip }
+  },
+  prompt_migration_fail: async (ctx={}, params)  => {
+    const modal = await modalView(params, 'migration_fail')
+    modal.acceptNode.addEventListener('click', () => {
+      modal.acceptNode.innerHTML = `Creating account ${assets.Loading}`
+    })
+    const createNew = await modal.accepted
+    return { createNew }
+  },
+  prompt_account: async (ctx={}, params)  => {
+    const modal = await modalView(params, 'account')
+    modal.declineNode.addEventListener('click', () => {
+      modal.declineNode.innerHTML = `Creating account ${assets.Loading}`
+      modal.declineNode.style.boxShadow = 'none'
+    })
+    const createNew = !(await modal.accepted)
+    return { createNew }
+  },
+  prompt_authenticate: async (ctx={}, params)  => {
+    const modal = await modalView(params, 'authenticate')
+    modal.acceptNode.addEventListener('click', () => {
+      modal.acceptNode.innerHTML = `Continue ${assets.Loading}`
+    })
+    const allow = await modal.accepted
+    return { allow }
+  },
+  inform_error: async (ctx={}, params)  => {
+    if (params.data) {
+      console.log(params.data.toString())
+    }
+    document.getElementById('action').innerHTML = error('Error: Unable to connect')
+  }
 }
 
-// Closure to pass cancel state to IDW iframe service
+//Create a 3ID Connect UI Provider 
+const provider = new UIProvider(UIMethods)
+
+// Closure to pass cancel state to IDW iframe service, TODO
 let closecallback
 
 // @ts-ignore
@@ -91,7 +117,7 @@ const closing = (cb) => {
   closecallback = cb
 }
 
-connectService.start(requestHandler, errorCb, closing)
+connectService.start(provider, closing)
 
 // For testing, uncomment one line to see static view
 // render(JSON.parse(`{"type":"authenticate","origin":"localhost:30001","paths":[], "opts": { "address": "0x9acb0539f2ea0c258ac43620dd03ef01f676a69b"}, "did":"did:3:bafyreihacllrcwagdqv7xn6yzw2xdy6wh2r6vsymbrd66vnh2o32dxpc6u"}`))
