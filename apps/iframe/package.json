@@ -1,6 +1,6 @@
 {
   "name": "3id-iframe",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "build:prod": "webpack --config webpack.config.js --mode=production",
@@ -13,15 +13,15 @@
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm run start"
   },
   "dependencies": {
-    "@3id/common": "^0.1.3",
-    "@3id/connect-display": "^0.1.5",
-    "@3id/manager": "^0.1.6",
-    "@3id/ui-provider": "^0.0.2",
-    "@3id/window-auth-provider": "^0.1.3",
+    "3id-did-provider": "^1.0.2",
+    "@3id/common": "^0.2.0",
+    "@3id/connect-display": "^0.2.0",
+    "@3id/manager": "^0.2.0",
+    "@3id/ui-provider": "^0.2.0",
+    "@3id/window-auth-provider": "^0.2.0",
     "@babel/runtime": "7.14.0",
     "@ceramicnetwork/http-client": "^1.0.0",
     "@ceramicstudio/idx": "^0.12.0",
-    "3id-did-provider": "^1.0.2",
     "errors-utils": "^0.1.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.3.4",
