@@ -5,7 +5,9 @@ import { AccountID } from 'caip'
 import type { RPCClient } from 'rpc-utils'
 import type { Observable } from 'rxjs'
 
-const NAMESPACE = process.env.NAMESPACE || '3id-connect-authprovider'
+let NAMESPACE = '3id-connect-authprovider';
+
+typeof process !== 'undefined' && (NAMESPACE = process.env.NAMESPACE || '3id-connect-authprovider');
 
 export type AuthProviderMethods = {
   accountId: { result: string }
