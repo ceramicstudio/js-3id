@@ -15,8 +15,6 @@ import { UIProvider, ThreeIDManagerUI } from '../../../packages/ui-provider/src/
 import { IframeService } from './iframeService'
 import type {
   UserAuthenticateRequest,
-  UserRequestHandler,
-  UserRequestErrorCallback,
   UserRequestCancel,
 } from './types'
 import { rpcError } from './utils'

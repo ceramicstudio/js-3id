@@ -1,11 +1,7 @@
 import * as assets from './assets/assets'
 import template from './html/template'
-
 import { ConnectService } from './connectService'
-import type { UserRequestHandler } from './types'
-import { UIProvider, UIProviderHandlers } from '../../../packages/ui-provider/src/index'
-import { BlobOptions } from 'buffer'
-import { create } from 'eslint/lib/rules/*'
+import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 /**
  *  UI Window Functions
