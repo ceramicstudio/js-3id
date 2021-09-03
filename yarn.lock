@@ -52,6 +52,13 @@
     store "^2.0.12"
     uint8arrays "^2.1.5"
 
+"@3id/ui-provider@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/ui-provider/-/ui-provider-0.2.0.tgz#1f22e77beb843efa9a6bdbdfa9709282cab46294"
+  integrity sha512-/VtPCYDuQDl7k/a1CKvIuxQM/grYhqRZOXN1bPYUpax/tLj5IdqQwjdWOm+K3yNTygZKEsrvFSRMHat7HQcKnw==
+  dependencies:
+    rpc-utils "^0.4.0"
+
 "@achingbrain/electron-fetch@^1.7.2":
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/@achingbrain/electron-fetch/-/electron-fetch-1.7.2.tgz#df48e7e33b217520be1abb5bef151828fef7cf73"
@@ -13934,6 +13941,11 @@ hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
+
+hex-to-rgb@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/hex-to-rgb/-/hex-to-rgb-1.0.1.tgz#100b9df126b32f2762adf8486be68c65ef8ed2a4"
+  integrity sha1-EAud8SazLydirfhIa+aMZe+O0qQ=
 
 hmac-drbg@^1.0.1:
   version "1.0.1"

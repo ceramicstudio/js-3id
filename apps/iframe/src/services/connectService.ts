@@ -10,14 +10,11 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
-import { UIProvider, ThreeIDManagerUI } from '../../../packages/ui-provider/src/index'
+import { UIProvider, ThreeIDManagerUI } from '@3id/ui-provider' //TODO: use proper lib
 
 import { IframeService } from './iframeService'
-import type {
-  UserAuthenticateRequest,
-  UserRequestCancel,
-} from './types'
-import { rpcError } from './utils'
+import type { UserAuthenticateRequest, UserRequestCancel } from './types'
+import { rpcError } from '../utils'
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-private.3boxlabs.com'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
@@ -47,10 +44,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
    * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
    */
   // @ts-ignore method override
-  start(
-    uiProvider : UIProvider,
-    cancel: UserRequestCancel
-  ): void {
+  start(uiProvider: UIProvider, cancel: UserRequestCancel): void {
     this.cancel = cancel
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
@@ -83,7 +77,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       await this.userPermissionRequest(authReq, domain)
     }
 
-    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create 
+    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
 
     let legacyDid = await legacyDidPromise
     let muportDid
@@ -104,7 +98,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       willFail = await willMigrationFail(accountId, legacyDid)
       if (willFail) legacyDid = null
     }
-    
+
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
       const createNew = (await this.uiManager.promptAccount()).createNew
@@ -113,37 +107,40 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       }
     }
 
-    if (DID_MIGRATION && newAccount){
+    if (DID_MIGRATION && newAccount) {
       if (willFail || muportDid) {
         await this.uiManager.promptMigrationSkip()
       }
-      if(legacyDid) {
-        await this.uiManager.promptMigration({legacyDid})
+      if (legacyDid) {
+        await this.uiManager.promptMigration({ legacyDid })
       }
     }
 
-    let did:string
+    let did: string
     try {
       // Skip migration if muport or known failure
+      // @ts-ignore - This is a weird one. It's complaining about a null value.
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
-    } catch(e) {
+    } catch (e) {
       if (legacyDid) {
         await this.uiManager.promptMigrationFail()
         // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {
         console.error(e)
-        throw new Error(e)
+        throw new Error(e as string)
       }
     }
 
+    //@ts-ignore - More weirdness here. and below.
     this.threeId = manage.threeIdProviders[did]
+    //@ts-ignore
     this.provider = this.threeId.getDidProvider(domain) as DIDProvider
 
     if (muportDid) {
       //Try to migrate profile data still for muport did
       try {
-        const migration = new Migrate3IDV0(this.provider , manage.idx)
+        const migration = new Migrate3IDV0(this.provider, manage.idx)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
         // If not available, continue
@@ -156,11 +153,18 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     }
   }
 
-  async userPermissionRequest(authReq: DIDRequest, domain?: string | null, did?:string): Promise<void> {
+  async userPermissionRequest(
+    authReq: DIDRequest,
+    domain?: string | null,
+    did?: string
+  ): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
-    this.cancel!(() => {throw new Error('3id-connect: Request not authorized')})
+    this.cancel!(() => {
+      throw new Error('3id-connect: Request not authorized')
+    })
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
+    // @ts-ignore - // TODO: Fix typing here.
     const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
     if (!userPermission) throw new Error('3id-connect: Request not authorized')
   }
@@ -216,11 +220,12 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     assert.isDefined(message.params, 'Message parameters must be defined')
 
     try {
-      const accountId = ((message.params as unknown) as { accountId: string }).accountId
+      const accountId = (message.params as unknown as { accountId: string }).accountId
 
       await this.init(accountId, message, domain)
 
       assert.isDefined(this.provider, 'DID provider must be defined')
+      // @ts-ignore // TODO: fix this.provider.send() only expecting one argument not two.
       const res = await this.provider.send(message, domain)
       await this.hideIframe()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
@@ -229,7 +234,14 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
         await this.hideIframe()
         return rpcError(message.id!)
       }
-      this.uiManager.noftifyError({ code: 0, data:e, message: 'Error: Unable to connect'})
+      if (this.uiManager) {
+        this.uiManager.noftifyError({
+          code: 0,
+          // data: e,1
+          data: undefined, // TODO: Fix this, throws compile error: 'Type unknown is not assignable to type undefined'
+          message: 'Error: Unable to connect',
+        })
+      }
     }
   }
 
@@ -238,6 +250,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     domain?: string | null
   ): Promise<RPCResponse<DIDProviderMethods, K> | null> {
     assert.isDefined(this.provider, 'DID provider must be defined')
+    // @ts-ignore // TODO: fix this.provider.send() only expecting one argument not two.
     return await this.provider.send(req, domain)
   }
 
@@ -258,7 +271,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       type: 'authenticate',
       origin,
       paths: params.paths || [],
-      did: did || ''
+      did: did || '',
     }
   }
 }
