@@ -30,7 +30,7 @@ const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL
 const CONNECT_MANAGE_URL =
   process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`
 
-const networkConfig = (base:string):NetworkConfig => {
+const networkConfig = (base: string): NetworkConfig => {
   return {
     connect_iframe: base,
     manage_iframe: `${base}${DEFAULT_MANAGE_PATH}`
@@ -116,6 +116,9 @@ export class ThreeIdConnect {
   }
 
   async connect(provider: AuthProvider): Promise<void> {
+    if (this._authProviderSubscription) {
+      this._authProviderSubscription.unsubscribe()
+    }
     if (provider) {
       await this.setAuthProvider(provider)
     }
@@ -123,7 +126,7 @@ export class ThreeIdConnect {
     this.postMessage = this.iframe.contentWindow!.postMessage.bind(this.iframe.contentWindow)
 
     // TODO: this should only be set if there is a provider injected, also need to stop current subscription
-    createAuthProviderServer(provider).subscribe()
+    this._authProviderSubscription = createAuthProviderServer(provider).subscribe()
     createDisplayConnectServerRPC(this.iframe).subscribe()
     createDisplayManageServerRPC(this.manageUrl).subscribe()
 
