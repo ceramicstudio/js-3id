@@ -36,7 +36,7 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "@ceramicnetwork/rpc-window": "^0.1.0",
+    "@ceramicnetwork/rpc-window": "^0.1.1",
     "@ceramicnetwork/transport-postmessage": "^0.3.0",
     "rxjs": "^6.6.6"
   },
