@@ -3,7 +3,7 @@ import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import { entropyToMnemonic } from '@ethersproject/hdnode'
 import { Wallet as EthereumWallet } from '@ethersproject/wallet'
-import { AccountID } from 'caip'
+import { AccountId } from 'caip'
 import { fromString, toString } from 'uint8arrays'
 
 export class EthereumProvider extends EventEmitter {
@@ -37,9 +37,9 @@ export class EthereumMigrationMockAuthProvider implements AuthProvider {
     return true
   }
 
-  accountId(): Promise<AccountID> {
+  accountId(): Promise<AccountId> {
     return Promise.resolve(
-      new AccountID({
+      new AccountId({
         address: '0x5314846209d781caad6258b0de7c13acb99ef692',
         chainId: `eip155:1`,
       })
