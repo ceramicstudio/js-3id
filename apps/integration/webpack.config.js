@@ -11,6 +11,13 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
+    fallback: {
+      crypto: false,
+      http: false,
+      https: false,
+      os: false,
+      stream: false,
+    },
   },
   module: {
     rules: [
