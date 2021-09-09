@@ -10,7 +10,7 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
-import { UIProvider, ThreeIDManagerUI } from '@3id/ui-provider' //TODO: use proper lib
+import { UIProvider, ThreeIDManagerUI } from '@3id/ui-provider'
 
 import { IframeService } from './iframeService'
 import type { UserAuthenticateRequest, UserRequestCancel } from './types'

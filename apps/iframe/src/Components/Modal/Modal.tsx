@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+
 import './Modal.scss'
 
 import Header from '../Header/Header'
@@ -27,6 +28,21 @@ export const Modal = ({ type }: ModalProps) => {
     </div>
   )
 
+  const [permissions, _setPermissions] = useState(['Store data', 'Read data'])
+
+  const [permissionDisplay] = useState(
+    <div className="permissions">
+      {permissions.map((permission, _id) => {
+        return (
+          <div className="permission" key={_id}>
+            <span className="permission-note"></span>
+            {permission}
+          </div>
+        )
+      })}
+    </div>
+  )
+
   // TODO: get Logo from Sena=
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
@@ -34,12 +50,7 @@ export const Modal = ({ type }: ModalProps) => {
       body = (
         <div>
           This site is requesting permission to connect to your decentralized identity.
-          <div className="permissions">
-            <ul>
-              <li>Store Data</li>
-              <li>Read Data</li>
-            </ul>
-          </div>
+          {permissionDisplay}
         </div>
       )
     } else if (type === 'account') {
@@ -47,6 +58,7 @@ export const Modal = ({ type }: ModalProps) => {
         <div>
           This site is requesting permission to interact with your decentralized ID. Please connect
           your wallet.
+          {permissionDisplay}
         </div>
       )
     } else if (type === 'migration') {

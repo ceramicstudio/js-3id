@@ -4,7 +4,10 @@ import Modal from '../Modal/Modal'
 
 type AppProps = {
   renderType?: string
-  bkgColor?: string //TODO: set regex for this
+  bkgColor?: string
+
+  acceptFunction: any
+  declineFunction: any
 }
 
 const App = ({ renderType, bkgColor }: AppProps) => {

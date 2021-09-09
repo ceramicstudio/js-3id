@@ -1,10 +1,10 @@
-import type {
+import type { 
   RPCClient,
-  RPCConnection,
-  RPCRequest,
-  RPCResponse,
+  RPCConnection, 
+  RPCRequest, 
+  RPCResponse, 
   RPCErrorObject,
-  HandlerMethods,
+  HandlerMethods
 } from 'rpc-utils'
 
 export type MigrationParams = {
@@ -15,11 +15,11 @@ export type MigrationRes = {
   migration: boolean
 }
 
-export type MigrationSkipRes = {
+export type MigrationSkipRes  = {
   skip: boolean
 }
 
-export type MigrationFailRes = {
+export type MigrationFailRes  = {
   createNew: boolean
 }
 
@@ -28,8 +28,8 @@ export type AccountRes = {
 }
 
 export type AuthParams = {
-  origin: string
-  paths: Array<string>
+	origin: string
+  paths: Array<string> 
   did: string
 }
 
@@ -43,13 +43,18 @@ export type UIProviderMethods = {
   prompt_migration_fail: { params: {}; result: MigrationFailRes }
   prompt_account: { params: {}; result: AccountRes }
   prompt_authenticate: { params: AuthParams; result: AuthRes }
-  inform_error: { params: RPCErrorObject; result: null }
+  inform_error: { params: RPCErrorObject, result: null }
 }
 
 export type UIMethodName = keyof UIProviderMethods
 export type UIRequest<K extends UIMethodName = UIMethodName> = RPCRequest<UIProviderMethods, K>
-export type UIResponse<K extends UIMethodName = UIMethodName> = RPCResponse<UIProviderMethods, K>
+export type UIResponse<K extends UIMethodName = UIMethodName> = RPCResponse<
+  UIProviderMethods,
+  K
+>
 export type UIProviderInterface = RPCConnection<UIProviderMethods>
 export type UIProviderClient = RPCClient<UIProviderMethods>
 export type UIProviderOrClient = UIProviderInterface | UIProviderClient
-export type UIProviderHandlers = HandlerMethods<{}, UIProviderMethods>
+export type UIProviderHandlers =  HandlerMethods<{}, UIProviderMethods>
+
+

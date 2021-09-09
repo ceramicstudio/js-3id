@@ -27,13 +27,11 @@ const error = (error: any) => `
 const render = async (params: object, type: string, functions: { accept: any; decline: any }) => {
   const request = Object.assign({}, params, { type })
 
-  // TODO:
-
   //TODO: parse through data object to get colors
   ReactDOM.render(
     <React.StrictMode>
       <App
-        renderType={render}
+        renderType={undefined}
         bkgColor={hexToRBGA('#000000', 10)}
         acceptFunction={functions.accept}
         declineFunction={functions.decline}
@@ -41,8 +39,6 @@ const render = async (params: object, type: string, functions: { accept: any; de
     </React.StrictMode>,
     document.getElementById('root')
   )
-
-  // document.getElementById('root').innerHTML = template({ request }, checkIsMobile())
 }
 
 /**
@@ -70,18 +66,21 @@ const modalView = async (params: object, type: string) => {
 }
 
 const UIMethods: UIProviderHandlers = {
+  //@ts-ignore
   prompt_migration: async (_ctx = {}, params) => {
     const modal = await modalView(params, 'migration')
     const migration = await modal
 
     return { migration }
   },
+  //@ts-ignore
   prompt_migration_skip: async (_ctx = {}, params) => {
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal
 
     return { skip }
   },
+  //@ts-ignore
   prompt_migration_fail: async (_ctx = {}, params) => {
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal
@@ -94,12 +93,14 @@ const UIMethods: UIProviderHandlers = {
 
     return { createNew }
   },
+  //@ts-ignore
   prompt_authenticate: async (_ctx = {}, params) => {
     const modal = await modalView(params, 'migration_fail')
     const allow = await modal
 
     return { allow }
   },
+  //@ts-ignore
   inform_error: async (_ctx = {}, params) => {
     // TODO: error component here
     // if (params.data) {
@@ -132,6 +133,23 @@ connectService.start(provider, closing)
 const hexToRBGA = (hex: string, opacity?: number | null): string =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   `rgba(${hexToRgb(hex) as string}, ${(opacity || 75) / 100})`
+
+// debug render
+ReactDOM.render(
+  <React.StrictMode>
+    <App
+      renderType={'authenticate'}
+      bkgColor={hexToRBGA('#000000', 10)}
+      acceptFunction={() => {
+        return true
+      }}
+      declineFunction={() => {
+        return false
+      }}
+    />
+  </React.StrictMode>,
+  document.getElementById('root')
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -1,0 +1,48 @@
+$placeholder: #5d40fb;
+.head {
+  display: flex;
+  flex-direction: column;
+
+  background-color: $placeholder;
+
+  color: white;
+
+  min-height: 125px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 15px 5px;
+
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .did {
+    background-color: darken($placeholder, 10%);
+  }
+
+  .logo-container {
+    display: block;
+    text-align: center;
+    width: 100%;
+    .logo {
+      display: block;
+      width: 100%;
+    }
+  }
+  .image-container {
+    position: relative;
+    top: 50px;
+    .avatar {
+      svg {
+        border: 3px solid white;
+        border-radius: 50px;
+      }
+    }
+  }
+}
