@@ -134,6 +134,7 @@ const errorNotFound = (err: any): boolean => {
 }
 
 export const legacyDIDLinkExist = async (accountId: string): Promise<string | null> => {
+  if (new AccountID(accountId).chainId.namespace !== 'eip155') return null
   const address = new AccountID(accountId).address.toLowerCase()
   try {
     const res = await fetchJson<{ data: { did: string } }>(
