@@ -30,7 +30,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test --verbose --runInBand",
+    "test": "tsdx test --verbose --runInBand --forceExit",
     "test:server": "rm -rf ./test/data && ../../node_modules/.bin/ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
     "lint": "tsdx lint src test --fix",
     "prepublish": "npm run build",
