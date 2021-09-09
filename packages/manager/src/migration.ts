@@ -134,8 +134,12 @@ const errorNotFound = (err: any): boolean => {
 }
 
 export const legacyDIDLinkExist = async (accountId: string): Promise<string | null> => {
-  if (new AccountID(accountId).chainId.namespace !== 'eip155') return null
-  const address = new AccountID(accountId).address.toLowerCase()
+  const account = new AccountID(accountId)
+  if (account.chainId.namespace !== 'eip155') {
+    // Only attempt migration for Ethereum accounts
+    return null
+  }
+  const address = account.address.toLowerCase()
   try {
     const res = await fetchJson<{ data: { did: string } }>(
       `${LEGACY_ADDRESS_SERVER}/odbAddress/${address}`
