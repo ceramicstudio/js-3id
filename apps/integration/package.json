@@ -14,7 +14,7 @@
   "dependencies": {
     "@3id/connect": "^0.2.0",
     "@3id/test-utils": "^0.2.0",
-    "@babel/runtime": "7.14.0",
+    "@babel/runtime": "7.15.4",
     "@ceramicnetwork/3id-did-resolver": "^1.4.0",
     "@ceramicnetwork/http-client": "^1.2.0",
     "dids": "^2.4.0",
