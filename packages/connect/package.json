@@ -1,6 +1,6 @@
 {
   "name": "@3id/connect",
-  "version": "0.2.0",
+  "version": "0.1.6",
   "description": "Account management for 3ID",
   "author": "3box <team@3box.io>",
   "license": "(Apache-2.0 OR MIT)",
@@ -37,9 +37,9 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "@3id/common": "^0.2.0",
-    "@3id/connect-display": "^0.2.0",
-    "@3id/window-auth-provider": "^0.2.0",
+    "@3id/common": "^0.1.3",
+    "@3id/connect-display": "^0.1.5",
+    "@3id/window-auth-provider": "^0.1.3",
     "@ceramicnetwork/blockchain-utils-linking": "^1.0.0",
     "postmsg-rpc": "^2.4.0",
     "rpc-utils": "^0.3.4",
