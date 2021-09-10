@@ -9,7 +9,7 @@
     "lerna": "lerna",
     "test:unit": "lerna run test",
     "test:integration": "lerna run test:integration",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "npm run test:unit",
     "lint": "lerna run lint",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
