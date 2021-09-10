@@ -1,6 +1,6 @@
 {
   "name": "3id-iframe",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "build:prod": "webpack --config webpack.config.js --mode=production",
@@ -14,11 +14,11 @@
   },
   "dependencies": {
     "3id-did-provider": "^1.1.0",
-    "@3id/common": "^0.2.0",
-    "@3id/connect-display": "^0.2.0",
-    "@3id/manager": "^0.2.0",
+    "@3id/common": "^0.2.1",
+    "@3id/connect-display": "^0.2.1",
+    "@3id/manager": "^0.2.1",
     "@3id/ui-provider": "^0.2.0",
-    "@3id/window-auth-provider": "^0.2.0",
+    "@3id/window-auth-provider": "^0.2.1",
     "@babel/runtime": "7.15.4",
     "@ceramicnetwork/http-client": "^1.2.0",
     "@ceramicstudio/idx": "^0.12.2",
