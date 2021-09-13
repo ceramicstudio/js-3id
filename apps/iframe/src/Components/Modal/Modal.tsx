@@ -5,37 +5,26 @@ import './Modal.scss'
 import Header from '../Header/Header'
 import Content from '../Content/Content'
 
+// TODO: use this for DID Switching to not overwhelm the display window.
 // const didShorten = (did: string): string => `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
 
 type ModalProps = {
   type?: string
+  accepted?: any
 }
 
 // TODO: Implement Error component
 
-export const Modal = ({ type }: ModalProps) => {
-  const [modal, setModal] = useState(
-    <div>
-      Your 3Box Account could not be migrated, continue with a new account?
-      <br />
-      <br />
-      <a
-        href="developers.ceramic.network/authentication/legacy/3id-connect-migration"
-        rel="noopener noreferrer"
-        target="_blank">
-        Learn More
-      </a>
-    </div>
-  )
-
-  const [permissions, _setPermissions] = useState(['Store data', 'Read data'])
+export const Modal = ({ type, accepted }: ModalProps) => {
+  // TODO: update this to be dynamically set when we have permission customization.
+  const permissions = ['Store data', 'Read data']
 
   const [permissionDisplay] = useState(
     <div className="permissions">
       {permissions.map((permission, _id) => {
         return (
           <div className="permission" key={_id}>
-            <span className="permission-note"></span>
+            <span className="permission-note" />
             {permission}
           </div>
         )
@@ -43,7 +32,7 @@ export const Modal = ({ type }: ModalProps) => {
     </div>
   )
 
-  // TODO: get Logo from Sena=
+  // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
     if (type === 'authenticate') {
@@ -81,14 +70,15 @@ export const Modal = ({ type }: ModalProps) => {
     return body
   }
 
-  useEffect(() => {
-    setModal(handleModal())
-  }, [])
-
   return (
     <div className="modal">
       <Header />
-      <Content message={modal} />
+      <Content
+        message={handleModal()}
+        approval={(result: boolean) => {
+          accepted(result)
+        }}
+      />
     </div>
   )
 }
