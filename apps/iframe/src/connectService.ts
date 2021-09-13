@@ -73,7 +73,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     const existLocally = await manage.cache.getLinkedDid(accountId)
     const existNetwork = await manage.linkInNetwork(accountId)
 
-    const newAccount = !existNetwork && !existNetwork
+    const newAccount = !existNetwork && !existLocally
 
     // Await during user prompt
     const legacyDidPromise = legacyDIDLinkExist(accountId)
