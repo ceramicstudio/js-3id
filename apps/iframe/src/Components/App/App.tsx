@@ -88,7 +88,6 @@ const App = () => {
     setPermission(result)
   }
 
-  console.log(connectService.manageApp)
   return (
     <div
       className="App"
