@@ -26,9 +26,11 @@ const BASE_MAIN_URL = 'https://app.3idconnect.org'
 const BASE_LOCAL_URL = `http://localhost:30001`
 const DEFAULT_MANAGE_PATH = `/management/index.html`
 
-const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL
-const CONNECT_MANAGE_URL =
-  process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`
+let CONNECT_IFRAME_URL = BASE_CLAY_URL;
+let CONNECT_MANAGE_URL = `${BASE_CLAY_URL}/management/index.html`;
+
+typeof process !== 'undefined' && (CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL);
+typeof process !== 'undefined' && (CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`);
 
 const networkConfig = (base:string):NetworkConfig => {
   return {
