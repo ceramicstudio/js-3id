@@ -32,7 +32,7 @@ Object {
 
 exports[`3ID Manager creates/loads and migrates a 3IDV0 did 2`] = `
 Object {
-  "0x5314846209d781caad6258b0de7c13acb99ef692@eip155:1": "ceramic://k2t6wyse1ukya90nl24z15p6ksj9lg5sp0fykl5mc890hrv74jwy105b892etp",
+  "0x5314846209d781caad6258b0de7c13acb99ef692@eip155:1": "ceramic://k2t6wyse1ukyg526sxjhqe9oqvmsrpe2qoo0ee4jklo424ybz3kn9y7lt0xnvl",
 }
 `;
 
