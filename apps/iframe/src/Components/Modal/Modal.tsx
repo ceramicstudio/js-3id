@@ -5,9 +5,6 @@ import './Modal.scss'
 import Header from '../Header/Header'
 import Content from '../Content/Content'
 
-// TODO: use this for DID Switching to not overwhelm the display window.
-// const didShorten = (did: string): string => `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
-
 type ModalProps = {
   type?: string
   accepted?: any

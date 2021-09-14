@@ -10,9 +10,10 @@ import './App.scss'
 import Modal from '../Modal/Modal'
 
 const App = () => {
+  const [renderType, setRenderType] = useState('')
   const [renderFunctions, setRenderFunctions] = useState({
     backgroundColor: '#e4e4e4',
-    type: 'authenticate',
+    type: '',
   })
 
   //@ts-ignore
@@ -37,27 +38,31 @@ const App = () => {
   const UIMethods: UIProviderHandlers = {
     // @ts-ignore TODO: swap this around a tad
     prompt_migration: async (_ctx = {}, _params) => {
+      setRenderType('migration')
       const result = await approvalResult
       return result
     },
     // @ts-ignore
     prompt_migration_skip: async (_ctx = {}, _params) => {
+      setRenderType('migration_skip')
       const result = await approvalResult
       return result
     },
     // @ts-ignore
     prompt_migration_fail: async (_ctx = {}, _params) => {
+      setRenderType('migration_fail')
       const result = await approvalResult
       return result
     },
     // @ts-ignore
     prompt_account: async (_ctx = {}, _params) => {
+      setRenderType('account')
       const result = await approvalResult
       return result
     },
     // @ts-ignore
     prompt_authenticate: async (_ctx = {}, _params) => {
-      console.log('authenticate')
+      setRenderType('authenticate')
       const result = await approvalResult
       return result
     },
@@ -86,9 +91,10 @@ const App = () => {
   return (
     <div
       className="App"
-      style={{ backgroundColor: hexToRBGA(renderFunctions?.backgroundColor || '#e4e4e4') }}>
+      // TODO: Dynamically set code instead of hardcoding
+      style={{ backgroundColor: hexToRBGA('#e4e4e4') }}>
       <Modal
-        type={renderFunctions.type}
+        type={renderType}
         accepted={(result: boolean) => {
           setApproval(result)
         }}
