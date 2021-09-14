@@ -15,8 +15,8 @@
     "@3id/connect": "^0.2.1",
     "@3id/test-utils": "^0.2.1",
     "@babel/runtime": "7.15.4",
-    "@ceramicnetwork/3id-did-resolver": "^1.4.0",
-    "@ceramicnetwork/http-client": "^1.2.0",
+    "@ceramicnetwork/3id-did-resolver": "^1.4.2",
+    "@ceramicnetwork/http-client": "^1.2.2",
     "dids": "^2.4.0",
     "key-did-resolver": "^1.4.0"
   },
