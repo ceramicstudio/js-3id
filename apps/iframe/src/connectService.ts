@@ -10,11 +10,10 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
-import { UIProvider, ThreeIDManagerUI } from '../../../packages/ui-provider/src/index'
+import { UIProvider, ThreeIDManagerUI, AuthParams } from '../../../packages/ui-provider/src/index'
 
 import { IframeService } from './iframeService'
 import type {
-  UserAuthenticateRequest,
   UserRequestCancel,
 } from './types'
 import { rpcError } from './utils'
@@ -83,7 +82,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       await this.userPermissionRequest(authReq, domain)
     }
 
-    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create 
+    //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
 
     let legacyDid = await legacyDidPromise
     let muportDid
@@ -104,7 +103,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
       willFail = await willMigrationFail(accountId, legacyDid)
       if (willFail) legacyDid = null
     }
-    
+
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
       const createNew = (await this.uiManager.promptAccount()).createNew
@@ -245,7 +244,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     req: RPCRequest<DIDProviderMethods, K>,
     origin?: string | null,
     did?: string
-  ): UserAuthenticateRequest | null {
+  ): AuthParams | null {
     assert.isDefined(req.params, 'Request parameters must be provided')
     const params = req.params as DIDProviderMethods[K]['params'] & { paths?: Array<string> }
 
