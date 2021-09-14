@@ -1,10 +1,11 @@
 import React from 'react'
+
 type ContentProps = {
-  message?: JSX.Element
-  approval?: any
+  message: JSX.Element
+  acceptPermissions: any
 }
 
-export const Content = ({ message, approval }: ContentProps) => (
+export const Content = ({ message, acceptPermissions }: ContentProps) => (
   <div className="body">
     <div className="inner">
       {message}
@@ -12,10 +13,12 @@ export const Content = ({ message, approval }: ContentProps) => (
         <a
           className="btn"
           onClick={() => {
-            approval(true)
+            acceptPermissions(true)
           }}>
           Continue
         </a>
+
+        {/* TODO: decline button */}
       </div>
     </div>
   </div>

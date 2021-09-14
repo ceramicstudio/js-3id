@@ -11,13 +11,10 @@ import Modal from '../Modal/Modal'
 
 const App = () => {
   const [renderType, setRenderType] = useState('')
-  const [renderFunctions, setRenderFunctions] = useState({
-    backgroundColor: '#e4e4e4',
-    type: '',
-  })
+  const [uiRequest, setUiRequest] = useState({})
+  const [permission, setPermission]: any = useState(null)
 
-  //@ts-ignore
-  const [approvalResult, setApprovalResult]: null | boolean = useState(null)
+  const connectService = new ConnectService()
 
   const hexToRBGA = (hex: string, opacity?: number | null): string =>
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -27,44 +24,43 @@ const App = () => {
    *  Identity Wallet Service configuration and start
    */
 
-  // This passes all the way down to Content.
-  const setApproval = (result: boolean) => {
-    setApprovalResult(result)
+  const accepted: Promise<boolean> = new Promise((resolve) => {
+    return resolve(permission)
+  })
+
+  const preUi = (req: object, type: string) => {
+    setRenderType(type)
+    setPermission(null)
+    setUiRequest(req)
   }
 
-  const connectService = new ConnectService()
-
-  // Set up for @zfer
   const UIMethods: UIProviderHandlers = {
-    // @ts-ignore TODO: swap this around a tad
-    prompt_migration: async (_ctx = {}, _params) => {
-      setRenderType('migration')
-      const result = await approvalResult
-      return result
+    prompt_migration: async (_ctx = {}, params) => {
+      preUi(Object.assign({}, params), 'migration')
+      const migration = await accepted
+      return { migration }
     },
-    // @ts-ignore
-    prompt_migration_skip: async (_ctx = {}, _params) => {
-      setRenderType('migration_skip')
-      const result = await approvalResult
-      return result
+    prompt_migration_skip: async (_ctx = {}, params) => {
+      preUi(Object.assign({}, params), 'migration_skip')
+      const skip = await accepted
+      return { skip }
     },
-    // @ts-ignore
-    prompt_migration_fail: async (_ctx = {}, _params) => {
-      setRenderType('migration_fail')
-      const result = await approvalResult
-      return result
+    prompt_migration_fail: async (_ctx = {}, params) => {
+      preUi(Object.assign({}, params), 'migration_fail')
+      const createNew = await accepted
+
+      return { createNew }
     },
-    // @ts-ignore
-    prompt_account: async (_ctx = {}, _params) => {
-      setRenderType('account')
-      const result = await approvalResult
-      return result
+    prompt_account: async (_ctx = {}, params) => {
+      preUi(Object.assign({}, params), 'account')
+      const createNew = !(await accepted)
+
+      return { createNew }
     },
-    // @ts-ignore
-    prompt_authenticate: async (_ctx = {}, _params) => {
-      setRenderType('authenticate')
-      const result = await approvalResult
-      return result
+    prompt_authenticate: async (_ctx = {}, params) => {
+      preUi(Object.assign({}, params), 'authenticate')
+      const allow = await accepted
+      return { allow }
     },
     //@ts-ignore
     inform_error: async (_ctx = {}, params) => {
@@ -88,6 +84,11 @@ const App = () => {
 
   connectService.start(provider, closing)
 
+  const setApproval = (result: boolean) => {
+    setPermission(result)
+  }
+
+  console.log(connectService.manageApp)
   return (
     <div
       className="App"
@@ -95,9 +96,10 @@ const App = () => {
       style={{ backgroundColor: hexToRBGA('#e4e4e4') }}>
       <Modal
         type={renderType}
-        accepted={(result: boolean) => {
+        acceptPermissions={(result: boolean) => {
           setApproval(result)
         }}
+        uiRequest={uiRequest}
       />
     </div>
   )

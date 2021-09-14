@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 import './Modal.scss'
 
@@ -6,17 +6,20 @@ import Header from '../Header/Header'
 import Content from '../Content/Content'
 
 type ModalProps = {
-  type?: string
-  accepted?: any
+  type: string
+  uiRequest: Object
+  acceptPermissions: any
 }
 
 // TODO: Implement Error component
 
-export const Modal = ({ type, accepted }: ModalProps) => {
+export const Modal = ({ type, uiRequest, acceptPermissions }: ModalProps) => {
   // TODO: update this to be dynamically set when we have permission customization.
   const permissions = ['Store data', 'Read data']
 
-  const [permissionDisplay] = useState(
+  console.log(uiRequest)
+
+  const permissionDisplay = (
     <div className="permissions">
       {permissions.map((permission, _id) => {
         return (
@@ -72,8 +75,8 @@ export const Modal = ({ type, accepted }: ModalProps) => {
       <Header />
       <Content
         message={handleModal()}
-        approval={(result: boolean) => {
-          accepted(result)
+        acceptPermissions={(result: boolean) => {
+          acceptPermissions(result)
         }}
       />
     </div>
