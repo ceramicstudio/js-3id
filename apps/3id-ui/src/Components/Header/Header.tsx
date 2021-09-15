@@ -1,14 +1,13 @@
 import React from 'react'
-
 import Avatar from 'boring-avatars'
-
+import { DID } from 'dids'
 import './Header.scss'
 
 type HeaderProps = {
+  did?: DID
   closeButton: JSX.Element
 }
-
-export const Header = ({ closeButton }: HeaderProps) => {
+const Header = ({ did, closeButton }: HeaderProps) => {
   return (
     <div className="head">
       <div className="close-container">{closeButton}</div>
@@ -26,7 +25,7 @@ export const Header = ({ closeButton }: HeaderProps) => {
         <div className="avatar">
           <Avatar
             size={65}
-            name="self.id-connect"
+            name={`${did}` || 'self.id-connect'}
             variant="marble"
             colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
           />

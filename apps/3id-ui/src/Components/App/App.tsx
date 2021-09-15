@@ -1,63 +1,21 @@
 import React from 'react'
-import logo from './logo.svg'
-import './App.css'
-import { ConnectService } from '../../services/connectService'
+import './App.scss'
+import Modal from '../Modal/Modal'
 
-import { UIProvider } from '@3id/ui-provider'
-import type { UIProviderHandlers } from '@3id/ui-provider'
+import { hexToRGBA } from '../../utils'
 
-function App() {
-  const connectService = new ConnectService()
-  connectService.displayIframe()
+type AppProps = {
+  buttons: any
+  request: any
+}
 
-  const UIMethods: UIProviderHandlers = {
-    //@ts-ignore
-    prompt_migration: async (_ctx = {}, params) => {
-      // should return { boolean }
-    },
-    //@ts-ignore
-    prompt_migration_skip: async (_ctx = {}, params) => {
-      // should return { boolean }
-    },
-    //@ts-ignore
-    prompt_migration_fail: async (_ctx = {}, params) => {
-      // should return { boolean }
-    },
-    //@ts-ignore
-    prompt_account: async (_ctx = {}, params) => {
-      // should return { boolean }
-    },
-    //@ts-ignore
-    prompt_authenticate: async (_ctx = {}, params) => {
-      // should return { boolean }
-    },
-    //@ts-ignore
-    inform_error: async (_ctx = {}, params) => {
-      // TODO: error component here
-      // if (params.data) {
-      //   console.log(params.data.toString())
-      // }
-      // document.getElementById('action').innerHTML = error('Error: Unable to connect')
-    },
-  }
-
-  const provider = new UIProvider(UIMethods)
-
+const App = ({ buttons, request }: AppProps) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
+    <div
+      className="App"
+      // TODO: dynamically set this based off of request object.
+      style={{ backgroundColor: `${hexToRGBA('#e4e4e4')}` }}>
+      <Modal buttons={buttons} request={request} />
     </div>
   )
 }
