@@ -39,8 +39,9 @@ export class IframeService<Methods extends RPCMethods> {
   /**
    *  Tells parent window to display iframe
    */
-  async displayIframe(): Promise<void> {
-    return await this.display(checkIsMobile())
+  async displayIframe(): Promise<boolean> {
+    await this.display(checkIsMobile())
+    return true
   }
 
   /**
