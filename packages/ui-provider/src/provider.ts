@@ -72,4 +72,8 @@ import type {
     async noftifyError(error: RPCErrorObject) {
       return this._client.notify('inform_error', error)
     }
+
+    async noftifyClose(params = {}) {
+      return this._client.notify('inform_close', params)
+    }
   }
