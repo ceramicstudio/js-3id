@@ -7,8 +7,6 @@ import { ConnectService } from './services/connectService'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 const render = async (params: object, type: string, buttons: object) => {
-  console.log(buttons)
-  console.log('render: ', type)
   const request = Object.assign({}, params, { type })
   ReactDOM.render(
     <React.StrictMode>
