@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+.btn {
+  display: inline-block;
+  text-align: center;
+
+  padding: 13px 20px;
+  border-radius: 10px;
+
+  background-color: #333;
+  color: white;
+
+  cursor: pointer;
+
+  transition: ease background-color 0.3s;
+
+  /* &:hover {
+    transition: ease background-color 0.3s;
+    background-color: darken($placeholder, 5%);
+  } */
+}

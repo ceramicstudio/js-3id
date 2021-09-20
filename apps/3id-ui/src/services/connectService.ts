@@ -14,7 +14,7 @@ import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider/src'
 
 import { IframeService } from './iframeService'
 /**
- * TODO: Export this block to common
+ * TODO: Export this block to @3id/common
  */
 import { RPCError } from 'rpc-utils'
 import type { RPCErrorObject } from 'rpc-utils'
@@ -182,6 +182,7 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
   async requestHandler(message: RPCRequest<Methods, keyof Methods>): Promise<string> {
     const domain = new Url(document.referrer).host
+    console.log(message)
 
     const responsePromise = new Promise((resolve, reject) => {
       // Register request cancel calback
