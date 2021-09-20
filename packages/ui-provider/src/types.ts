@@ -44,6 +44,8 @@ export type UIProviderMethods = {
   prompt_account: { params: {}; result: AccountRes }
   prompt_authenticate: { params: AuthParams; result: AuthRes }
   inform_error: { params: RPCErrorObject, result: null }
+  inform_open: { params: {}, result: null }
+  inform_close: { params: {}, result: null }
 }
 
 export type UIMethodName = keyof UIProviderMethods
