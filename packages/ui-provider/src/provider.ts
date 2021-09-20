@@ -73,10 +73,6 @@ import type {
       return this._client.notify('inform_error', error)
     }
 
-    async noftifyOpen(params = {}) {
-      return this._client.notify('inform_open', params)
-    }
-
     async noftifyClose(params = {}) {
       return this._client.notify('inform_close', params)
     }

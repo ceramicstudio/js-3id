@@ -46,10 +46,6 @@ const UIMethods: UIProviderHandlers = {
   inform_error: async (ctx, params) => {
     //...
   },
-  // Inform UI that a flow is starting and requests are coming
-  inform_open: async (ctx, params) => {
-    //...
-  },
   // Inform UI that a flow has ended and no futher requests are expected 
   inform_close: async (ctx, params) => {
     //...

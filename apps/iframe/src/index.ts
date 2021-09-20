@@ -2,6 +2,7 @@ import * as assets from './assets/assets'
 import template from './html/template'
 import { ConnectService } from './connectService'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
+import { DisplayConnectClientRPC } from '@3id/connect-display'
 
 /**
  *  UI Window Functions
@@ -25,9 +26,10 @@ const render = async (params, type) => {
  */
 
 const connectService = new ConnectService()
+const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
 const modalView = async (params, type) => {
-  await connectService.displayIframe()
+  await iframeDisplay.display(checkIsMobile())
   await render(params, type)
   const acceptNode = document.getElementById('accept')
   const declineNode = document.getElementById('decline')
@@ -96,6 +98,9 @@ const UIMethods: UIProviderHandlers = {
       console.log(params.data.toString())
     }
     document.getElementById('action').innerHTML = error('Error: Unable to connect')
+  }, 
+  inform_close: async (ctx={}, params)  => {
+    await iframeDisplay.hide()
   }
 }
 
@@ -107,7 +112,7 @@ let closecallback
 
 // @ts-ignore
 window.hideIframe = () => {
-  connectService.hideIframe()
+  iframeDisplay.hide()
   const root = document.getElementById('root')
   if (root) root.innerHTML = ``
   if (closecallback) closecallback()
