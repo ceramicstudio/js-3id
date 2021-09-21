@@ -11,8 +11,8 @@ import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDRes
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
 import { UIProvider, ThreeIDManagerUI, AuthParams } from '../../../packages/ui-provider/src/index'
+import { expose } from 'postmsg-rpc'
 
-import { IframeService } from './iframeService'
 import type {
   UserRequestCancel,
 } from './types'
@@ -28,7 +28,7 @@ type Methods = DIDProviderMethods
  *  ConnectService runs a 3ID DID provider instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-export class ConnectService extends IframeService<DIDProviderMethods> {
+export class ConnectService  {
   uiManager: ThreeIDManagerUI | undefined
   cancel: UserRequestCancel | undefined
 
@@ -53,8 +53,8 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
     this.cancel = cancel
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
-    super.start(this.requestHandler.bind(this))
     this.manageApp = new DisplayManageClientRPC()
+    expose('send', this.requestHandler.bind(this), { postMessage: window.parent.postMessage.bind(window.parent) })
   }
 
   async init(
@@ -221,11 +221,11 @@ export class ConnectService extends IframeService<DIDProviderMethods> {
 
       assert.isDefined(this.provider, 'DID provider must be defined')
       const res = await this.provider.send(message, domain)
-      await this.hideIframe()
+      this.uiManager.noftifyClose()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
     } catch (e) {
       if ((e as Error).toString().includes('authorized')) {
-        await this.hideIframe()
+        this.uiManager.noftifyClose()
         return rpcError(message.id!)
       }
       this.uiManager.noftifyError({ code: 0, data:e, message: 'Error: Unable to connect'})
