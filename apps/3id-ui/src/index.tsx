@@ -7,10 +7,11 @@ import { ConnectService } from './services/connectService'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 const render = async (params: object, type: string, buttons: object) => {
-  const request = Object.assign({}, params, { type })
+  const request = Object.assign(params, { type })
+  console.log(params)
   ReactDOM.render(
     <React.StrictMode>
-      <App buttons={buttons} />
+      <App request={request} buttons={buttons} />
     </React.StrictMode>,
     document.getElementById('root')
   )

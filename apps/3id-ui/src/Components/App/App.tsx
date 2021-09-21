@@ -1,12 +1,15 @@
 import React from 'react'
 import './App.css'
 
+import Modal from '../Modal/Modal'
+
 type AppProps = {
-  buttons?: any
+  buttons: any
+  request: any
 }
 
-function App({ buttons }: AppProps) {
-  return <div className="App">{buttons.acceptNode}</div>
+const App = ({ buttons, request }: AppProps) => {
+  return <Modal buttons={buttons} request={request} />
 }
 
 export default App
