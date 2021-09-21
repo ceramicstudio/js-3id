@@ -8,7 +8,7 @@ import { web3Modal } from './providers'
 
 const CERAMIC_URL = process.env.CERAMIC_API || 'http://localhost:7007'
 
-const threeIdConnect = new ThreeIdConnect('local')
+const threeIdConnect = new ThreeIdConnect()
 
 const authenticate = async () => {
   const ethProvider = await web3Modal.connect()
@@ -20,7 +20,7 @@ const authenticate = async () => {
   const ceramic = new Ceramic(CERAMIC_URL)
   const did = new DID({
     provider: threeIdConnect.getDidProvider(),
-    resolver: ThreeIdResolver.getResolver(ceramic)
+    resolver: ThreeIdResolver.getResolver(ceramic),
   })
 
   await did.authenticate()
