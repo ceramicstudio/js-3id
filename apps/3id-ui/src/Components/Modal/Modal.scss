@@ -1,33 +1,5 @@
 $placeholder: #5d40fb;
 
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 400;
-  font-display: fallback;
-  src: local('Segment Regular'), local('Segment-Regular'),
-    url('../../fonts/Segment-Regular.woff2') format('woff2'),
-    url('../../fonts/Segment-Regular.woff') format('woff');
-}
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 500;
-  font-display: fallback;
-  src: local('Segment Medium'), local('Segment-Medium'),
-    url('../../fonts/Segment-Medium.woff2') format('woff2'),
-    url('../../fonts/Segment-Medium.woff') format('woff');
-}
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 600;
-  font-display: fallback;
-  src: local('Segment SemiBold'), local('Segment-SemiBold'),
-    url('../../fonts/Segment-SemiBold.woff2') format('woff2'),
-    url('../../fonts/Segment-SemiBold.woff') format('woff');
-}
-
 .modal {
   background-color: white;
   position: fixed;
@@ -84,17 +56,16 @@ $placeholder: #5d40fb;
       .permissions {
         margin-top: 20px;
         .permission {
-          $size: 20px;
           text-align: left;
           display: flex;
           align-items: center;
 
-          margin-bottom: ($size/2);
+          margin-bottom: 10px;
           .permission-note {
             display: inline-block;
             background: $placeholder;
-            height: $size;
-            width: $size;
+            height: 20px;
+            width: 20px;
             border-radius: 2.5px;
             margin-right: 10px;
           }
