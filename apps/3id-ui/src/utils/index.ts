@@ -7,6 +7,7 @@ export const hexToRGBA = (hex: string, opacity?: number | null): string =>
 
 export const createCeramic = () => {
   const ceramic = new Ceramic('https://ceramic-clay.3boxlabs.com')
+
   return Promise.resolve(ceramic)
 }
 

@@ -4,6 +4,9 @@ import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
 import { ConnectService } from './services/connectService'
+
+import { DisplayConnectClientRPC } from '@3id/connect-display'
+import { ThreeIDService } from '@3id/service'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 const render = async (params: object, type: string, buttons: object) => {
@@ -17,10 +20,14 @@ const render = async (params: object, type: string, buttons: object) => {
   )
 }
 
-const connectService = new ConnectService()
+const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
+
+const connectService = new ThreeIDService()
+const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
 const modalView = async (params: object, type: string) => {
-  await connectService.displayIframe()
+  await iframeDisplay.display(checkIsMobile())
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
@@ -104,7 +111,7 @@ let closecallback: any
 
 // @ts-ignore
 window.hideIframe = () => {
-  connectService.hideIframe()
+  iframeDisplay.hide()
   const root = document.getElementById('root')
   if (root) root.innerHTML = ``
   if (closecallback) closecallback()
@@ -114,6 +121,7 @@ const closing = (cb: any) => {
   closecallback = cb
 }
 
+//@ts-ignore
 connectService.start(provider, closing)
 
 reportWebVitals()
