@@ -1,13 +1,21 @@
 import React from 'react'
-
 import Avatar from 'boring-avatars'
 
+import { createIdx } from '../../utils'
 import './Header.scss'
 
 type HeaderProps = {
   did?: string
 }
 const Header = ({ did }: HeaderProps) => {
+  const idx = createIdx()
+
+  React.useEffect(() => {
+    console.log(did)
+    if (did) {
+      idx.get('basicProfile', did)
+    }
+  })
   return (
     <div className="head">
       <div className="logo-container">
