@@ -1,19 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import Avatar from 'boring-avatars'
 
 import './Header.scss'
 
-/**
- * Handle all the data updates that are needed for display.
- */
-export const Header = () => {
-  // Get the Favicon of the parent window
-  // const referrerUrl =
-  //   window.location != window.parent.location ? document.referrer : document.location.href
-  // Fetch the page & snag the favicon
-
-  const did = undefined // user?.id // TODO: Set based off of IDX DID
+type HeaderProps = {
+  did?: string
+}
+const Header = ({ did }: HeaderProps) => {
   return (
     <div className="head">
       <div className="logo-container">

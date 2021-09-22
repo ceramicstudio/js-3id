@@ -2,15 +2,12 @@ import React from 'react'
 import './App.scss'
 import Modal from '../Modal/Modal'
 
-import * as hexToRgb from 'hex-to-rgb'
+import { hexToRGBA } from '../../utils'
 
 type AppProps = {
   buttons: any
   request: any
 }
-
-const hexToRGBA = (hex: string, opacity?: number | null): string =>
-  `rgba(${hexToRgb(hex) as string}, ${(opacity || 30) / 100})`
 
 const App = ({ buttons, request }: AppProps) => {
   return (

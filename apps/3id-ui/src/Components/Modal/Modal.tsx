@@ -9,6 +9,8 @@ type ModalProps = {
   request: {
     type: string
     params: object
+    did?: string
+    legacyDid?: string
   }
   buttons: {
     acceptNode: JSX.Element
@@ -45,7 +47,8 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            This site is requesting permission to connect to your decentralized identity.
+            <a href={document.referrer}>{document.referrer}</a> is requesting permission to connect
+            to your decentralized identity.
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -55,8 +58,8 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            This site is requesting permission to interact with your decentralized ID. Please
-            connect your wallet.
+            <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
+            with your decentralized ID. Please connect your wallet.
             {permissionDisplay}
           </div>
           <div className="bottom">
@@ -70,7 +73,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            {`Your 3Box DID will be migrated.`}
+            {`Your 3Box DID ${request.did || request.legacyDid} will be migrated.`}
             <br />
             <br />
             <a
@@ -96,7 +99,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
 
   return (
     <div className="modal">
-      <Header />
+      <Header did={request.did || request.legacyDid} />
       <Content message={handleModal()} />
     </div>
   )
