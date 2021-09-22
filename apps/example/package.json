@@ -1,6 +1,6 @@
 {
   "name": "3id-example-app",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "server:app": "http-server -c-1 -p 30000 .",
