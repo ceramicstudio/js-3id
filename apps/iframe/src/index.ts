@@ -1,8 +1,8 @@
 import * as assets from './assets/assets'
 import template from './html/template'
-import { ConnectService } from './connectService'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
+import { ThreeIDService } from '@3id/service'
 
 /**
  *  UI Window Functions
@@ -25,7 +25,7 @@ const render = async (params, type) => {
  *  Identity Wallet Service configuration and start
  */
 
-const connectService = new ConnectService()
+const connectService = new ThreeIDService()
 const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
 const modalView = async (params, type) => {
