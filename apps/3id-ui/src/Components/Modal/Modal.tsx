@@ -1,11 +1,9 @@
 import React from 'react'
-import { isIndexedAccessTypeNode } from 'typescript'
 
 import './Modal.scss'
 
 import Header from '../Header/Header'
 import Content from '../Content/Content'
-// import { didShorten } from '../../utils'
 
 type ModalProps = {
   request: {
@@ -23,8 +21,10 @@ type ModalProps = {
 export const Modal = ({ request, buttons }: ModalProps) => {
   // TODO: update this to be dynamically set when we have permission customization.
   const permissions = ['Store data', 'Read data']
+
   const type = request.type
   const { acceptNode, declineNode } = buttons
+
   const permissionDisplay = (
     <div className="permissions">
       {permissions.map((permission, _id) => {
@@ -93,10 +93,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     }
     return body
   }
-
-  React.useEffect(() => {
-    console.log(request.params)
-  }, [])
 
   return (
     <div className="modal">
