@@ -23,7 +23,7 @@ const connectService = new ThreeIDService()
 const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
 const modalView = async (params: object, type: string) => {
-  await iframeDisplay.display()
+  await iframeDisplay.display(undefined, '100%', '100%')
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
