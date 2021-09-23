@@ -1,6 +1,6 @@
 {
   "name": "@3id/manager",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
@@ -54,7 +54,7 @@
     "uint8arrays": "^2.1.4"
   },
   "devDependencies": {
-    "@3id/test-utils": "^0.2.2",
+    "@3id/test-utils": "^0.2.5",
     "@ceramicnetwork/cli": "^1.4.0",
     "@ceramicnetwork/common": "^1.5.0",
     "@ceramicstudio/idx-constants": "^1.0.0",
