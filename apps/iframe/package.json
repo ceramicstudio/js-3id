@@ -20,7 +20,7 @@
     "@3id/ui-provider": "^0.2.4",
     "@3id/window-auth-provider": "^0.2.3",
     "@babel/runtime": "7.15.4",
-    "@ceramicnetwork/http-client": "^1.2.2",
+    "@ceramicnetwork/http-client": "^1.3.0",
     "@ceramicstudio/idx": "^0.12.2",
     "errors-utils": "^0.1.0",
     "postmsg-rpc": "^2.4.0",
