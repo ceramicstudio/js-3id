@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call */
 
 import { fromHex } from '@3id/common'
 import Resolver from '@ceramicnetwork/3id-did-resolver'
@@ -15,8 +15,10 @@ import { fetchJson, jwtDecode } from './utils'
 
 const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'
-let VERIFICATION_SERVICE = 'https://verifications-clay.3boxlabs.com';
-typeof process !== 'undefined' && (VERIFICATION_SERVICE = process.env.VERIFICATION_SERVICE || 'https://verifications-clay.3boxlabs.com');
+let VERIFICATION_SERVICE = 'https://verifications-clay.3boxlabs.com'
+typeof process !== 'undefined' &&
+  (VERIFICATION_SERVICE =
+    process.env.VERIFICATION_SERVICE || 'https://verifications-clay.3boxlabs.com')
 
 export class Migrate3IDV0 {
   private idx: IDX
@@ -53,16 +55,12 @@ export class Migrate3IDV0 {
       return (await idx.get<AlsoKnownAs>('alsoKnownAs'))?.accounts || []
     }
 
-    const results: Array<
-      Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null
-    > = await Promise.all([
-      existing(this.idx),
-      this._twitterVerify(did, profile),
-      this._githubVerify(did, profile),
-    ])
+    const results: Array<Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null> = await Promise.all(
+      [existing(this.idx), this._twitterVerify(did, profile), this._githubVerify(did, profile)]
+    )
 
     const accounts: Array<AlsoKnownAsAccount> = results
-      .filter((Boolean as any) as ExcludesBoolean)
+      .filter(Boolean as any as ExcludesBoolean)
       .flat()
 
     await this.idx.set('alsoKnownAs', { accounts })
@@ -148,7 +146,9 @@ export const legacyDIDLinkExist = async (accountId: string): Promise<string | nu
     const { did } = res.data
     return did
   } catch (err) {
-    console.log('Note: 404 Error is expected behavior, and indicates the user does not have a legacy 3Box profile.')
+    console.log(
+      'Note: 404 Error is expected behavior, and indicates the user does not have a legacy 3Box profile.'
+    )
     if (errorNotFound(err)) return null
     throw new Error(`Error while resolve V03ID`)
   }
@@ -186,28 +186,28 @@ export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> =
   }
 }
 
-export const get3BoxConfig = async (did:string):Promise<LinksArray> => {
+export const get3BoxConfig = async (did: string): Promise<LinksArray> => {
   const url = `${THREEBOX_PROFILE_API}/config?did=${encodeURIComponent(did)}`
   return fetchJson<LinksArray>(url)
 }
 
 // returns ipfs json object, not a valid did doc
-export const getLegacyDidDoc = async (did:string):Promise<any> => {
+export const getLegacyDidDoc = async (did: string): Promise<any> => {
   const cid = did.split(':').pop() as string
   const url = `${THREEBOX_PROFILE_API}/did-doc?cid=${encodeURIComponent(cid)}`
-  const { value } = await fetchJson<{value: any}>(url)
+  const { value } = await fetchJson<{ value: any }>(url)
   return value
 }
 
 // return true if migration is expected to fail, can added additional known cases here
-export const willMigrationFail = async (accountId:string, did:string):Promise<boolean> => {
+export const willMigrationFail = async (accountId: string, did: string): Promise<boolean> => {
   const address = new AccountID(accountId).address.toLowerCase()
   // Case 1: more than one account linked to did and address server link does not match did doc link
   // Reference: https://github.com/ceramicstudio/3id-connect/issues/67
   const doc = await getLegacyDidDoc(did)
   let managementAddress
   try {
-    const managementEntry = doc.publicKey.findIndex((e:any) => e.id.endsWith('managementKey'))
+    const managementEntry = doc.publicKey.findIndex((e: any) => e.id.endsWith('managementKey'))
     managementAddress = doc.publicKey[managementEntry].ethereumAddress
   } catch (e) {
     return true
