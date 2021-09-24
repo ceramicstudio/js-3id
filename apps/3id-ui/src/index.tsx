@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
-import { ConnectService } from './services/connectService'
 
-import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { ThreeIDService } from '@3id/service'
+import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 
 const render = async (params: object, type: string, buttons: object) => {
@@ -20,14 +19,11 @@ const render = async (params: object, type: string, buttons: object) => {
   )
 }
 
-const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-const checkIsMobile = () => mobileRegex.test(navigator.userAgent)
-
 const connectService = new ThreeIDService()
 const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
 const modalView = async (params: object, type: string) => {
-  await iframeDisplay.display(checkIsMobile())
+  await iframeDisplay.display(undefined, '100%', '100%')
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
@@ -94,13 +90,12 @@ const UIMethods: UIProviderHandlers = {
     console.log(allow)
     return { allow }
   },
-  // // TODO: reenable this
-  // inform_error: async (ctx = {}, params: object) => {
-  //   if (params.data) {
-  //     console.log(params.data.toString())
-  //   }
-  //   document.getElementById('action').innerHTML = error('Error: Unable to connect')
-  // },
+  //@ts-ignore
+  inform_error: async (ctx = {}, params: any) => {
+    if (params?.data) {
+      console.log(params?.data.toString())
+    }
+  },
 }
 
 //Create a 3ID Connect UI Provider
@@ -112,8 +107,6 @@ let closecallback: any
 // @ts-ignore
 window.hideIframe = () => {
   iframeDisplay.hide()
-  const root = document.getElementById('root')
-  if (root) root.innerHTML = ``
   if (closecallback) closecallback()
 }
 
