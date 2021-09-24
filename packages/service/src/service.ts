@@ -126,7 +126,7 @@ export class ThreeIDService  {
     try {
       // Skip migration if muport or known failure
        // @ts-ignore
-      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail), legacyDid })
+      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
         await this.uiManager.promptMigrationFail()
