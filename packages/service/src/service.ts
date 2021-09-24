@@ -75,8 +75,8 @@ export class ThreeIDService  {
 
     const newAccount = !existNetwork && !existLocally
 
-    // Await during user prompt
-    const legacyDidPromise = legacyDIDLinkExist(accountId)
+    // Await during user prompt, only lookup legacy if no link in network already
+    const legacyDidPromise = existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
 
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {
@@ -126,7 +126,7 @@ export class ThreeIDService  {
     try {
       // Skip migration if muport or known failure
        // @ts-ignore
-      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
+      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail), legacyDid })
     } catch(e) {
       if (legacyDid) {
         await this.uiManager.promptMigrationFail()
