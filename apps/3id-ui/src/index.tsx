@@ -42,7 +42,7 @@ const modalView = async (params: object, type: string) => {
         <div
           className="btn"
           onClick={() => {
-            resolve(true)
+            resolve(false)
           }}>
           Decline
         </div>
