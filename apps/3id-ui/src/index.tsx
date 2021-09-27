@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals'
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
+import { RPCErrorObject } from 'rpc-utils'
 
 const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
@@ -22,12 +23,18 @@ const render = async (params: object, type: string, buttons: object) => {
 const connectService = new ThreeIDService()
 const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
-const modalView = async (params: object, type: string) => {
+type ModalType = {
+  accepted: Promise<boolean>
+  acceptNode: JSX.Element
+  declineNode: JSX.Element
+}
+
+const modalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
-  const accepted = new Promise((resolve) => {
+  const accepted: Promise<boolean> = new Promise((resolve) => {
     acceptNode = (
       <div
         className="btn"
@@ -58,45 +65,41 @@ const modalView = async (params: object, type: string) => {
 }
 
 const UIMethods: UIProviderHandlers = {
-  //@ts-ignore
-  prompt_migration: async (ctx = {}, params: object) => {
+  prompt_migration: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
-    console.log(migration)
     return { migration }
   },
-  //@ts-ignore
-  prompt_migration_skip: async (ctx = {}, params: object) => {
+  prompt_migration_skip: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
-  //@ts-ignore
-  prompt_migration_fail: async (ctx = {}, params: object) => {
+  prompt_migration_fail: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
-  //@ts-ignore
-  prompt_account: async (ctx = {}, params: object) => {
+  prompt_account: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
-  //@ts-ignore
-  prompt_authenticate: async (ctx = {}, params: object) => {
+  prompt_authenticate: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
-    console.log(allow)
     return { allow }
   },
-  // // TODO: reenable this
-  // inform_error: async (ctx = {}, params: object) => {
-  //   if (params.data) {
-  //     console.log(params.data.toString())
-  //   }
-  //   document.getElementById('action').innerHTML = error('Error: Unable to connect')
-  // },
+  inform_error: async (_ctx = {}, params: RPCErrorObject) => {
+    if (params?.message) {
+      console.log(params.message.toString())
+    }
+    return null
+  },
+  inform_close: async () => {
+    await iframeDisplay.hide()
+    return null
+  },
 }
 
 //Create a 3ID Connect UI Provider
