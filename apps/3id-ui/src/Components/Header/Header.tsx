@@ -4,15 +4,7 @@ import Avatar from 'boring-avatars'
 
 import './Header.scss'
 
-/**
- * Handle all the data updates that are needed for display.
- */
 export const Header = () => {
-  // Get the Favicon of the parent window
-  // const referrerUrl =
-  //   window.location != window.parent.location ? document.referrer : document.location.href
-  // Fetch the page & snag the favicon
-
   return (
     <div className="head">
       <div className="logo-container">
