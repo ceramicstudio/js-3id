@@ -26,24 +26,26 @@ const BASE_MAIN_URL = 'https://app.3idconnect.org'
 const BASE_LOCAL_URL = `http://localhost:30001`
 const DEFAULT_MANAGE_PATH = `/management/index.html`
 
-let CONNECT_IFRAME_URL = BASE_CLAY_URL;
-let CONNECT_MANAGE_URL = `${BASE_CLAY_URL}/management/index.html`;
+let CONNECT_IFRAME_URL = BASE_CLAY_URL
+let CONNECT_MANAGE_URL = `${BASE_CLAY_URL}/management/index.html`
 
-typeof process !== 'undefined' && (CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL);
-typeof process !== 'undefined' && (CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`);
+typeof process !== 'undefined' &&
+  (CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL)
+typeof process !== 'undefined' &&
+  (CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`)
 
 const networkConfig = (base: string): NetworkConfig => {
   return {
     connect_iframe: base,
-    manage_iframe: `${base}${DEFAULT_MANAGE_PATH}`
+    manage_iframe: `${base}${DEFAULT_MANAGE_PATH}`,
   }
 }
 // Configuration for each network
 const networks: NetworkList = {
   'dev-unstable': networkConfig(BASE_DEV_URL),
   'testnet-clay': networkConfig(BASE_CLAY_URL),
-  'mainnet': networkConfig(BASE_MAIN_URL),
-  'local': networkConfig(BASE_LOCAL_URL)
+  mainnet: networkConfig(BASE_MAIN_URL),
+  local: networkConfig(BASE_LOCAL_URL),
 }
 
 type PostMessage = (
