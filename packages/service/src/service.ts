@@ -10,8 +10,9 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
-import { UIProvider, ThreeIDManagerUI, AuthParams } from '../../../packages/ui-provider/src/index'
-import { expose } from 'postmsg-rpc'
+import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider'
+// import { expose } from 'postmsg-rpc'
+const { expose } = require('postmsg-rpc')
 
 import type {
   UserRequestCancel,
@@ -28,7 +29,7 @@ type Methods = DIDProviderMethods
  *  ConnectService runs a 3ID DID provider instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-export class ConnectService  {
+export class ThreeIDService  {
   uiManager: ThreeIDManagerUI | undefined
   cancel: UserRequestCancel | undefined
 
@@ -74,8 +75,8 @@ export class ConnectService  {
 
     const newAccount = !existNetwork && !existLocally
 
-    // Await during user prompt
-    const legacyDidPromise = legacyDIDLinkExist(accountId)
+    // Await during user prompt, only lookup legacy if no link in network already
+    const legacyDidPromise = existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
 
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {
@@ -124,6 +125,7 @@ export class ConnectService  {
     let did:string
     try {
       // Skip migration if muport or known failure
+       // @ts-ignore
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch(e) {
       if (legacyDid) {
@@ -137,6 +139,7 @@ export class ConnectService  {
     }
 
     this.threeId = manage.threeIdProviders[did]
+      // @ts-ignore
     this.provider = this.threeId.getDidProvider(domain) as DIDProvider
 
     if (muportDid) {
@@ -200,7 +203,7 @@ export class ConnectService  {
   > {
     return message.method === 'did_authenticate'
       ? ((await this._didAuthReq(message as DIDRequest<'did_authenticate'>, domain)) as any)
-      : await this._relayDidReq(message, domain)
+      : await this._relayDidReq(message)
   }
 
   async _didAuthReq(
@@ -213,6 +216,7 @@ export class ConnectService  {
     | void
   > {
     assert.isDefined(message.params, 'Message parameters must be defined')
+    assert.isDefined(this.uiManager, 'A uiManager must be defined')
 
     try {
       const accountId = ((message.params as unknown) as { accountId: string }).accountId
@@ -220,7 +224,7 @@ export class ConnectService  {
       await this.init(accountId, message, domain)
 
       assert.isDefined(this.provider, 'DID provider must be defined')
-      const res = await this.provider.send(message, domain)
+      const res = await this.provider.send(message)
       this.uiManager.noftifyClose()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
     } catch (e) {
@@ -233,11 +237,10 @@ export class ConnectService  {
   }
 
   async _relayDidReq<K extends keyof DIDProviderMethods>(
-    req: RPCRequest<DIDProviderMethods, K>,
-    domain?: string | null
+    req: RPCRequest<DIDProviderMethods, K>
   ): Promise<RPCResponse<DIDProviderMethods, K> | null> {
     assert.isDefined(this.provider, 'DID provider must be defined')
-    return await this.provider.send(req, domain)
+    return await this.provider.send(req)
   }
 
   _createUserRequest<K extends keyof DIDProviderMethods>(
@@ -255,6 +258,7 @@ export class ConnectService  {
 
     return {
       type: 'authenticate',
+      // @ts-ignore
       origin,
       paths: params.paths || [],
       did: did || ''

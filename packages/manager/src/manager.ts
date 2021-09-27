@@ -74,7 +74,7 @@ export class Manager {
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrating, authSecretAdd
     if (migrate) {
-      legacyDid = opts?.legacyDid || (await legacyDIDLinkExist(accountId))
+      legacyDid = opts && 'legacyDid' in opts ? opts.legacyDid : (await legacyDIDLinkExist(accountId))
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret
