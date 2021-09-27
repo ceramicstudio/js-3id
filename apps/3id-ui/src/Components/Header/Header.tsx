@@ -1,21 +1,48 @@
 import React from 'react'
 import Avatar from 'boring-avatars'
+import KeyDidResolver from 'key-did-resolver'
+import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
+import { DID } from 'dids'
 
-import { createIdx } from '../../utils'
+import { createIdx, createCeramic } from '../../utils'
 import './Header.scss'
+import { ResolverRegistry } from 'did-resolver'
 
 type HeaderProps = {
   did?: string
 }
 const Header = ({ did }: HeaderProps) => {
-  const idx = createIdx()
+  let idx: any
+  const authenticate = async () => {
+    const ceramic = await createCeramic()
+    const keyDidResolver = KeyDidResolver.getResolver()
+    const threeIdResolver = ThreeIdResolver.getResolver(ceramic)
+
+    const resolverRegistry: ResolverRegistry = {
+      ...threeIdResolver,
+      ...keyDidResolver,
+    }
+    const did = new DID({
+      resolver: resolverRegistry,
+    })
+    await did.authenticate()
+    await ceramic.setDID(did)
+    const idx = createIdx(ceramic)
+    return idx
+  }
+
+  const setIDX = async () => {
+    idx = await authenticate()
+  }
 
   React.useEffect(() => {
-    console.log(did)
     if (did) {
-      idx.get('basicProfile', did)
+      setIDX()
+      if (idx) {
+        idx.get('basicProfile')
+      }
     }
-  })
+  }, [did])
   return (
     <div className="head">
       <div className="logo-container">
