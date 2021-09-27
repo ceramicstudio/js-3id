@@ -13,7 +13,6 @@ export const Header = () => {
   //   window.location != window.parent.location ? document.referrer : document.location.href
   // Fetch the page & snag the favicon
 
-  const did = undefined // user?.id // TODO: Set based off of IDX DID
   return (
     <div className="head">
       <div className="logo-container">
@@ -30,7 +29,7 @@ export const Header = () => {
         <div className="avatar">
           <Avatar
             size={65}
-            name={did ?? 'self.id-connect'}
+            name="self.id-connect"
             variant="marble"
             colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
           />
