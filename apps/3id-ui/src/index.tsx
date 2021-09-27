@@ -106,6 +106,7 @@ const UIMethods: UIProviderHandlers = {
 const provider = new UIProvider(UIMethods)
 
 // Closure to pass cancel state to IDW iframe service
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let closecallback: any
 
 const closing = (cb: any) => {
