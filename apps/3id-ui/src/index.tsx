@@ -108,19 +108,10 @@ const provider = new UIProvider(UIMethods)
 // Closure to pass cancel state to IDW iframe service
 let closecallback: any
 
-// @ts-ignore
-window.hideIframe = () => {
-  iframeDisplay.hide()
-  const root = document.getElementById('root')
-  if (root) root.innerHTML = ``
-  if (closecallback) closecallback()
-}
-
 const closing = (cb: any) => {
   closecallback = cb
 }
 
-//@ts-ignore
 connectService.start(provider, closing)
 
 reportWebVitals()
