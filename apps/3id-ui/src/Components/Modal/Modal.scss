@@ -1,0 +1,107 @@
+$placeholder: #5d40fb;
+
+.modal {
+  background-color: white;
+  position: fixed;
+  top: 15px;
+
+  $width: 450px;
+
+  width: 25%;
+
+  min-width: ($width/2);
+  max-width: $width;
+
+  right: calc(50vw - 10%);
+
+  margin: 0;
+
+  border-radius: 15px;
+
+  display: flex;
+  flex-direction: column;
+
+  font-family: 'Segment', sans-serif;
+  font-size: 15px;
+
+  box-shadow: 4px 6px 19px 5px rgba(0, 0, 0, 0.49);
+  .body {
+    height: 100%;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    min-height: 300px;
+
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+
+    font-size: 13px;
+    .inner {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+
+      align-items: stretch;
+      justify-content: space-around;
+
+      padding: 15px;
+
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+      .permissions {
+        margin-top: 20px;
+        .permission {
+          text-align: left;
+          display: flex;
+          align-items: center;
+
+          margin-bottom: 10px;
+          .permission-note {
+            display: inline-block;
+            background: $placeholder;
+            height: 20px;
+            width: 20px;
+            border-radius: 2.5px;
+            margin-right: 10px;
+          }
+        }
+      }
+      .images {
+        color: black;
+      }
+      .bottom {
+        align-self: flex-end;
+        min-width: 100%;
+      }
+      .btn {
+        display: block;
+        text-align: center;
+
+        padding: 13px 0px;
+        border-radius: 10px;
+        width: 100%;
+
+        background-color: $placeholder;
+        color: white;
+
+        cursor: pointer;
+
+        transition: ease background-color 0.3s;
+
+        &:hover {
+          transition: ease background-color 0.3s;
+          background-color: darken($placeholder, 5%);
+        }
+      }
+    }
+  }
+}
+
+.logo_control {
+  text-decoration: none;
+}
