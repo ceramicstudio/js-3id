@@ -31,6 +31,15 @@ type ModalType = {
 
 const modalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
+  const closeNode = (
+    <div
+      className="close-btn"
+      onClick={() => {
+        iframeDisplay.hide()
+      }}>
+      X
+    </div>
+  )
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
@@ -56,7 +65,7 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
       )
     }
   })
-  await render(params, type, { acceptNode, declineNode })
+  await render(params, type, { acceptNode, declineNode, closeNode })
   return {
     accepted,
     acceptNode,
@@ -91,9 +100,7 @@ const UIMethods: UIProviderHandlers = {
     return { allow }
   },
   inform_error: async (_ctx = {}, params: RPCErrorObject) => {
-    if (params?.message) {
-      console.log(params.message.toString())
-    }
+    await modalView(params, 'inform_error')
     return null
   },
   inform_close: async () => {
