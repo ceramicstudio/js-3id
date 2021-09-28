@@ -4,9 +4,14 @@ import Avatar from 'boring-avatars'
 
 import './Header.scss'
 
-export const Header = () => {
+type HeaderProps = {
+  closeButton: JSX.Element
+}
+
+export const Header = ({ closeButton }: HeaderProps) => {
   return (
     <div className="head">
+      <div className="close-container">{closeButton}</div>
       <div className="logo-container">
         <a
           href="https://ceramic.network"
