@@ -45,4 +45,14 @@ $placeholder: #5d40fb;
       }
     }
   }
+  .close-container {
+    width: 100%;
+    text-align: right;
+    margin-top: 5px;
+    .close-btn {
+      position: relative;
+      display: inline;
+      cursor: pointer;
+    }
+  }
 }
