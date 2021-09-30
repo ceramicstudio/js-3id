@@ -10,11 +10,12 @@ import { ResolverRegistry } from 'did-resolver'
 
 type HeaderProps = {
   did?: string
+  closeButton: JSX.Element
 }
-const Header = ({ did }: HeaderProps) => {
-  let idx: any
-  const authenticate = async () => {
-    const ceramic = await createCeramic()
+const Header = ({ did, closeButton }: HeaderProps) => {
+let idx: any
+const authenticate = async () => {
+  const ceramic = await createCeramic()
     const keyDidResolver = KeyDidResolver.getResolver()
     const threeIdResolver = ThreeIdResolver.getResolver(ceramic)
 
@@ -45,6 +46,7 @@ const Header = ({ did }: HeaderProps) => {
   }, [did])
   return (
     <div className="head">
+      <div className="close-container">{closeButton}</div>
       <div className="logo-container">
         <a
           href="https://ceramic.network"
@@ -59,7 +61,7 @@ const Header = ({ did }: HeaderProps) => {
         <div className="avatar">
           <Avatar
             size={65}
-            name={did ?? 'self.id-connect'}
+            name="self.id-connect"
             variant="marble"
             colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
           />

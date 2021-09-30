@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 
 import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
@@ -10,13 +10,12 @@ import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
-import { UIProvider, ThreeIDManagerUI, AuthParams } from '../../../packages/ui-provider/src/index'
-import { expose } from 'postmsg-rpc'
+import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider'
 
-import type {
-  UserRequestCancel,
-} from './types'
+import type { UserRequestCancel } from './types'
 import { rpcError } from './utils'
+// import { expose } from 'postmsg-rpc'
+const { expose } = require('postmsg-rpc')
 
 const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-private.3boxlabs.com'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
@@ -28,7 +27,7 @@ type Methods = DIDProviderMethods
  *  ConnectService runs a 3ID DID provider instance and rpc server with
  *  bindings to receive and relay rpc messages to identity wallet
  */
-export class ConnectService  {
+export class ThreeIDService {
   uiManager: ThreeIDManagerUI | undefined
   cancel: UserRequestCancel | undefined
 
@@ -46,15 +45,14 @@ export class ConnectService  {
    * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
    */
   // @ts-ignore method override
-  start(
-    uiProvider : UIProvider,
-    cancel: UserRequestCancel
-  ): void {
+  start(uiProvider: UIProvider, cancel: UserRequestCancel): void {
     this.cancel = cancel
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
     this.manageApp = new DisplayManageClientRPC()
-    expose('send', this.requestHandler.bind(this), { postMessage: window.parent.postMessage.bind(window.parent) })
+    expose('send', this.requestHandler.bind(this), {
+      postMessage: window.parent.postMessage.bind(window.parent),
+    })
   }
 
   async init(
@@ -74,8 +72,8 @@ export class ConnectService  {
 
     const newAccount = !existNetwork && !existLocally
 
-    // Await during user prompt
-    const legacyDidPromise = legacyDIDLinkExist(accountId)
+    // Await during user prompt, only lookup legacy if no link in network already
+    const legacyDidPromise = existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
 
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {
@@ -112,20 +110,21 @@ export class ConnectService  {
       }
     }
 
-    if (DID_MIGRATION && newAccount){
+    if (DID_MIGRATION && newAccount) {
       if (willFail || muportDid) {
         await this.uiManager.promptMigrationSkip()
       }
-      if(legacyDid) {
-        await this.uiManager.promptMigration({legacyDid})
+      if (legacyDid) {
+        await this.uiManager.promptMigration({ legacyDid })
       }
     }
 
-    let did:string
+    let did: string
     try {
       // Skip migration if muport or known failure
+      // @ts-ignore
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
-    } catch(e) {
+    } catch (e) {
       if (legacyDid) {
         await this.uiManager.promptMigrationFail()
         // If migration fails, continue with new did instead
@@ -137,12 +136,13 @@ export class ConnectService  {
     }
 
     this.threeId = manage.threeIdProviders[did]
+    // @ts-ignore
     this.provider = this.threeId.getDidProvider(domain) as DIDProvider
 
     if (muportDid) {
       //Try to migrate profile data still for muport did
       try {
-        const migration = new Migrate3IDV0(this.provider , manage.idx)
+        const migration = new Migrate3IDV0(this.provider, manage.idx)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
         // If not available, continue
@@ -155,9 +155,15 @@ export class ConnectService  {
     }
   }
 
-  async userPermissionRequest(authReq: DIDRequest, domain?: string | null, did?:string): Promise<void> {
+  async userPermissionRequest(
+    authReq: DIDRequest,
+    domain?: string | null,
+    did?: string
+  ): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
-    this.cancel!(() => {throw new Error('3id-connect: Request not authorized')})
+    this.cancel!(() => {
+      throw new Error('3id-connect: Request not authorized')
+    })
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
     const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
@@ -200,7 +206,7 @@ export class ConnectService  {
   > {
     return message.method === 'did_authenticate'
       ? ((await this._didAuthReq(message as DIDRequest<'did_authenticate'>, domain)) as any)
-      : await this._relayDidReq(message, domain)
+      : await this._relayDidReq(message)
   }
 
   async _didAuthReq(
@@ -213,31 +219,31 @@ export class ConnectService  {
     | void
   > {
     assert.isDefined(message.params, 'Message parameters must be defined')
+    assert.isDefined(this.uiManager, 'A uiManager must be defined')
 
     try {
-      const accountId = ((message.params as unknown) as { accountId: string }).accountId
+      const accountId = (message.params as unknown as { accountId: string }).accountId
 
       await this.init(accountId, message, domain)
 
       assert.isDefined(this.provider, 'DID provider must be defined')
-      const res = await this.provider.send(message, domain)
-      this.uiManager.noftifyClose()
+      const res = await this.provider.send(message)
+      void this.uiManager.noftifyClose()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
     } catch (e) {
       if ((e as Error).toString().includes('authorized')) {
-        this.uiManager.noftifyClose()
+        void this.uiManager.noftifyClose()
         return rpcError(message.id!)
       }
-      this.uiManager.noftifyError({ code: 0, data:e, message: 'Error: Unable to connect'})
+      void this.uiManager.noftifyError({ code: 0, data: e, message: 'Error: Unable to connect' })
     }
   }
 
   async _relayDidReq<K extends keyof DIDProviderMethods>(
-    req: RPCRequest<DIDProviderMethods, K>,
-    domain?: string | null
+    req: RPCRequest<DIDProviderMethods, K>
   ): Promise<RPCResponse<DIDProviderMethods, K> | null> {
     assert.isDefined(this.provider, 'DID provider must be defined')
-    return await this.provider.send(req, domain)
+    return await this.provider.send(req)
   }
 
   _createUserRequest<K extends keyof DIDProviderMethods>(
@@ -255,9 +261,10 @@ export class ConnectService  {
 
     return {
       type: 'authenticate',
+      // @ts-ignore
       origin,
       paths: params.paths || [],
-      did: did || ''
+      did: did || '',
     }
   }
 }

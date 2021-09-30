@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals'
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
+import { RPCErrorObject } from 'rpc-utils'
 
 const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
@@ -22,12 +23,27 @@ const render = async (params: object, type: string, buttons: object) => {
 const connectService = new ThreeIDService()
 const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
-const modalView = async (params: object, type: string) => {
+type ModalType = {
+  accepted: Promise<boolean>
+  acceptNode: JSX.Element
+  declineNode: JSX.Element
+}
+
+const modalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
+  const closeNode = (
+    <div
+      className="close-btn"
+      onClick={() => {
+        iframeDisplay.hide()
+      }}>
+      X
+    </div>
+  )
   let acceptNode = <div className="btn">Accept</div>
   let declineNode = <div className="btn">Decline</div>
 
-  const accepted = new Promise((resolve) => {
+  const accepted: Promise<boolean> = new Promise((resolve) => {
     acceptNode = (
       <div
         className="btn"
@@ -42,14 +58,14 @@ const modalView = async (params: object, type: string) => {
         <div
           className="btn"
           onClick={() => {
-            resolve(true)
+            resolve(false)
           }}>
           Decline
         </div>
       )
     }
   })
-  await render(params, type, { acceptNode, declineNode })
+  await render(params, type, { acceptNode, declineNode, closeNode })
   return {
     accepted,
     acceptNode,
@@ -58,43 +74,38 @@ const modalView = async (params: object, type: string) => {
 }
 
 const UIMethods: UIProviderHandlers = {
-  //@ts-ignore
-  prompt_migration: async (ctx = {}, params: object) => {
+  prompt_migration: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
-    console.log(migration)
     return { migration }
   },
-  //@ts-ignore
-  prompt_migration_skip: async (ctx = {}, params: object) => {
+  prompt_migration_skip: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
-  //@ts-ignore
-  prompt_migration_fail: async (ctx = {}, params: object) => {
+  prompt_migration_fail: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
-  //@ts-ignore
-  prompt_account: async (ctx = {}, params: object) => {
+  prompt_account: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
-  //@ts-ignore
-  prompt_authenticate: async (ctx = {}, params: object) => {
+  prompt_authenticate: async (_ctx = {}, params: object) => {
     const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
-    console.log(allow)
     return { allow }
   },
-  //@ts-ignore
-  inform_error: async (ctx = {}, params: any) => {
-    if (params?.data) {
-      console.log(params?.data.toString())
-    }
+  inform_error: async (_ctx = {}, params: RPCErrorObject) => {
+    await modalView(params, 'inform_error')
+    return null
+  },
+  inform_close: async () => {
+    await iframeDisplay.hide()
+    return null
   },
 }
 
@@ -102,19 +113,13 @@ const UIMethods: UIProviderHandlers = {
 const provider = new UIProvider(UIMethods)
 
 // Closure to pass cancel state to IDW iframe service
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let closecallback: any
-
-// @ts-ignore
-window.hideIframe = () => {
-  iframeDisplay.hide()
-  if (closecallback) closecallback()
-}
 
 const closing = (cb: any) => {
   closecallback = cb
 }
 
-//@ts-ignore
 connectService.start(provider, closing)
 
 reportWebVitals()

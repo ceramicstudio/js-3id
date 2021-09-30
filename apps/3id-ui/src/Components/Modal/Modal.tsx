@@ -8,13 +8,14 @@ import Content from '../Content/Content'
 type ModalProps = {
   request: {
     type: string
-    params: object
     did?: string
     legacyDid?: string
+    message?: any
   }
   buttons: {
     acceptNode: JSX.Element
     declineNode: JSX.Element
+    closeNode: JSX.Element
   }
 }
 
@@ -25,7 +26,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
-  const { acceptNode, declineNode } = buttons
+  const { acceptNode, declineNode, closeNode } = buttons
 
   const permissionDisplay = (
     <div className="permissions">
@@ -86,6 +87,17 @@ export const Modal = ({ request, buttons }: ModalProps) => {
           <div className="bottom">{acceptNode}</div>
         </>
       )
+    } else if (type === 'inform_error') {
+      body = (
+        <>
+          <div>
+            The following error has occured while we were processing your request:
+            <br />
+            {request.message}
+          </div>
+          <div className="bottom">{acceptNode}</div>
+        </>
+      )
     } else {
       body = (
         <>
@@ -97,9 +109,10 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     return body
   }
 
+  console.log(closeNode)
   return (
     <div className="modal">
-      <Header did={request.did || request.legacyDid} />
+      <Header closeButton={closeNode} />
       <Content message={handleModal()} />
     </div>
   )
