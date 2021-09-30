@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"3id-did-provider@^1.0.2", "3id-did-provider@^1.1.0":
+"3id-did-provider@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/3id-did-provider/-/3id-did-provider-1.1.0.tgz#5660f4e16b2824d343d2710b786baaf598915df5"
   integrity sha512-hQSm2QAulKgUh5BRwDsPR9CD5L/Ae8HaaMnKWimCXPMHmuakE4z0R0gi7tVjd9tPN2rKpvWwmWkVs5cWHGU1AA==
@@ -26,51 +26,6 @@
     rpc-utils "^0.3.4"
     store "^2.0.12"
     uint8arrays "^2.1.5"
-
-"@3id/common@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@3id/common/-/common-0.1.3.tgz#c3a29a477dd50814faec8af0d3166ba310d26b3b"
-  integrity sha512-JBzRQKoneKyHKg/Ez9HHOsJ1DipZOS4whglnBqb2gfUotLq9HHG+qRgW1nhKTiU+8cadwYBy3b4XwR9wzaPmpA==
-  dependencies:
-    errors-utils "^0.1.0"
-    uint8arrays "^2.1.5"
-
-"@3id/connect-display@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@3id/connect-display/-/connect-display-0.1.5.tgz#8a03203254ec4d4713e8fc623adda7bb26147740"
-  integrity sha512-Yz1+eM0WYQXloUkxsnnQL9tf34kddPR08EmwklIMtnVhQsoc8tZdlKDIfAw89VmZVzcCxjE9w55q1AyKd0hepA==
-  dependencies:
-    "@ceramicnetwork/rpc-window" "^0.1.0"
-    "@ceramicnetwork/transport-postmessage" "^0.3.0"
-    rxjs "^6.6.6"
-
-"@3id/manager@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@3id/manager/-/manager-0.1.6.tgz#0088f2ac2a1d9345a7a5ec4cd79ba739f0412003"
-  integrity sha512-EGBK4k3dhsZWk139S1hRaC74jsSo4cDD2OcO0b/tb+S2+WJYfXVog/jDrIbZwVmQwc0ffWaPyre5t+sUT3esXA==
-  dependencies:
-    "3id-did-provider" "^1.0.2"
-    "@3id/common" "^0.1.3"
-    "@ceramicnetwork/blockchain-utils-linking" "^1.0.0"
-    "@ceramicnetwork/http-client" "^1.0.0"
-    "@ceramicstudio/idx" "^0.12.0"
-    "@ethersproject/hdnode" "^5.0.8"
-    "@stablelib/sha256" "^1.0.0"
-    caip "^0.9.2"
-    cross-fetch "^3.0.6"
-    dids "^2.1.0"
-    errors-utils "^0.1.0"
-    rpc-utils "^0.3.4"
-    store "^2.0.12"
-    uint8arrays "^2.1.4"
-
-"@3id/window-auth-provider@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@3id/window-auth-provider/-/window-auth-provider-0.1.3.tgz#0f83c2bfbebb9eff755c8b4e28c9ea9009d625df"
-  integrity sha512-BSpsGzsnZkFrAlP8QHbcJ4qWVbYojWmYWG9hEPRHloyzp3LxMcqzDe9U/ity9pT49J1BgbMTa+lja3x3ELDQWA==
-  dependencies:
-    "@ceramicnetwork/rpc-window" "^0.1.0"
-    caip "^0.9.2"
 
 "@assemblyscript/loader@^0.9.4":
   version "0.9.4"
@@ -1387,7 +1342,7 @@
     lru_map "^0.4.1"
     uint8arrays "^2.0.5"
 
-"@ceramicnetwork/blockchain-utils-linking@^1.0.0", "@ceramicnetwork/blockchain-utils-linking@^1.2.0":
+"@ceramicnetwork/blockchain-utils-linking@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/blockchain-utils-linking/-/blockchain-utils-linking-1.2.0.tgz#542953c323bc85f6087e74fdf95190b2e037639f"
   integrity sha512-hqPH35CzOAxtyrVrZHid8PmAAgsI8gy5sGxT1L00kAHLrGl6aLyihkUw2qMnq9l24moLuzY8JiovrqIIKWuwOQ==
@@ -1583,7 +1538,7 @@
     rpc-utils "^0.4.0"
     rxjs "^6.6.6"
 
-"@ceramicnetwork/rpc-window@^0.1.0", "@ceramicnetwork/rpc-window@^0.1.1":
+"@ceramicnetwork/rpc-window@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/rpc-window/-/rpc-window-0.1.1.tgz#6dc69963129b7028cff00fbb531a25ac084e1ba1"
   integrity sha512-WoaRVj39yt5RuCEsXrt9Dnd5/MKOloNwEvJiCB1GQ2KMWK5NdAJ91cHuw5Pmmo2sKpV0t2dwoYOpvOchNqQvUw==

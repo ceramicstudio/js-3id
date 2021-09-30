@@ -4,12 +4,13 @@ import './Modal.scss'
 
 import Header from '../Header/Header'
 import Content from '../Content/Content'
+import type { DID } from 'dids'
 
 type ModalProps = {
   request: {
     type: string
-    did?: string
-    legacyDid?: string
+    did?: DID
+    legacyDid?: DID
     message?: any
   }
   buttons: {
@@ -40,7 +41,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
-  const formatDid = (did: string) => {
+  const formatDid = (did: any) => {
     return `${did.slice(0, 10)}…${did.slice(-5)}`
   }
 
@@ -122,10 +123,9 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     return body
   }
 
-  console.log(closeNode)
   return (
     <div className="modal">
-      <Header closeButton={closeNode} />
+      <Header closeButton={closeNode} did={request.did || request.legacyDid} />
       <Content message={handleModal()} />
     </div>
   )
