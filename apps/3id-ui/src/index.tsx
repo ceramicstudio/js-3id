@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
+import { CERAMIC_URL } from './contants'
 
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
+
 
 const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
@@ -120,6 +122,7 @@ const closing = (cb: any) => {
   closecallback = cb
 }
 
-connectService.start(provider, closing)
+
+connectService.start(provider, closing, CERAMIC_URL)
 
 reportWebVitals()
