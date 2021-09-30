@@ -6,8 +6,11 @@ import reportWebVitals from './reportWebVitals'
 
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
-import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
-import { RPCErrorObject } from 'rpc-utils'
+import { UIProvider } from '@3id/ui-provider'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { UIProviderHandlers } from '@3id/ui-provider'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { RPCErrorObject } from 'rpc-utils'
 
 const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
@@ -117,6 +120,7 @@ const provider = new UIProvider(UIMethods)
 let closecallback: any
 
 const closing = (cb: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   closecallback = cb
 }
 

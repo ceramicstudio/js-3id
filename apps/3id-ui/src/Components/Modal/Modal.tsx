@@ -22,7 +22,6 @@ type ModalProps = {
 // TODO: Implement Error component
 
 export const Modal = ({ request, buttons }: ModalProps) => {
-  // TODO: update this to be dynamically set when we have permission customization.
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
@@ -41,6 +40,10 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
+  const formatDid = (did: string) => {
+    return `${did.slice(0, 10)}…${did.slice(-5)}`
+  }
+
   // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
@@ -48,8 +51,10 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            <a href={document.referrer}>{document.referrer}</a> is requesting permission to connect
-            to your decentralized identity.
+            <a href={document.referrer} target="_blank" rel="noopener noreferrer">
+              {document.referrer}
+            </a>{' '}
+            is requesting permission to connect to your decentralized identity.
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -59,6 +64,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
+            <br />
             <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
             with your decentralized ID. Please connect your wallet.
             {permissionDisplay}
@@ -71,10 +77,17 @@ export const Modal = ({ request, buttons }: ModalProps) => {
         </>
       )
     } else if (type === 'migration') {
+      let formattedDid = ''
+      if (request.did) {
+        formattedDid = formatDid(request.did)
+      } else if (request.legacyDid) {
+        formattedDid = formatDid(request.legacyDid)
+      }
       body = (
         <>
           <div>
-            {`Your 3Box DID ${request.did || request.legacyDid} will be migrated.`}
+            <br />
+            Your 3Box DID <code>{formattedDid}</code> will be migrated.
             <br />
             <br />
             <a

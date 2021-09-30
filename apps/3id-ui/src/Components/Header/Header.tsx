@@ -13,9 +13,9 @@ type HeaderProps = {
   closeButton: JSX.Element
 }
 const Header = ({ did, closeButton }: HeaderProps) => {
-let idx: any
-const authenticate = async () => {
-  const ceramic = await createCeramic()
+  let idx: any
+  const authenticate = async () => {
+    const ceramic = await createCeramic()
     const keyDidResolver = KeyDidResolver.getResolver()
     const threeIdResolver = ThreeIdResolver.getResolver(ceramic)
 
