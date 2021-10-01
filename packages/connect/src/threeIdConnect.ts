@@ -10,43 +10,15 @@ import { caller } from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
 import type { Subscription } from 'rxjs'
-
 import { DidProviderProxy } from './didProviderProxy'
+import {
+  isValidNetwork,
+  iframeByNetwork,
+  iframeManageUrl,
+  Network
+} from '@3id/common'
 
-export type NetworkConfig = {
-  connect_iframe: string
-  manage_iframe: string
-}
-export type NetworkList = Record<string, NetworkConfig>
-
-// Base iframe urls by network
-const BASE_DEV_URL = 'https://app-dev.3idconnect.org'
-const BASE_CLAY_URL = 'https://app-clay.3idconnect.org'
-const BASE_MAIN_URL = 'https://app.3idconnect.org'
-const BASE_LOCAL_URL = `http://localhost:30001`
-const DEFAULT_MANAGE_PATH = `/management/index.html`
-
-let CONNECT_IFRAME_URL = BASE_CLAY_URL
-let CONNECT_MANAGE_URL = `${BASE_CLAY_URL}/management/index.html`
-
-typeof process !== 'undefined' &&
-  (CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL || BASE_CLAY_URL)
-typeof process !== 'undefined' &&
-  (CONNECT_MANAGE_URL = process.env.CONNECT_MANAGE_URL || `${BASE_CLAY_URL}/management/index.html`)
-
-const networkConfig = (base: string): NetworkConfig => {
-  return {
-    connect_iframe: base,
-    manage_iframe: `${base}${DEFAULT_MANAGE_PATH}`,
-  }
-}
-// Configuration for each network
-const networks: NetworkList = {
-  'dev-unstable': networkConfig(BASE_DEV_URL),
-  'testnet-clay': networkConfig(BASE_CLAY_URL),
-  mainnet: networkConfig(BASE_MAIN_URL),
-  local: networkConfig(BASE_LOCAL_URL),
-}
+const DEFAULT_NETWORK = 'testnet-clay'
 
 type PostMessage = (
   message: any,
@@ -92,23 +64,15 @@ export class ThreeIdConnect {
    *  Creates ThreeIdConnect. Create and loads iframe. Should be instantiated
    *  on page load.
    *
-   * @param     {String}    network     network name, or iframe url, testnet-clay, dev-unstable, local and mainnet are supported
-   * @param     {String}    iframeUrl   manage iframe url
+   * @param     {String}    network     network name: testnet-clay, dev-unstable, local and mainnet are supported or or iframe url
    */
 
-  constructor(network?: string, manageUrl?: string) {
+  constructor(network?: string) {
     assertBrowser()
-    let iframeUrl
-
-    if (network && Object.keys(networks).includes(network)) {
-      iframeUrl = networks[network].connect_iframe
-      manageUrl = networks[network].manage_iframe
-    } else {
-      iframeUrl = network
-    }
-
-    this.iframe = createConnectIframe(iframeUrl || CONNECT_IFRAME_URL)
-    this.manageUrl = manageUrl || CONNECT_MANAGE_URL
+    
+    const iframeUrl = isValidNetwork(network || '') ? iframeByNetwork(network as Network) : network || iframeByNetwork(DEFAULT_NETWORK)
+    this.iframe = createConnectIframe(iframeUrl)
+    this.manageUrl = iframeManageUrl(iframeUrl)
 
     this.iframeLoadedPromise = new Promise((resolve) => {
       this.iframe.onload = () => {
