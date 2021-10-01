@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 
-import { 
-  ThreeIDError, 
-  assert,
-  isValidNetwork,
-  apiByNetwork,
-  Network
- } from '@3id/common'
+import { ThreeIDError, assert, isValidNetwork, apiByNetwork, Network } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
@@ -30,7 +24,9 @@ const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' :
 type Methods = DIDProviderMethods
 
 const getCeramicApi = (network?: string) => {
-  return isValidNetwork(network || '') ? apiByNetwork(network as Network) : network || apiByNetwork(DEFAULT_NETWORK)
+  return isValidNetwork(network || '')
+    ? apiByNetwork(network as Network)
+    : network || apiByNetwork(DEFAULT_NETWORK)
 }
 
 /**
