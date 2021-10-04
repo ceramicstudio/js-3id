@@ -10,6 +10,7 @@ jobs:
       - image: mcr.microsoft.com/playwright@sha256:9ed647342dba733508fdf102ae13b669b3e3ad11f16045e42b1af50a29d4b871
         environment:
           NODE_ENV: development
+          CI: false
     steps:
       - checkout
 
