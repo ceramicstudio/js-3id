@@ -123,7 +123,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     }
     return body
   }
-
   return (
     <div className="modal">
       <Header closeButton={closeNode} />
