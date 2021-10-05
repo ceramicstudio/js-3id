@@ -26,14 +26,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI= react-scripts build",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
-    "build:prod": "npm run build && mv -f ./public ../../public",
+    "build:prod": "npm run build && cp -rf ./build/. ../../public",
     "dev:build": "REACT_APP_CERAMIC_NETWORK=local npm run build:prod",
     "build:dev": "REACT_APP_CERAMIC_NETWORK=dev-unstable npm run build:prod",
     "build:test": "REACT_APP_CERAMIC_API=http://localhost:7777 npm run build:prod",
-    "build:clay": "REACT_APP_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/management && mkdir -p ../../public-clay && mv ./out ../../public-clay/management"
+    "build:clay": "REACT_APP_CERAMIC_NETWORK=testnet-clay npm run build && cp -rf ./build/. ../../public-clay"
   },
   "eslintConfig": {
     "extends": [
