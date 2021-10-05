@@ -63,7 +63,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
             {permissionDisplay}
           </div>
           <div className="bottom">
-            hi
             {acceptNode}
             {declineNode}
           </div>
