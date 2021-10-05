@@ -124,7 +124,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     return body
   }
 
-  console.log(closeNode)
   return (
     <div className="modal">
       <Header closeButton={closeNode} />
