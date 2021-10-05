@@ -36,3 +36,5 @@ export interface EOSIOProvider {
 
 export type AccountsList = Array<string>
 export type DIDLinksList = Record<string, AccountsList>
+
+export type Network = 'dev-unstable' | 'testnet-clay' | 'mainnet' | 'local'

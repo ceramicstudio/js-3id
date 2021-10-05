@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 
-import { ThreeIDError, assert } from '@3id/common'
+import { ThreeIDError, assert, isValidNetwork, apiByNetwork, Network } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
@@ -17,11 +17,17 @@ import { rpcError } from './utils'
 // import { expose } from 'postmsg-rpc'
 const { expose } = require('postmsg-rpc')
 
-const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-private.3boxlabs.com'
+const DEFAULT_NETWORK = 'mainnet'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
 // Any other supported method?
 type Methods = DIDProviderMethods
+
+const getCeramicApi = (network?: string) => {
+  return isValidNetwork(network || '')
+    ? apiByNetwork(network as Network)
+    : network || apiByNetwork(DEFAULT_NETWORK)
+}
 
 /**
  *  ConnectService runs a 3ID DID provider instance and rpc server with
@@ -41,14 +47,16 @@ export class ThreeIDService {
   /**
    *  Start connect service. Once returns ready to receive rpc requests
    *
-   * @param     {Function}    uiProvider           A uiProvider instance
+   * @param     {Object}      uiProvider           A uiProvider instance
    * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
+   * @param     {Network}     network              Network to run service on, testnet-clay, dev-unstable, local and mainnet are supported or API url
    */
   // @ts-ignore method override
-  start(uiProvider: UIProvider, cancel: UserRequestCancel): void {
+  start(uiProvider: UIProvider, cancel: UserRequestCancel, network: Network | string): void {
+    const ceramicUrl = getCeramicApi(network)
     this.cancel = cancel
     this.uiManager = new ThreeIDManagerUI(uiProvider)
-    this.ceramic = new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
+    this.ceramic = new CeramicClient(ceramicUrl, { syncInterval: 30 * 60 * 1000 })
     this.manageApp = new DisplayManageClientRPC()
     expose('send', this.requestHandler.bind(this), {
       postMessage: window.parent.postMessage.bind(window.parent),
