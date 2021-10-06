@@ -12,6 +12,7 @@ type ModalProps = {
     did?: DID
     legacyDid?: DID
     message?: any
+    request:
   }
   buttons: {
     acceptNode: JSX.Element
@@ -55,7 +56,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
             <a href={document.referrer} target="_blank" rel="noopener noreferrer">
               {document.referrer}
             </a>{' '}
-            is requesting permission to connect to your decentralized identity.
+            is requesting permission to connect to your decentralized identity. {request.request.paths.length === 0 ? '' : `and ${request.request.paths.length} data source ${request.request.paths.length > 1 ?'s.' : '.'}`}
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -67,7 +68,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
           <div>
             <br />
             <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
-            with your decentralized ID. Please connect your wallet.
+            with your decentralized ID. Connect your wallet.
             {permissionDisplay}
           </div>
           <div className="bottom">
@@ -104,7 +105,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            Your 3Box account could not be migrated, continue with a new account?
+            You have a 3Box account we are unable to migrate, continue with a new account?
             <br />
             <br />
             <a
