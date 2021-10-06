@@ -71,7 +71,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
             {permissionDisplay}
           </div>
           <div className="bottom">
-            hi
             {acceptNode}
             {declineNode}
           </div>
@@ -93,6 +92,23 @@ export const Modal = ({ request, buttons }: ModalProps) => {
             <br />
             <a
               href="developers.ceramic.network/authentication/legacy/3id-connect-migration"
+              rel="noopener noreferrer"
+              target="_blank">
+              Learn More
+            </a>
+          </div>
+          <div className="bottom">{acceptNode}</div>
+        </>
+      )
+    } else if (type === 'migration_fail') {
+      body = (
+        <>
+          <div>
+            Your 3Box account could not be migrated, continue with a new account?
+            <br />
+            <br />
+            <a
+              href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration"
               rel="noopener noreferrer"
               target="_blank">
               Learn More
