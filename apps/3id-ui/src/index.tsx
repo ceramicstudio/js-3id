@@ -10,10 +10,8 @@ import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
 
-
 const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
-  console.log(params)
   ReactDOM.render(
     <React.StrictMode>
       <App request={request} buttons={buttons} />
@@ -122,7 +120,6 @@ const closing = (cb: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   closecallback = cb
 }
-
 
 connectService.start(provider, closing, CERAMIC_URL)
 

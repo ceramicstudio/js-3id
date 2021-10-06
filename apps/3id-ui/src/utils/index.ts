@@ -6,6 +6,9 @@ import { IDX } from '@ceramicstudio/idx'
 export const hexToRGBA = (hex: string, opacity?: number | null): string =>
   `rgba(${hexToRgb(hex) as string}, ${(opacity || 30) / 100})`
 
+export const didShorten = (did: string): string =>
+  `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+
 export async function createCeramic(): Promise<CeramicApi> {
   // TODO: move to ENV var
   const ceramic = new Ceramic('https://ceramic-clay.3boxlabs.com')

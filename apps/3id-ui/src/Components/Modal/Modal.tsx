@@ -12,7 +12,7 @@ type ModalProps = {
     did?: DID
     legacyDid?: DID
     message?: any
-    request:
+    paths: Array<string>
   }
   buttons: {
     acceptNode: JSX.Element
@@ -49,6 +49,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
   // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
+    console.log(request)
     if (type === 'authenticate') {
       body = (
         <>
@@ -56,7 +57,10 @@ export const Modal = ({ request, buttons }: ModalProps) => {
             <a href={document.referrer} target="_blank" rel="noopener noreferrer">
               {document.referrer}
             </a>{' '}
-            is requesting permission to connect to your decentralized identity. {request.request.paths.length === 0 ? '' : `and ${request.request.paths.length} data source ${request.request.paths.length > 1 ?'s.' : '.'}`}
+            is requesting permission to connect to your decentralized identity.{' '}
+            {request?.paths?.length === 0
+              ? ''
+              : `and ${request.paths.length} data source ${request.paths.length > 1 ? 's.' : '.'}`}
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -142,7 +146,11 @@ export const Modal = ({ request, buttons }: ModalProps) => {
 
   return (
     <div className="modal">
-      <Header closeButton={closeNode} did={request.did || request.legacyDid} />
+      <Header
+        closeButton={closeNode}
+        did={request.did || request.legacyDid}
+        type={/* request.type */ 'migration'}
+      />
       <Content message={handleModal()} />
     </div>
   )
