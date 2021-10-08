@@ -4,13 +4,14 @@ import './Modal.scss'
 
 import Header from '../Header/Header'
 import Content from '../Content/Content'
-import type { DID } from 'dids'
+
+import { didShorten } from '../../utils'
 
 type ModalProps = {
   request: {
     type: string
-    did?: DID
-    legacyDid?: DID
+    did?: string
+    legacyDid?: string
     message?: any
     paths: Array<string>
   }
@@ -42,14 +43,9 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
-  const formatDid = (did: any) => {
-    return `${did.slice(0, 10)}…${did.slice(-5)}`
-  }
-
   // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
-    console.log(request)
     if (type === 'authenticate') {
       body = (
         <>
@@ -84,9 +80,9 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     } else if (type === 'migration') {
       let formattedDid = ''
       if (request.did) {
-        formattedDid = formatDid(request.did)
+        formattedDid = didShorten(request.did)
       } else if (request.legacyDid) {
-        formattedDid = formatDid(request.legacyDid)
+        formattedDid = didShorten(request.legacyDid)
       }
       body = (
         <>
@@ -146,11 +142,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
 
   return (
     <div className="modal">
-      <Header
-        closeButton={closeNode}
-        did={request.did || request.legacyDid}
-        type={/* request.type */ 'migration'}
-      />
+      <Header closeButton={closeNode} did={request.did || request.legacyDid} type={request.type} />
       <Content message={handleModal()} />
     </div>
   )
