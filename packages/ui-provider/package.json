@@ -1,0 +1,44 @@
+{
+  "name": "@3id/ui-provider",
+  "version": "0.2.4",
+  "author": "Ceramic Studio",
+  "license": "(Apache-2.0 OR MIT)",
+  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "keywords": [
+    "3id",
+    "ui-provider"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/3id-connect",
+    "directory": "packages/ui-provider"
+  },
+  "main": "dist/index.js",
+  "module": "dist/ui-provider.esm.js",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/ui-provider.esm.js",
+    "default": "./dist/ui-provider.esm.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint src test --fix",
+    "prepublish": "npm run build",
+    "prepublishOnly": "package-check"
+  },
+  "dependencies": {
+    "rpc-utils": "^0.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

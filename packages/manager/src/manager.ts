@@ -17,8 +17,13 @@ import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
 import type { AuthConfig, SeedConfig } from './types'
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link'
 
-const CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com'
-const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
+let CERAMIC_API = 'https://ceramic-clay.3boxlabs.com'
+let DID_MIGRATION = true
+
+typeof process !== 'undefined' &&
+  (CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com')
+typeof process !== 'undefined' &&
+  (DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true)
 
 export class Manager {
   authProvider: AuthProvider
@@ -71,7 +76,7 @@ export class Manager {
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrating, authSecretAdd
     if (migrate) {
-      legacyDid = opts?.legacyDid || (await legacyDIDLinkExist(accountId))
+      legacyDid = opts && 'legacyDid' in opts ? opts.legacyDid : await legacyDIDLinkExist(accountId)
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret

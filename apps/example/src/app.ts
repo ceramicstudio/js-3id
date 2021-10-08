@@ -20,7 +20,7 @@ const authenticate = async () => {
   const ceramic = new Ceramic(CERAMIC_URL)
   const did = new DID({
     provider: threeIdConnect.getDidProvider(),
-    resolver: ThreeIdResolver.getResolver(ceramic)
+    resolver: ThreeIdResolver.getResolver(ceramic),
   })
 
   await did.authenticate()

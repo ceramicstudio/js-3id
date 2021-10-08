@@ -24,16 +24,14 @@ const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
 // @ts-ignore
 const hide = (iframe: HTMLIFrameElement) => () => (iframe.style = HIDE_IFRAME_STYLE)
-const display = (iframe: HTMLIFrameElement) => (
-  mobile = false,
-  height = '245px',
-  width = '440px'
-) => {
-  // @ts-ignore
-  iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${
-    mobile ? IFRAME_BOTTOM : IFRAME_TOP
-  }`
-}
+const display =
+  (iframe: HTMLIFrameElement) =>
+  (mobile = false, height = '245px', width = '440px') => {
+    // @ts-ignore
+    iframe.style = `${DISPLAY_IFRAME_STYLE} width: ${width}; height: ${height}; ${
+      mobile ? IFRAME_BOTTOM : IFRAME_TOP
+    }`
+  }
 
 type DisplayConnectMethods = {
   hide: RPCMethodTypes

@@ -12,7 +12,9 @@
       "@3id/connect-display": ["packages/connect-display/src"],
       "@3id/manager": ["packages/manager/src"],
       "@3id/test-utils": ["packages/test-utils/src"],
-      "@3id/window-auth-provider": ["packages/window-auth-provider/src"]
+      "@3id/window-auth-provider": ["packages/window-auth-provider/src"],
+      "@3id/ui-provider": ["packages/ui-provider/src"],
+      "@3id/service": ["packages/service/src"]
     }
   }
 }

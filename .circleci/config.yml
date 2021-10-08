@@ -24,6 +24,7 @@ jobs:
             apt-get update && apt-get install -y --no-install-recommends python make gcc g++
             npm i -g codecov lerna node-gyp
             yarn install --frozen-lockfile
+            npx playwright install-deps
 
       - run:
           name: lint
