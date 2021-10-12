@@ -21,8 +21,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "typeRoots": ["./src/types"]
+    "noEmit": true
   },
-  "include": ["src", "services"]
+  "include": ["src"]
 }

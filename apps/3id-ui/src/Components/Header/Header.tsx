@@ -3,6 +3,7 @@ import React from 'react'
 import Avatar from 'boring-avatars'
 
 import './Header.scss'
+import selfIdLogo from './self.id.svg'
 
 type HeaderProps = {
   closeButton: JSX.Element
@@ -18,9 +19,8 @@ export const Header = ({ closeButton }: HeaderProps) => {
           rel="noopener noreferrer"
           target="_blank"
           className="logo col-12">
-          SelfId Connect
+          <img src={selfIdLogo} alt="self.id logo" />
         </a>
-        <span> SelfID Connect </span>
       </div>
       <div className="image-container">
         <div className="avatar">

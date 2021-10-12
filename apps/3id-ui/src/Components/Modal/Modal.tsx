@@ -19,8 +19,6 @@ type ModalProps = {
   }
 }
 
-// TODO: Implement Error component
-
 export const Modal = ({ request, buttons }: ModalProps) => {
   // TODO: update this to be dynamically set when we have permission customization.
   const permissions = ['Store data', 'Read data']
