@@ -28,10 +28,30 @@ $placeholder: #5d40fb;
     url('../../fonts/Segment-SemiBold.woff') format('woff');
 }
 
+@mixin slide {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .App {
+  overflow: hidden;
   text-align: center;
   width: 100vw;
   height: 100vh;
+
+  @include slide;
+  animation-name: slideInFromTop;
 }
 
 .btn {

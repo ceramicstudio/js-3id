@@ -5,12 +5,15 @@ import './Modal.scss'
 import Header from '../Header/Header'
 import Content from '../Content/Content'
 
+import { didShorten } from '../../utils'
+
 type ModalProps = {
   request: {
     type: string
     did?: string
     legacyDid?: string
     message?: any
+    paths: Array<string>
   }
   buttons: {
     acceptNode: JSX.Element
@@ -22,7 +25,6 @@ type ModalProps = {
 // TODO: Implement Error component
 
 export const Modal = ({ request, buttons }: ModalProps) => {
-  // TODO: update this to be dynamically set when we have permission customization.
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
@@ -48,7 +50,13 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            This site is requesting permission to connect to your decentralized identity.
+            <a href={document.referrer} target="_blank" rel="noopener noreferrer">
+              {document.referrer}
+            </a>{' '}
+            is requesting permission to connect to your decentralized identity.{' '}
+            {request?.paths?.length === 0
+              ? ''
+              : `and ${request.paths.length} data source ${request.paths.length > 1 ? 's.' : '.'}`}
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -58,8 +66,9 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            This site is requesting permission to interact with your decentralized ID. Please
-            connect your wallet.
+            <br />
+            <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
+            with your decentralized ID. Connect your wallet.
             {permissionDisplay}
           </div>
           <div className="bottom">
@@ -69,10 +78,17 @@ export const Modal = ({ request, buttons }: ModalProps) => {
         </>
       )
     } else if (type === 'migration') {
+      let formattedDid = ''
+      if (request.did) {
+        formattedDid = didShorten(request.did)
+      } else if (request.legacyDid) {
+        formattedDid = didShorten(request.legacyDid)
+      }
       body = (
         <>
           <div>
-            {`Your 3Box DID will be migrated.`}
+            <br />
+            Your 3Box DID <code>{formattedDid}</code> will be migrated.
             <br />
             <br />
             <a
@@ -89,7 +105,7 @@ export const Modal = ({ request, buttons }: ModalProps) => {
       body = (
         <>
           <div>
-            Your 3Box account could not be migrated, continue with a new account?
+            You have a 3Box account we are unable to migrate, continue with a new account?
             <br />
             <br />
             <a
@@ -123,9 +139,10 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     }
     return body
   }
+
   return (
     <div className="modal">
-      <Header closeButton={closeNode} />
+      <Header closeButton={closeNode} did={request.did || request.legacyDid} type={request.type} />
       <Content message={handleModal()} />
     </div>
   )

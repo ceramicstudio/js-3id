@@ -48,14 +48,36 @@ $placeholder: #5d40fb;
   .avatar {
     margin-bottom: 20px;
   }
-  .close-container {
+  .head-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
     width: 100%;
-    text-align: right;
-    margin-top: 5px;
-    .close-btn {
-      position: relative;
-      display: inline;
-      cursor: pointer;
+    margin: 10px 0;
+    .details {
+      font-size: 13px;
+      font-weight: 500;
+      a {
+        border-bottom: 1px solid white;
+        padding-bottom: 3px;
+        transition: ease padding-bottom 0.3s;
+        &:hover {
+          padding-bottom: 5px;
+          transition: ease padding-bottom 0.3s;
+        }
+      }
+    }
+    .close-container {
+      width: 100%;
+      text-align: right;
+      margin-top: 5px;
+      .close-btn {
+        position: relative;
+        display: inline;
+        cursor: pointer;
+      }
     }
   }
 }
