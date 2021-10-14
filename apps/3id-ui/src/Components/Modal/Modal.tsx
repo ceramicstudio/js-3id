@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { IDX } from '@ceramicstudio/idx'
+
 import './Modal.scss'
 
 import Header from '../Header/Header'
@@ -17,14 +19,36 @@ type ModalProps = {
     declineNode: JSX.Element
     closeNode: JSX.Element
   }
+  connectService: any
 }
 
-export const Modal = ({ request, buttons }: ModalProps) => {
-  // TODO: update this to be dynamically set when we have permission customization.
+// @ts-ignore
+export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
   const { acceptNode, declineNode, closeNode } = buttons
+  const test = async () => {
+    const idx = connectService.idx
+    const ceramic = connectService.ceramic
+    console.log('CERAMIC INSTANCE: ', ceramic)
+    const fileTest = await TileDocument.load(
+      ceramic,
+      'kjzl6cwe1jw14ayoqla4qy0h72p3o257jk14xik53uhq08oipqckvkuvavf3pi6'
+    )
+    console.log('tile doc test:', fileTest)
+    //@ts-ignore
+    connectService.idx = new IDX({ ceramic })
+    console.log(idx)
+    try {
+      await idx.get(
+        'basicProfile',
+        'did:3:bafyreihq3gquqeuzblcpckqoanlftg7zp3wivkvg26mzfiwvau45rrepie'
+      )
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const permissionDisplay = (
     <div className="permissions">
@@ -39,7 +63,16 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
-  // TODO: get Logo from Sena
+  const updateDisplay = async () => {
+    // if ((idx && request.legacyDid) || request.did) {
+    // console.log('updateDisplay :', await idx.get('basicProfile', request.did || request.legacyDid))
+    // }
+  }
+
+  React.useEffect(() => {
+    test()
+  }, [request.did || request.legacyDid])
+
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
     if (type === 'authenticate') {
@@ -123,8 +156,12 @@ export const Modal = ({ request, buttons }: ModalProps) => {
   }
 
   return (
-    <div className="modal">
-      <Header closeButton={closeNode} />
+    <div
+      className="modal"
+      style={{
+        zIndex: 9999999, //todo: pull this from request object passed in.
+      }}>
+      <Header closeButton={closeNode} did={request.did || request.legacyDid} type={request.type} />
       <Content message={handleModal()} />
     </div>
   )
