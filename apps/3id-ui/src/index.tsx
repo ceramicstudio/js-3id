@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
@@ -14,7 +15,7 @@ const render = async (params: object, type: string, buttons: object) => {
   console.log(params)
   ReactDOM.render(
     <React.StrictMode>
-      <App request={request} buttons={buttons} />
+      <App request={request} buttons={buttons} connectService={connectService} />
     </React.StrictMode>,
     document.getElementById('root')
   )
@@ -75,26 +76,31 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
 
 const UIMethods: UIProviderHandlers = {
   prompt_migration: async (_ctx = {}, params: object) => {
+    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
     return { migration }
   },
   prompt_migration_skip: async (_ctx = {}, params: object) => {
+    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
   prompt_migration_fail: async (_ctx = {}, params: object) => {
+    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
   prompt_account: async (_ctx = {}, params: object) => {
+    console.log('UI REQUEST')
     const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
   prompt_authenticate: async (_ctx = {}, params: object) => {
+    console.log('UI REQUEST')
     const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
     return { allow }
@@ -120,6 +126,8 @@ const closing = (cb: any) => {
   closecallback = cb
 }
 
-connectService.start(provider, closing)
+connectService.start(provider, closing, CERAMIC_URL)
+
+console.log(connectService)
 
 reportWebVitals()
