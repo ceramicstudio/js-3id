@@ -76,31 +76,26 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
 
 const UIMethods: UIProviderHandlers = {
   prompt_migration: async (_ctx = {}, params: object) => {
-    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
     return { migration }
   },
   prompt_migration_skip: async (_ctx = {}, params: object) => {
-    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
   prompt_migration_fail: async (_ctx = {}, params: object) => {
-    console.log('UI REQUEST')
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
   prompt_account: async (_ctx = {}, params: object) => {
-    console.log('UI REQUEST')
     const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
   prompt_authenticate: async (_ctx = {}, params: object) => {
-    console.log('UI REQUEST')
     const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
     return { allow }
@@ -110,7 +105,7 @@ const UIMethods: UIProviderHandlers = {
     return null
   },
   inform_close: async () => {
-    await iframeDisplay.hide()
+    // await iframeDisplay.hide()
     return null
   },
 }
@@ -127,7 +122,5 @@ const closing = (cb: any) => {
 }
 
 connectService.start(provider, closing, CERAMIC_URL)
-
-console.log(connectService)
 
 reportWebVitals()
