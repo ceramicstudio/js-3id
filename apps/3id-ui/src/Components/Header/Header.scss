@@ -39,9 +39,14 @@ $placeholder: #5d40fb;
     position: relative;
     top: 50px;
     .avatar {
-      svg {
+      svg,
+      img {
         border: 3px solid white;
         border-radius: 50px;
+      }
+      img {
+        height: 65px;
+        width: 65px;
       }
     }
   }

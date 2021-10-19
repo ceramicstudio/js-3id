@@ -14,7 +14,10 @@ type HeaderProps = {
   connectService?: any
 }
 const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
-  const [userData, setUserData] = React.useState({})
+  const [userData, setUserData] = React.useState({
+    name: undefined,
+    image: undefined,
+  })
   const headerData = () => {
     if (type === 'authenticate') {
       if (did !== undefined) {
@@ -80,6 +83,33 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     console.log('userData: ', userData)
   }, [did])
 
+  const ipfsToImg = (url: string) => {
+    let formattedUrl = url.split('ipfs://')[1]
+    formattedUrl = `https://ipfs.infura.io/ipfs/${formattedUrl}`
+    return formattedUrl
+  }
+
+  const boringOrAvatar = () => {
+    if (userData.image !== undefined) {
+      return (
+        <div
+          className="avatarImage"
+          style={{
+            backgroundImage: userData.image,
+          }}></div>
+      )
+    } else {
+      return (
+        <Avatar
+          size={65}
+          name={did || 'self.id-connect'}
+          variant="marble"
+          colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
+        />
+      )
+    }
+  }
+
   return (
     <div className="head">
       <div className="close-container">{closeButton}</div>
@@ -93,14 +123,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
         </a>
       </div>
       <div className="image-container">
-        <div className="avatar">
-          <Avatar
-            size={65}
-            name="self.id-connect"
-            variant="marble"
-            colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-          />
-        </div>
+        <div className="avatar">{boringOrAvatar()}</div>
       </div>
     </div>
   )
