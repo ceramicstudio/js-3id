@@ -95,7 +95,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
         <div
           className="avatarImage"
           style={{
-            backgroundImage: userData.image,
+            backgroundImage: ipfsToImg(userData.image),
           }}></div>
       )
     } else {
