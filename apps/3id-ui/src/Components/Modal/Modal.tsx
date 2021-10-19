@@ -1,5 +1,4 @@
 import React from 'react'
-import { IDX } from '@ceramicstudio/idx'
 
 import './Modal.scss'
 
@@ -22,7 +21,7 @@ type ModalProps = {
   }
   connectService?: any
 }
-//@ts-ignore
+
 export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
