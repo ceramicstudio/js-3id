@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
@@ -14,7 +15,7 @@ const render = async (params: object, type: string, buttons: object) => {
   const request = Object.assign(params, { type })
   ReactDOM.render(
     <React.StrictMode>
-      <App request={request} buttons={buttons} />
+      <App request={request} buttons={buttons} connectService={connectService} />
     </React.StrictMode>,
     document.getElementById('root')
   )
@@ -104,7 +105,7 @@ const UIMethods: UIProviderHandlers = {
     return null
   },
   inform_close: async () => {
-    await iframeDisplay.hide()
+    // await iframeDisplay.hide()
     return null
   },
 }

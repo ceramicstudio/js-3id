@@ -2,7 +2,10 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "ES5",
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "keyofStringsOnly": true,
     "importHelpers": true,
     "declaration": true,
@@ -22,5 +25,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true
-  }
+  },
+  "include": [
+    "src"
+  ]
 }
