@@ -22,5 +22,6 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true
-  }
+  },
+  "include": ["src"]
 }

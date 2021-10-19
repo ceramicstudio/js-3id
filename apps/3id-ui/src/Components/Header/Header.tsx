@@ -1,15 +1,24 @@
 import React from 'react'
 import Avatar from 'boring-avatars'
 
+import { IDX } from '@ceramicstudio/idx'
+import type { CeramicApi } from '@ceramicnetwork/common'
+
 import { didShorten } from '../../utils'
 import './Header.scss'
+import selfIdLogo from './self.id.svg'
 
 type HeaderProps = {
   did?: string
   type: string
   closeButton: JSX.Element
+  connectService?: any
 }
-const Header = ({ did, type, closeButton }: HeaderProps) => {
+const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
+  const [userData, setUserData] = React.useState({
+    name: undefined,
+    image: undefined,
+  })
   const headerData = () => {
     if (type === 'authenticate') {
       if (did !== undefined) {
@@ -43,6 +52,65 @@ const Header = ({ did, type, closeButton }: HeaderProps) => {
     }
     return <div className="details"></div>
   }
+  const setup = () => {
+    if (connectService.idx) {
+      return true
+    }
+    const ceramic: CeramicApi = connectService.ceramic
+    try {
+      connectService.idx = new IDX({ ceramic })
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  }
+
+  const updateData = async () => {
+    try {
+      const data = await connectService.idx.get('basicProfile', did)
+      setUserData(data.content)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  React.useEffect(() => {
+    setup()
+    if (did) {
+      console.log(did)
+      updateData()
+    }
+    console.log('userData: ', userData)
+  }, [did])
+
+  const ipfsToImg = (url: string) => {
+    let formattedUrl = url.split('ipfs://')[1]
+    formattedUrl = `https://ipfs.infura.io/ipfs/${formattedUrl}`
+    return formattedUrl
+  }
+
+  const boringOrAvatar = () => {
+    if (userData.image !== undefined) {
+      return (
+        <div
+          className="avatarImage"
+          style={{
+            backgroundImage: ipfsToImg(userData.image),
+          }}></div>
+      )
+    } else {
+      return (
+        <Avatar
+          size={65}
+          name={did || 'self.id-connect'}
+          variant="marble"
+          colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
+        />
+      )
+    }
+  }
+
   return (
     <div className="head">
       <div className="head-container">
@@ -55,19 +123,11 @@ const Header = ({ did, type, closeButton }: HeaderProps) => {
           rel="noopener noreferrer"
           target="_blank"
           className="logo col-12">
-          SelfId Connect
+          <img src={selfIdLogo} alt="self.id logo" />
         </a>
-        <span> SelfID Connect </span>
       </div>
       <div className="image-container">
-        <div className="avatar">
-          <Avatar
-            size={65}
-            name={did || 'self.id-connect'}
-            variant="marble"
-            colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-          />
-        </div>
+        <div className="avatar">{boringOrAvatar()}</div>
       </div>
     </div>
   )

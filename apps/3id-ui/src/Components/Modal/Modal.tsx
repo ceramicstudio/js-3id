@@ -20,11 +20,10 @@ type ModalProps = {
     declineNode: JSX.Element
     closeNode: JSX.Element
   }
+  connectService?: any
 }
 
-// TODO: Implement Error component
-
-export const Modal = ({ request, buttons }: ModalProps) => {
+export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
@@ -43,7 +42,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
-  // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
     if (type === 'authenticate') {
@@ -141,7 +139,12 @@ export const Modal = ({ request, buttons }: ModalProps) => {
   }
   return (
     <div className="modal">
-      <Header closeButton={closeNode} did={request.did || request.legacyDid} type={request.type} />
+      <Header
+        closeButton={closeNode}
+        did={request.did || request.legacyDid}
+        type={request.type}
+        connectService={connectService}
+      />
       <Content message={handleModal()} />
     </div>
   )
