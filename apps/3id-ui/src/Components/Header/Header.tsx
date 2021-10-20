@@ -100,10 +100,8 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
   React.useEffect(() => {
     setup()
     if (did) {
-      console.log(did)
       updateData()
     }
-    console.log('userData: ', userData)
   }, [did])
 
   const boringOrAvatar = userData?.image ? (
