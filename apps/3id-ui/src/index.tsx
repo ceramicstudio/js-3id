@@ -123,7 +123,6 @@ const closing = (cb: any) => {
   closecallback = cb
 }
 
-connectService.start(provider, closing, 'https://ceramic-clay.3boxlabs.com')
-// connectService.start(provider, closing, CERAMIC_URL)
+connectService.start(provider, closing, CERAMIC_URL)
 
 reportWebVitals()
