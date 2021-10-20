@@ -5,3 +5,9 @@ export const hexToRGBA = (hex: string, opacity?: number | null): string =>
 
 export const didShorten = (did: string): string =>
   `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+
+export const ipfsToImg = (url: string) => {
+  let formattedUrl = url.split('ipfs://')[1]
+  formattedUrl = `https://ipfs.infura.io/ipfs/${formattedUrl}`
+  return formattedUrl
+}

@@ -10,9 +10,10 @@ import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
+import { ButtonsType, RequestType } from './Types'
 
-const render = async (params: object, type: string, buttons: object) => {
-  const request = Object.assign(params, { type })
+const render = async (params: object, type: string, buttons: ButtonsType) => {
+  const request: RequestType = Object.assign(params, { type })
   ReactDOM.render(
     <React.StrictMode>
       <App request={request} buttons={buttons} connectService={connectService} />
@@ -105,7 +106,7 @@ const UIMethods: UIProviderHandlers = {
     return null
   },
   inform_close: async () => {
-    // await iframeDisplay.hide()
+    await iframeDisplay.hide()
     return null
   },
 }

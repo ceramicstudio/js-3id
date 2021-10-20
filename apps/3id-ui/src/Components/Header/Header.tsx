@@ -3,8 +3,9 @@ import Avatar from 'boring-avatars'
 
 import { IDX } from '@ceramicstudio/idx'
 import type { CeramicApi } from '@ceramicnetwork/common'
+import { didShorten, ipfsToImg } from '../../utils'
+import type { ConnectServiceType } from '../../Types'
 
-import { didShorten } from '../../utils'
 import './Header.scss'
 import selfIdLogo from './self.id.svg'
 
@@ -12,10 +13,21 @@ type HeaderProps = {
   did?: string
   type: string
   closeButton: JSX.Element
-  connectService?: any
+  connectService: ConnectServiceType
+}
+
+type ThreeIDProfile = {
+  name?: string | undefined
+  image?:
+    | {
+        original: {
+          src: string
+        }
+      }
+    | undefined
 }
 const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
-  const [userData, setUserData] = React.useState({
+  const [userData, setUserData] = React.useState<ThreeIDProfile | null>({
     name: undefined,
     image: undefined,
   })
@@ -56,20 +68,30 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     if (connectService.idx) {
       return true
     }
-    const ceramic: CeramicApi = connectService.ceramic
-    try {
-      connectService.idx = new IDX({ ceramic })
-      return true
-    } catch (e) {
-      console.error(e)
-      return false
+    if (!connectService.ceramic) {
+      throw new Error('Ceramic instance not found.')
+    } else {
+      const ceramic: CeramicApi = connectService.ceramic
+      try {
+        connectService.idx = new IDX({ ceramic })
+        return true
+      } catch (e) {
+        console.error(e)
+        return false
+      }
     }
   }
 
   const updateData = async () => {
     try {
-      const data = await connectService.idx.get('basicProfile', did)
-      setUserData(data.content)
+      if (!connectService.idx) {
+        throw new Error('IDX instance could not be started.')
+      } else {
+        const data: ThreeIDProfile | null = await connectService.idx.get('basicProfile', did)
+        if (data !== null) {
+          setUserData(data)
+        }
+      }
     } catch (e) {
       console.error(e)
     }
@@ -84,32 +106,20 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     console.log('userData: ', userData)
   }, [did])
 
-  const ipfsToImg = (url: string) => {
-    let formattedUrl = url.split('ipfs://')[1]
-    formattedUrl = `https://ipfs.infura.io/ipfs/${formattedUrl}`
-    return formattedUrl
-  }
-
-  const boringOrAvatar = () => {
-    if (userData.image !== undefined) {
-      return (
-        <div
-          className="avatarImage"
-          style={{
-            backgroundImage: ipfsToImg(userData.image),
-          }}></div>
-      )
-    } else {
-      return (
-        <Avatar
-          size={65}
-          name={did || 'self.id-connect'}
-          variant="marble"
-          colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-        />
-      )
-    }
-  }
+  const boringOrAvatar = userData?.image ? (
+    <div
+      className="avatarImage"
+      style={{
+        backgroundImage: ipfsToImg(userData.image.original.src),
+      }}></div>
+  ) : (
+    <Avatar
+      size={65}
+      name={did || 'self.id-connect'}
+      variant="marble"
+      colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
+    />
+  )
 
   return (
     <div className="head">
@@ -127,7 +137,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
         </a>
       </div>
       <div className="image-container">
-        <div className="avatar">{boringOrAvatar()}</div>
+        <div className="avatar">{boringOrAvatar}</div>
       </div>
     </div>
   )

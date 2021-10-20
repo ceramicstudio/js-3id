@@ -6,21 +6,12 @@ import Header from '../Header/Header'
 import Content from '../Content/Content'
 
 import { didShorten } from '../../utils'
+import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
 
 type ModalProps = {
-  request: {
-    type: string
-    did?: string
-    legacyDid?: string
-    message?: any
-    paths: Array<string>
-  }
-  buttons: {
-    acceptNode: JSX.Element
-    declineNode: JSX.Element
-    closeNode: JSX.Element
-  }
-  connectService?: any
+  request: RequestType
+  buttons: ButtonsType
+  connectService: ConnectServiceType
 }
 
 export const Modal = ({ request, buttons, connectService }: ModalProps) => {
@@ -52,9 +43,11 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               {document.referrer}
             </a>{' '}
             is requesting permission to connect to your decentralized identity.{' '}
-            {request?.paths?.length === 0
+            {request.paths === undefined || request.paths.length === 0
               ? ''
-              : `and ${request.paths.length} data source ${request.paths.length > 1 ? 's.' : '.'}`}
+              : `and ${request?.paths?.length} data source ${
+                  request?.paths?.length > 1 ? 's.' : '.'
+                }`}
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>

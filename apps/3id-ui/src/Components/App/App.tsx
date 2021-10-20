@@ -1,13 +1,16 @@
 import React from 'react'
+
 import './App.scss'
 import Modal from '../Modal/Modal'
 
 import * as hexToRgb from 'hex-to-rgb'
 
+import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
+
 type AppProps = {
-  buttons: any
-  request: any
-  connectService?: any
+  request: RequestType
+  buttons: ButtonsType
+  connectService: ConnectServiceType
 }
 
 const hexToRGBA = (hex: string, opacity?: number | null): string =>
