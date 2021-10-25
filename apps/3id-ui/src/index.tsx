@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import './index.css'
 import App from './Components/App/App'
 import reportWebVitals from './reportWebVitals'
@@ -9,12 +10,13 @@ import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
+import { ButtonsType, RequestType } from './Types'
 
-const render = async (params: object, type: string, buttons: object) => {
-  const request = Object.assign(params, { type })
+const render = async (params: object, type: string, buttons: ButtonsType) => {
+  const request: RequestType = Object.assign(params, { type })
   ReactDOM.render(
     <React.StrictMode>
-      <App request={request} buttons={buttons} />
+      <App request={request} buttons={buttons} connectService={connectService} />
     </React.StrictMode>,
     document.getElementById('root')
   )

@@ -6,25 +6,15 @@ import Header from '../Header/Header'
 import Content from '../Content/Content'
 
 import { didShorten } from '../../utils'
+import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
 
 type ModalProps = {
-  request: {
-    type: string
-    did?: string
-    legacyDid?: string
-    message?: any
-    paths: Array<string>
-  }
-  buttons: {
-    acceptNode: JSX.Element
-    declineNode: JSX.Element
-    closeNode: JSX.Element
-  }
+  request: RequestType
+  buttons: ButtonsType
+  connectService: ConnectServiceType
 }
 
-// TODO: Implement Error component
-
-export const Modal = ({ request, buttons }: ModalProps) => {
+export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
   const type = request.type
@@ -43,7 +33,6 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     </div>
   )
 
-  // TODO: get Logo from Sena
   const handleModal = (): JSX.Element => {
     let body: JSX.Element
     if (type === 'authenticate') {
@@ -54,9 +43,11 @@ export const Modal = ({ request, buttons }: ModalProps) => {
               {document.referrer}
             </a>{' '}
             is requesting permission to connect to your decentralized identity.{' '}
-            {request?.paths?.length === 0
+            {request.paths === undefined || request.paths.length === 0
               ? ''
-              : `and ${request.paths.length} data source ${request.paths.length > 1 ? 's.' : '.'}`}
+              : `and ${request?.paths?.length} data source ${
+                  request?.paths?.length > 1 ? 's.' : '.'
+                }`}
             {permissionDisplay}
           </div>
           <div className="bottom">{acceptNode}</div>
@@ -139,10 +130,14 @@ export const Modal = ({ request, buttons }: ModalProps) => {
     }
     return body
   }
-
   return (
     <div className="modal">
-      <Header closeButton={closeNode} did={request.did || request.legacyDid} type={request.type} />
+      <Header
+        closeButton={closeNode}
+        did={request.did || request.legacyDid}
+        type={request.type}
+        connectService={connectService}
+      />
       <Content message={handleModal()} />
     </div>
   )
