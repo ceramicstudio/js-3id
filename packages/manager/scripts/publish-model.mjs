@@ -1,19 +1,10 @@
 import { writeFile } from 'node:fs/promises'
-import { CeramicClient } from '@ceramicnetwork/http-client'
-import { model as cryptoAccountsModel } from '@datamodels/identity-accounts-crypto'
-import { model as webAccountsModel } from '@datamodels/identity-accounts-web'
-import { model as profileModel } from '@datamodels/identity-profile-basic'
-import { model as keychainModel } from '@datamodels/3id-keychain'
-import { ModelManager } from '@glazed/devtools'
+import { idxModelManager } from '../src/utils'
 import prettierConfig from 'eslint-config-3box/prettier.config.js'
 import prettier from 'prettier'
 
 const ceramic = new CeramicClient(process.env.CERAMIC_URL)
-const manager = new ModelManager(ceramic)
-manager.addJSONModel(cryptoAccountsModel)
-manager.addJSONModel(webAccountsModel)
-manager.addJSONModel(profileModel)
-manager.addJSONModel(keychainModel)
+const manager = idxModelManager(ceramic)
 
 const published = await manager.toPublished()
 const modelFile = prettier.format(

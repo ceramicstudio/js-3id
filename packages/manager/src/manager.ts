@@ -3,15 +3,15 @@ import type { DIDProvider } from 'dids'
 import { DID } from 'dids'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import CeramicClient from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
-import type { CryptoAccounts } from '@ceramicstudio/idx-constants'
+import type { CryptoAccountLinks } from '@datamodels/identity-accounts-crypto'
+import { DIDDataStore } from '@glazed/did-datastore'
+import { model as idxModel } from './__generated__/model'
 import { hash } from '@stablelib/sha256'
 import ThreeIdProvider from '3id-did-provider'
 import { fromString } from 'uint8arrays'
 import KeyDidResolver from 'key-did-resolver'
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
 import { Resolver } from 'did-resolver'
-
 import { DIDStore, LinkCache } from './stores'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
 import type { AuthConfig, SeedConfig } from './types'
@@ -29,7 +29,7 @@ export class Manager {
   authProvider: AuthProvider
   store: DIDStore
   cache: LinkCache
-  idx: IDX
+  dataStore: DIDDataStore
   ceramic: CeramicClient
   threeIdProviders: Record<string, ThreeIdProvider>
 
@@ -42,7 +42,7 @@ export class Manager {
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
     this.ceramic = opts.ceramic || new CeramicClient(CERAMIC_API)
-    this.idx = new IDX({ ceramic: this.ceramic })
+    this.dataStore = new DIDDataStore({ ceramic: this.ceramic, model: idxModel })
     this.threeIdProviders = {}
   }
 
@@ -96,7 +96,7 @@ export class Manager {
       // if data or link fails, continue, can create new link instead and add data later if necessary
       try {
         const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-        const migration = new Migrate3IDV0(didProvider as any, this.idx)
+        const migration = new Migrate3IDV0(didProvider as any, this.dataStore)
         const promChain = async (): Promise<void> => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const profile3Box = await migration.migrate3BoxProfile(did)
@@ -127,7 +127,6 @@ export class Manager {
       getPermission,
       ceramic: this.ceramic,
     })
-
     const threeId = await ThreeIdProvider.create(threeIdConfig)
     this.threeIdProviders[threeId.id] = threeId
     await this.store.storeDID(threeId.id, this.threeIdProviders[threeId.id].keychain._keyring.seed)
@@ -181,13 +180,12 @@ export class Manager {
     const accountId = await this.authProvider.accountId()
     await this.setDid(did)
 
-    const existing: CryptoAccounts = (await this.idx.get('cryptoAccounts')) || {}
+    const existing: CryptoAccountLinks = (await this.dataStore.get('cryptoAccounts')) || {}
     if (existing && existing[accountId.toString()]) return
 
     if (!linkProof) {
       linkProof = await this.authProvider.createLink(did)
     }
-
     const accountLink = await Caip10Link.fromAccount(this.ceramic, accountId, {
       anchor: false,
       publish: false,
@@ -196,7 +194,7 @@ export class Manager {
     await this.ceramic.pin.add(accountLink.id)
 
     const links = Object.assign(existing, { [accountId.toString()]: accountLink.id.toUrl() })
-    await this.idx.set('cryptoAccounts', links)
+    await this.dataStore.set('cryptoAccounts', links)
     await this.cache.setLinkedDid(accountId.toString(), did)
   }
 
@@ -210,7 +208,12 @@ export class Manager {
   // return did if a link exist for AccountId/caip10 in network, otherwise null
   async linkInNetwork(accountId: string): Promise<string | null> {
     try {
-      const did = await this.idx.caip10ToDid(accountId)
+      const accountLink = await Caip10Link.fromAccount(this.ceramic, accountId, {
+        anchor: false,
+        publish: false,
+      })
+      const did = accountLink.did
+      if (!did) throw new Error('Link not found')
       if (await this.didExist(did)) {
         await this.cache.setLinkedDid(accountId, did)
       }

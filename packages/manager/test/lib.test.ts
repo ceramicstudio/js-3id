@@ -3,8 +3,9 @@
 import { EthereumMigrationMockAuthProvider, createAuthProvider } from '@3id/test-utils'
 import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-provider'
 import Ceramic from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
-import { publishIDXConfig } from '@ceramicstudio/idx-tools'
+import { DIDDataStore } from '@glazed/did-datastore'
+import { model as idxModel } from '../src/__generated__/model'
+import { idxModelManager } from '../src/utils'
 
 import { Manager } from '../src'
 
@@ -12,10 +13,11 @@ describe('3ID Manager', () => {
   jest.setTimeout(60000)
 
   const ceramic = new Ceramic('http://localhost:7777')
-  const idx = new IDX({ ceramic })
+  const dataStore = new DIDDataStore({ ceramic, model: idxModel })
 
   beforeAll(async () => {
-    await publishIDXConfig(ceramic)
+    const manager = idxModelManager(ceramic)
+    await manager.toPublished()
   })
 
   test('creates/loads new did', async () => {
@@ -25,7 +27,7 @@ describe('3ID Manager', () => {
     const manager = new Manager(authProvider, { ceramic })
     const did = await manager.createAccount()
     // expect link to be created
-    const links = await idx.get('cryptoAccounts', did)
+    const links = await dataStore.get('cryptoAccounts', did)
     expect(links[accountId]).toBeTruthy()
   })
 
@@ -51,7 +53,7 @@ describe('3ID Manager', () => {
     const accountId = (await authProvider.accountId()).toString()
     const manager = new Manager(authProvider, { ceramic })
     const did = await manager.createAccount()
-    const links = await idx.get('cryptoAccounts', did)
+    const links = await dataStore.get('cryptoAccounts', did)
     expect(links[accountId]).toBeTruthy()
     server.unsubscribe()
   })
@@ -66,15 +68,15 @@ describe('3ID Manager', () => {
     expect(did.includes('did:3:bafy')).toBeTruthy()
 
     // profile migrate
-    const migratedProfile = await idx.get('basicProfile', did)
+    const migratedProfile = await dataStore.get('basicProfile', did)
     expect(migratedProfile).toMatchSnapshot()
 
     // link migrated
-    const links = await idx.get('cryptoAccounts', did)
+    const links = await dataStore.get('cryptoAccounts', did)
     expect(links).toMatchSnapshot()
 
     // twitter & github migrated
-    const aka = await idx.get('alsoKnownAs', did)
+    const aka = await dataStore.get('alsoKnownAs', did)
     expect(aka.accounts[0].claim).toMatchSnapshot()
     expect(aka.accounts[1].claim).toMatchSnapshot()
   })
@@ -117,7 +119,7 @@ describe('3ID Manager', () => {
     await manager2.addAuthAndLink(did1)
 
     // expect two links to exist now
-    const links = await idx.get('cryptoAccounts', did1)
+    const links = await dataStore.get('cryptoAccounts', did1)
     expect(links[accountId1]).toBeTruthy()
     expect(links[accountId2]).toBeTruthy()
 

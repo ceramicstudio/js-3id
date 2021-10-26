@@ -4,12 +4,12 @@ import { fromHex } from '@3id/common'
 import Resolver from '@ceramicnetwork/3id-did-resolver'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import type { CeramicApi } from '@ceramicnetwork/common'
-import { IDX } from '@ceramicstudio/idx'
-import type { AlsoKnownAs, AlsoKnownAsAccount, BasicProfile } from '@ceramicstudio/idx-constants'
+import { DIDDataStore } from '@glazed/did-datastore'
+import type { Account as AlsoKnownAsAccount } from '@datamodels/identity-accounts-web'
+import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import { mnemonicToSeed, entropyToMnemonic } from '@ethersproject/hdnode'
 import { AccountID } from 'caip'
 import { DagJWS, DID, DIDProvider } from 'dids'
-
 import type { ExcludesBoolean, LinksArray } from './types'
 import { fetchJson, jwtDecode } from './utils'
 
@@ -21,13 +21,13 @@ typeof process !== 'undefined' &&
     process.env.VERIFICATION_SERVICE || 'https://verifications-clay.3boxlabs.com')
 
 export class Migrate3IDV0 {
-  private idx: IDX
+  private dataStore: DIDDataStore
   private ceramic: CeramicApi
   private user: DID
 
-  constructor(threeIdProvider: DIDProvider, idx: IDX) {
-    this.idx = idx
-    this.ceramic = idx.ceramic
+  constructor(threeIdProvider: DIDProvider, dataStore: DIDDataStore) {
+    this.dataStore = dataStore
+    this.ceramic = dataStore.ceramic
     this.user = new DID({
       provider: threeIdProvider,
       resolver: Resolver.getResolver(this.ceramic),
@@ -51,26 +51,26 @@ export class Migrate3IDV0 {
   async migrateAKALinks(did: string, profile = {} as any): Promise<void> {
     await this.userDIDAuthenticated()
 
-    const existing = async (idx: IDX): Promise<Array<AlsoKnownAsAccount>> => {
-      return (await idx.get<AlsoKnownAs>('alsoKnownAs'))?.accounts || []
+    const existing = async (dataStore: DIDDataStore): Promise<Array<AlsoKnownAsAccount>> => {
+      return (await dataStore.get('alsoKnownAs'))?.accounts || []
     }
 
     const results: Array<Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null> = await Promise.all(
-      [existing(this.idx), this._twitterVerify(did, profile), this._githubVerify(did, profile)]
+      [existing(this.dataStore), this._twitterVerify(did, profile), this._githubVerify(did, profile)]
     )
 
     const accounts: Array<AlsoKnownAsAccount> = results
       .filter(Boolean as any as ExcludesBoolean)
       .flat()
 
-    await this.idx.set('alsoKnownAs', { accounts })
+    await this.dataStore.set('alsoKnownAs', { accounts })
   }
 
   // Returns 3box original profile
   async migrate3BoxProfile(did: string): Promise<any> {
     const profile = await get3BoxProfile(did)
     const transform = transformProfile(profile)
-    await this.idx.merge('basicProfile', transform)
+    await this.dataStore.merge('basicProfile', transform)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return profile
   }
