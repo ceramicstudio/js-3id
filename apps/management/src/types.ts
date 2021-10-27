@@ -1,6 +1,6 @@
 import type { Manager } from '@3id/manager'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
-import type { BasicProfile } from '@ceramicstudio/idx-constants'
+import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import type { AccountID } from 'caip'
 
 export type DIDData = {
