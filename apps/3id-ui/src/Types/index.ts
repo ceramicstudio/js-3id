@@ -19,3 +19,15 @@ export type ConnectServiceType = {
   idx?: IDX
   ceramic?: CeramicClient
 }
+
+export type AtomType = {
+  loading: boolean
+  body: string
+}
+
+export type Store = {
+  loading: boolean
+  body: string
+  set: Function
+  get: Function
+}

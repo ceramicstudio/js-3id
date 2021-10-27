@@ -83,6 +83,8 @@ $placeholder: #5d40fb;
         display: block;
         text-align: center;
 
+        border: none;
+
         padding: 13px 0px;
         border-radius: 10px;
         margin-bottom: 3px;
@@ -98,6 +100,9 @@ $placeholder: #5d40fb;
         &:hover {
           transition: ease background-color 0.3s;
           background-color: darken($placeholder, 5%);
+        }
+        &:disabled {
+          cursor: not-allowed;
         }
       }
     }

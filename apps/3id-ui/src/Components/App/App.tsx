@@ -9,7 +9,7 @@ import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
 
 type AppProps = {
   request: RequestType
-  buttons: ButtonsType
+  buttons: any //ButtonsType
   connectService: ConnectServiceType
 }
 

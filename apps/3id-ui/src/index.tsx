@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom'
 
 import './index.css'
 import App from './Components/App/App'
+import Button from './Components/Button/Button'
 import reportWebVitals from './reportWebVitals'
 import { CERAMIC_URL } from './contants'
+import { AcceptStore, DeclineStore } from './State/Button'
 
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
@@ -31,7 +33,7 @@ type ModalType = {
   declineNode: JSX.Element
 }
 
-const modalView = async (params: object, type: string): Promise<ModalType> => {
+const ModalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
   const closeNode = (
     <div
@@ -42,31 +44,28 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
       X
     </div>
   )
-  let acceptNode = <div className="btn">Accept</div>
-  let declineNode = <div className="btn">Decline</div>
+  let acceptNode = <div className="btn"></div>
+  let declineNode = <div className="btn"></div>
 
   const accepted: Promise<boolean> = new Promise((resolve) => {
     acceptNode = (
-      <div
-        className="btn"
-        onClick={() => {
+      <Button
+        btnFunction={() => {
           resolve(true)
-        }}>
-        Accept
-      </div>
+        }}
+        store={AcceptStore}
+      />
     )
-    if (declineNode) {
-      declineNode = (
-        <div
-          className="btn"
-          onClick={() => {
-            resolve(false)
-          }}>
-          Decline
-        </div>
-      )
-    }
+    declineNode = (
+      <Button
+        btnFunction={() => {
+          resolve(false)
+        }}
+        store={DeclineStore}
+      />
+    )
   })
+
   await render(params, type, { acceptNode, declineNode, closeNode })
   return {
     accepted,
@@ -77,32 +76,60 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
 
 const UIMethods: UIProviderHandlers = {
   prompt_migration: async (_ctx = {}, params: object) => {
-    const modal = await modalView(params, 'migration')
+    AcceptStore.set({
+      loading: false,
+      body: 'Accept',
+    })
+    const modal = await ModalView(params, 'migration')
     const migration = await modal.accepted
     return { migration }
   },
   prompt_migration_skip: async (_ctx = {}, params: object) => {
-    const modal = await modalView(params, 'migration_skip')
+    AcceptStore.set({
+      loading: false,
+      body: 'Accept',
+    })
+    DeclineStore.set({
+      loading: false,
+      body: 'Decline',
+    })
+    const modal = await ModalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
   prompt_migration_fail: async (_ctx = {}, params: object) => {
-    const modal = await modalView(params, 'migration_fail')
+    AcceptStore.set({
+      loading: false,
+      body: 'Close',
+    })
+    const modal = await ModalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
   prompt_account: async (_ctx = {}, params: object) => {
-    const modal = await modalView(params, 'account')
+    AcceptStore.set({
+      loading: false,
+      body: 'Accept',
+    })
+    const modal = await ModalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
   prompt_authenticate: async (_ctx = {}, params: object) => {
-    const modal = await modalView(params, 'authenticate')
+    AcceptStore.set({
+      loading: false,
+      body: 'Accept',
+    })
+    const modal = await ModalView(params, 'authenticate')
     const allow = await modal.accepted
     return { allow }
   },
   inform_error: async (_ctx = {}, params: RPCErrorObject) => {
-    await modalView(params, 'inform_error')
+    AcceptStore.set({
+      loading: false,
+      body: 'Close',
+    })
+    await ModalView(params, 'inform_error')
     return null
   },
   inform_close: async () => {
@@ -123,6 +150,7 @@ const closing = (cb: any) => {
   closecallback = cb
 }
 
+// connectService.start(provider, closing, 'https://ceramic-clay.3boxlabs.com')
 connectService.start(provider, closing, CERAMIC_URL)
 
 reportWebVitals()
