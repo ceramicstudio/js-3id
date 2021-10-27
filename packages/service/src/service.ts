@@ -5,7 +5,6 @@ import { DisplayManageClientRPC } from '@3id/connect-display'
 import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import CeramicClient from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
 import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
@@ -39,7 +38,6 @@ export class ThreeIDService {
 
   ceramic: CeramicClient | undefined
   threeId: ThreeIdProvider | undefined
-  idx: IDX | undefined
   provider: DIDProvider | undefined
 
   manageApp: DisplayManageClientRPC | undefined
@@ -150,7 +148,7 @@ export class ThreeIDService {
     if (muportDid) {
       //Try to migrate profile data still for muport did
       try {
-        const migration = new Migrate3IDV0(this.provider, manage.idx)
+        const migration = new Migrate3IDV0(this.provider, manage.dataStore)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
         // If not available, continue
