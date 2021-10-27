@@ -30,7 +30,6 @@ const Button = ({ btnType, btnFunction, store }: ButtonProps) => {
         setLoading(true)
         btnFunction()
       }}>
-      {/* TODO: add loader. */}
       {isLoading === true ? <div className="loader"></div> : ''} {body}
     </button>
   )

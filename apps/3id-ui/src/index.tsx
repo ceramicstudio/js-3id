@@ -5,6 +5,7 @@ import './index.css'
 import App from './Components/App/App'
 import Button from './Components/Button/Button'
 import reportWebVitals from './reportWebVitals'
+
 import { CERAMIC_URL } from './contants'
 import { AcceptStore, DeclineStore } from './State/Button'
 
@@ -12,7 +13,7 @@ import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
-import { ButtonsType, RequestType } from './Types'
+import type { ButtonsType, RequestType } from './Types'
 
 const render = async (params: object, type: string, buttons: ButtonsType) => {
   const request: RequestType = Object.assign(params, { type })
@@ -33,7 +34,7 @@ type ModalType = {
   declineNode: JSX.Element
 }
 
-const ModalView = async (params: object, type: string): Promise<ModalType> => {
+const modalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
   const closeNode = (
     <div
@@ -80,7 +81,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Accept',
     })
-    const modal = await ModalView(params, 'migration')
+    const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
     return { migration }
   },
@@ -93,7 +94,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Decline',
     })
-    const modal = await ModalView(params, 'migration_skip')
+    const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
     return { skip }
   },
@@ -102,7 +103,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Close',
     })
-    const modal = await ModalView(params, 'migration_fail')
+    const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
     return { createNew }
   },
@@ -111,7 +112,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Accept',
     })
-    const modal = await ModalView(params, 'account')
+    const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
     return { createNew }
   },
@@ -120,7 +121,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Accept',
     })
-    const modal = await ModalView(params, 'authenticate')
+    const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
     return { allow }
   },
@@ -129,7 +130,7 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Close',
     })
-    await ModalView(params, 'inform_error')
+    await modalView(params, 'inform_error')
     return null
   },
   inform_close: async () => {
