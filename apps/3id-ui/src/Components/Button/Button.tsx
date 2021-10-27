@@ -8,7 +8,6 @@ type ButtonProps = {
   store: Store
 }
 
-//@ts-ignore
 const Button = ({ btnType, btnFunction, store }: ButtonProps) => {
   const [isLoading, setLoading] = React.useState(false)
   const [body, setBody] = React.useState('hi')
@@ -25,7 +24,6 @@ const Button = ({ btnType, btnFunction, store }: ButtonProps) => {
       onClick={() => {
         store.set({
           loading: true,
-          // body: store.body,
         })
         setLoading(true)
         btnFunction()
