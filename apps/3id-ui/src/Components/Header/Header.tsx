@@ -1,8 +1,5 @@
 import React from 'react'
 import Avatar from 'boring-avatars'
-
-import { IDX } from '@ceramicstudio/idx'
-import type { CeramicApi } from '@ceramicnetwork/common'
 import { didShorten, ipfsToImg } from '../../utils'
 import type { ConnectServiceType } from '../../Types'
 
@@ -65,29 +62,19 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     return <div className="details"></div>
   }
   const setup = () => {
-    if (connectService.idx) {
+    // Assumes existing connect service datastore with needed models
+    if (connectService.dataStore) {
       return true
     }
-    if (!connectService.ceramic) {
-      throw new Error('Ceramic instance not found.')
-    } else {
-      const ceramic: CeramicApi = connectService.ceramic
-      try {
-        connectService.idx = new IDX({ ceramic })
-        return true
-      } catch (e) {
-        console.error(e)
-        return false
-      }
-    }
+    throw new Error('dataStore instance not found.')
   }
 
   const updateData = async () => {
     try {
-      if (!connectService.idx) {
-        throw new Error('IDX instance could not be started.')
+      if (!connectService.dataStore) {
+        throw new Error('DataStore instance could not be started.')
       } else {
-        const data: ThreeIDProfile | null = await connectService.idx.get('basicProfile', did)
+        const data: ThreeIDProfile | null = await connectService.dataStore.get('basicProfile', did)
         if (data !== null) {
           setUserData(data)
         }

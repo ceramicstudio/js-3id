@@ -1,5 +1,5 @@
 import CeramicClient from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
+import { DIDDataStore } from '@glazed/did-datastore'
 
 export type RequestType = {
   type: string
@@ -16,6 +16,6 @@ export type ButtonsType = {
 }
 
 export type ConnectServiceType = {
-  idx?: IDX
+  dataStore?: DIDDataStore
   ceramic?: CeramicClient
 }

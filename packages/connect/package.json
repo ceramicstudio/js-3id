@@ -50,8 +50,6 @@
     "@ceramicnetwork/cli": "^1.4.0",
     "@ceramicnetwork/http-client": "^1.3.0",
     "@ceramicnetwork/transport-postmessage": "^0.3.0",
-    "@ceramicstudio/idx": "^0.12.2",
-    "@ceramicstudio/idx-tools": "^0.11.0",
     "@ethersproject/hdnode": "^5.0.8",
     "@ethersproject/wallet": "^5.0.11",
     "@types/create-hash": "^1.2.2",
