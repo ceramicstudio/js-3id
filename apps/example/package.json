@@ -14,7 +14,6 @@
     "@babel/runtime": "7.15.4",
     "@ceramicnetwork/3id-did-resolver": "^1.4.3",
     "@ceramicnetwork/http-client": "^1.3.0",
-    "@ceramicstudio/idx": "^0.12.2",
     "dids": "^2.4.0",
     "web3modal": "^1.9.2"
   },
