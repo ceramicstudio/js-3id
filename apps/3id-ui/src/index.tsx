@@ -8,12 +8,13 @@ import reportWebVitals from './reportWebVitals'
 
 import { CERAMIC_URL } from './contants'
 import { AcceptStore, DeclineStore } from './State/Button'
+import type { ButtonsType, RequestType } from './Types'
+import close from './assets/close.svg'
 
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
-import type { ButtonsType, RequestType } from './Types'
 
 const render = async (params: object, type: string, buttons: ButtonsType) => {
   const request: RequestType = Object.assign(params, { type })
@@ -42,7 +43,7 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
       onClick={() => {
         iframeDisplay.hide()
       }}>
-      X
+      <img src={close} />
     </div>
   )
   let acceptNode = <div className="btn"></div>
@@ -102,6 +103,9 @@ const UIMethods: UIProviderHandlers = {
     AcceptStore.set({
       loading: false,
       body: 'Close',
+      click: () => {
+        iframeDisplay.hide()
+      },
     })
     const modal = await modalView(params, 'migration_fail')
     const createNew = await modal.accepted
@@ -110,7 +114,11 @@ const UIMethods: UIProviderHandlers = {
   prompt_account: async (_ctx = {}, params: object) => {
     AcceptStore.set({
       loading: false,
-      body: 'Accept',
+      body: 'Connect to Existing ID',
+    })
+    DeclineStore.set({
+      loading: false,
+      body: 'Cancel',
     })
     const modal = await modalView(params, 'account')
     const createNew = !(await modal.accepted)
@@ -119,7 +127,7 @@ const UIMethods: UIProviderHandlers = {
   prompt_authenticate: async (_ctx = {}, params: object) => {
     AcceptStore.set({
       loading: false,
-      body: 'Accept',
+      body: 'Continue',
     })
     const modal = await modalView(params, 'authenticate')
     const allow = await modal.accepted
@@ -129,6 +137,9 @@ const UIMethods: UIProviderHandlers = {
     AcceptStore.set({
       loading: false,
       body: 'Close',
+      click: () => {
+        iframeDisplay.hide()
+      },
     })
     await modalView(params, 'inform_error')
     return null

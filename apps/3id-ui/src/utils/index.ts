@@ -11,3 +11,8 @@ export const ipfsToImg = (url: string) => {
   formattedUrl = `https://ipfs.infura.io/ipfs/${formattedUrl}`
   return formattedUrl
 }
+
+export const urlToHost = (url: string) => {
+  const parsed = new URL(url)
+  return parsed.hostname
+}

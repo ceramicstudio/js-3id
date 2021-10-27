@@ -5,7 +5,7 @@ import './Modal.scss'
 import Header from '../Header/Header'
 import Content from '../Content/Content'
 
-import { didShorten } from '../../utils'
+import { didShorten, urlToHost } from '../../utils'
 import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
 
 type ModalProps = {
@@ -40,7 +40,7 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
         <>
           <div>
             <a href={document.referrer} target="_blank" rel="noopener noreferrer">
-              {document.referrer}
+              {urlToHost(document.referrer)}
             </a>{' '}
             is requesting permission to connect to your decentralized identity.{' '}
             {request.paths === undefined || request.paths.length === 0
@@ -48,8 +48,8 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               : `and ${request?.paths?.length} data source ${
                   request?.paths?.length > 1 ? 's.' : '.'
                 }`}
-            {permissionDisplay}
           </div>
+          {permissionDisplay}
           <div className="bottom">{acceptNode}</div>
         </>
       )
@@ -58,8 +58,8 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
         <>
           <div>
             <br />
-            <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
-            with your decentralized ID. Connect your wallet.
+            <a href={document.referrer}>{urlToHost(document.referrer)}</a> is requesting permission
+            to interact with your decentralized ID. Connect your wallet.
             {permissionDisplay}
           </div>
           <div className="bottom">
@@ -112,11 +112,7 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
     } else if (type === 'inform_error') {
       body = (
         <>
-          <div>
-            The following error has occured while we were processing your request:
-            <br />
-            {request.message}
-          </div>
+          <div>An error has occurred while authenticating, unable to connect</div>
           <div className="bottom">{acceptNode}</div>
         </>
       )

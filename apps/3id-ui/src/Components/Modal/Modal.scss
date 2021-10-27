@@ -4,7 +4,6 @@ $placeholder: #5d40fb;
   transition: ease 0.3s all;
   background-color: white;
   position: fixed;
-  top: 15px;
 
   $width: 450px;
 
@@ -13,7 +12,7 @@ $placeholder: #5d40fb;
   min-width: ($width/2);
   max-width: $width;
 
-  right: calc(50vw - 10%);
+  top: 20vh;
 
   margin: 0;
 
@@ -52,10 +51,12 @@ $placeholder: #5d40fb;
       padding: 15px;
 
       width: 80%;
+      height: 100%;
       margin: 0 auto;
       text-align: center;
       .permissions {
-        margin-top: 20px;
+        align-self: center;
+        width: 100%;
         .permission {
           text-align: left;
           display: flex;
@@ -97,6 +98,14 @@ $placeholder: #5d40fb;
 
         transition: ease background-color 0.3s;
 
+        &.secondary {
+          background-color: transparent;
+          color: #333;
+          border: none;
+          &:hover {
+            background-color: transparent;
+          }
+        }
         &:hover {
           transition: ease background-color 0.3s;
           background-color: darken($placeholder, 5%);

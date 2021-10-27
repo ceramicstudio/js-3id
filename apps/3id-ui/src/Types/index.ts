@@ -28,6 +28,15 @@ export type AtomType = {
 export type Store = {
   loading: boolean
   body: string
+  click?: Function
+  class?: string
   set: Function
   get: Function
+}
+
+export type StoreBody = {
+  loading: boolean
+  body: string
+  click?: Function
+  class?: string
 }

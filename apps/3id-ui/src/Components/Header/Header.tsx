@@ -7,7 +7,6 @@ import { didShorten, ipfsToImg } from '../../utils'
 import type { ConnectServiceType } from '../../Types'
 
 import './Header.scss'
-import selfIdLogo from './self.id.svg'
 
 type HeaderProps = {
   did?: string
@@ -131,7 +130,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
           rel="noopener noreferrer"
           target="_blank"
           className="logo col-12">
-          <img src={selfIdLogo} alt="self.id logo" />
+          Powered by <b>Self.id</b>
         </a>
       </div>
       <div className="image-container">

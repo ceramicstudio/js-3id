@@ -7,7 +7,7 @@ $placeholder: #5d40fb;
 
   color: white;
 
-  min-height: 125px;
+  height: 125px;
 
   align-items: center;
   justify-content: center;
@@ -74,15 +74,12 @@ $placeholder: #5d40fb;
         }
       }
     }
-    .close-container {
-      width: 100%;
-      text-align: right;
-      margin-top: 5px;
-      .close-btn {
-        position: relative;
-        display: inline;
-        cursor: pointer;
-      }
+    .close-btn {
+      display: inline-block;
+      cursor: pointer;
+      position: relative;
+      top: 10px;
+      right: 5px;
     }
   }
 }
