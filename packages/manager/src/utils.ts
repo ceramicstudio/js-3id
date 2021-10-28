@@ -6,7 +6,6 @@ import { model as webAccountsModel } from '@datamodels/identity-accounts-web'
 import { model as profileModel } from '@datamodels/identity-profile-basic'
 import { model as keychainModel } from '@datamodels/3id-keychain'
 import { ModelManager } from '@glazed/devtools'
-import { Manager } from './manager'
 
 const HTTPError = (status: number, message: string): Error => {
   const e = new Error(message)
@@ -46,7 +45,7 @@ export const jwtDecode = <T>(jwt: string): T => {
   return JSON.parse(toString(uint8))
 }
 
-export const idxModelManager = (ceramic: CeramicClient):ModelManager => {
+export const idxModelManager = (ceramic: CeramicClient): ModelManager => {
   const manager = new ModelManager(ceramic)
   manager.addJSONModel(cryptoAccountsModel)
   manager.addJSONModel(webAccountsModel)

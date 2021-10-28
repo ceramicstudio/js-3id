@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment*/
 
 import { EthereumMigrationMockAuthProvider, createAuthProvider } from '@3id/test-utils'
 import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-provider'

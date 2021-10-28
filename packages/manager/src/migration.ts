@@ -56,7 +56,11 @@ export class Migrate3IDV0 {
     }
 
     const results: Array<Array<AlsoKnownAsAccount> | AlsoKnownAsAccount | null> = await Promise.all(
-      [existing(this.dataStore), this._twitterVerify(did, profile), this._githubVerify(did, profile)]
+      [
+        existing(this.dataStore),
+        this._twitterVerify(did, profile),
+        this._githubVerify(did, profile),
+      ]
     )
 
     const accounts: Array<AlsoKnownAsAccount> = results
