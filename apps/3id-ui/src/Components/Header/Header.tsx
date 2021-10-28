@@ -31,15 +31,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     image: undefined,
   })
   const headerData = () => {
-    if (type === 'authenticate') {
-      if (did !== undefined) {
-        return (
-          <div className="details">
-            <code>{didShorten(`${did}`)}</code>
-          </div>
-        )
-      }
-    } else if (type === 'account') {
+    if (type === 'migration_skip') {
       return (
         <div className="details">
           <a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
@@ -58,10 +50,22 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
           </a>
         </div>
       )
+    } else if (did !== undefined) {
+      return (
+        <div className="details">
+          <code>{didShorten(`${did}`)}</code>
+        </div>
+      )
     } else {
-      return <div className="details"></div>
+      return (
+        <div className="details">
+          Powered by{' '}
+          <a href="https://self.id" rel="noopener noreferrer" target="_blank">
+            Self.id
+          </a>
+        </div>
+      )
     }
-    return <div className="details"></div>
   }
   const setup = () => {
     if (connectService.idx) {
@@ -124,7 +128,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
         {headerData()}
         {closeButton}
       </div>
-      <div className="logo-container">
+      {/* <div className="logo-container">
         <a
           href="https://ceramic.network"
           rel="noopener noreferrer"
@@ -132,7 +136,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
           className="logo col-12">
           Powered by <b>Self.id</b>
         </a>
-      </div>
+      </div> */}
       <div className="image-container">
         <div className="avatar">{boringOrAvatar}</div>
       </div>

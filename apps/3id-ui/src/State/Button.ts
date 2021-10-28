@@ -22,6 +22,7 @@ export const AcceptStore: Store = {
 export const DeclineStore: Store = {
   loading: false,
   body: 'Decline',
+  class: 'secondary',
   set: (value: StoreBody) => {
     DeclineStore.loading = value.loading
     DeclineStore.body = value.body

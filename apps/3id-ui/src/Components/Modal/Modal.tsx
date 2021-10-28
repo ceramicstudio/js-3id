@@ -78,18 +78,12 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
       body = (
         <>
           <div>
-            <br />
             Your 3Box DID <code>{formattedDid}</code> will be migrated.
-            <br />
-            <br />
-            <a
-              href="developers.ceramic.network/authentication/legacy/3id-connect-migration"
-              rel="noopener noreferrer"
-              target="_blank">
-              Learn More
-            </a>
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            {acceptNode}
+            {declineNode}
+          </div>
         </>
       )
     } else if (type === 'migration_fail') {
@@ -106,7 +100,28 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               Learn More
             </a>
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            {acceptNode}
+            {declineNode}
+          </div>
+        </>
+      )
+    } else if (type === 'migration_skip') {
+      let formattedDid = ''
+      if (request.did) {
+        formattedDid = didShorten(request.did)
+      } else if (request.legacyDid) {
+        formattedDid = didShorten(request.legacyDid)
+      }
+      body = (
+        <>
+          <div>
+            Your 3Box DID {formattedDid} could not be migrated, continue with a new account?
+          </div>
+          <div className="bottom">
+            {acceptNode}
+            {declineNode}
+          </div>
         </>
       )
     } else if (type === 'inform_error') {

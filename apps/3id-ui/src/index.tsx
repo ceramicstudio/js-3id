@@ -34,7 +34,7 @@ type ModalType = {
   acceptNode: JSX.Element
   declineNode: JSX.Element
 }
-
+//@ts-ignore
 const modalView = async (params: object, type: string): Promise<ModalType> => {
   await iframeDisplay.display(undefined, '100%', '100%')
   const closeNode = (
@@ -68,7 +68,7 @@ const modalView = async (params: object, type: string): Promise<ModalType> => {
     )
   })
 
-  await render(params, type, { acceptNode, declineNode, closeNode })
+  await render(params, 'account', { acceptNode, declineNode, closeNode })
   return {
     accepted,
     acceptNode,
@@ -82,6 +82,18 @@ const UIMethods: UIProviderHandlers = {
       loading: false,
       body: 'Accept',
     })
+    DeclineStore.set({
+      loading: false,
+      body: 'Learn more',
+      click: () => {
+        window
+          .open(
+            'https://developers.ceramic.network/authentication/legacy/3id-connect-migration',
+            '_blank'
+          )
+          ?.focus()
+      },
+    })
     const modal = await modalView(params, 'migration')
     const migration = await modal.accepted
     return { migration }
@@ -93,7 +105,15 @@ const UIMethods: UIProviderHandlers = {
     })
     DeclineStore.set({
       loading: false,
-      body: 'Decline',
+      body: 'Learn more',
+      click: () => {
+        window
+          .open(
+            'https://developers.ceramic.network/authentication/legacy/3id-connect-migration',
+            '_blank'
+          )
+          ?.focus()
+      },
     })
     const modal = await modalView(params, 'migration_skip')
     const skip = await modal.accepted
@@ -102,9 +122,21 @@ const UIMethods: UIProviderHandlers = {
   prompt_migration_fail: async (_ctx = {}, params: object) => {
     AcceptStore.set({
       loading: false,
-      body: 'Close',
+      body: 'Continue',
       click: () => {
         iframeDisplay.hide()
+      },
+    })
+    DeclineStore.set({
+      loading: false,
+      body: 'Learn More',
+      click: () => {
+        window
+          .open(
+            'https://developers.ceramic.network/authentication/legacy/3id-connect-migration',
+            '_blank'
+          )
+          ?.focus()
       },
     })
     const modal = await modalView(params, 'migration_fail')
