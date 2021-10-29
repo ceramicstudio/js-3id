@@ -5,7 +5,7 @@ import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-p
 import Ceramic from '@ceramicnetwork/http-client'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { model as idxModel } from '../src/__generated__/model'
-import { idxModelManager } from '../src/utils'
+import { idxModelManager } from './utils'
 
 import { Manager } from '../src'
 

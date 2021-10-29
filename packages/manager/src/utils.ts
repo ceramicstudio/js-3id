@@ -1,11 +1,5 @@
 import fetch from 'cross-fetch'
 import { fromString, toString } from 'uint8arrays'
-import { CeramicClient } from '@ceramicnetwork/http-client'
-import { model as cryptoAccountsModel } from '@datamodels/identity-accounts-crypto'
-import { model as webAccountsModel } from '@datamodels/identity-accounts-web'
-import { model as profileModel } from '@datamodels/identity-profile-basic'
-import { model as keychainModel } from '@datamodels/3id-keychain'
-import { ModelManager } from '@glazed/devtools'
 
 const HTTPError = (status: number, message: string): Error => {
   const e = new Error(message)
@@ -43,13 +37,4 @@ export const jwtDecode = <T>(jwt: string): T => {
   const uint8 = fromString(payload, 'base64')
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return JSON.parse(toString(uint8))
-}
-
-export const idxModelManager = (ceramic: CeramicClient): ModelManager => {
-  const manager = new ModelManager(ceramic)
-  manager.addJSONModel(cryptoAccountsModel)
-  manager.addJSONModel(webAccountsModel)
-  manager.addJSONModel(profileModel)
-  manager.addJSONModel(keychainModel)
-  return manager
 }

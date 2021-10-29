@@ -1,11 +1,9 @@
 import type { Manager } from '@3id/manager'
 import { DIDDataStore } from '@glazed/did-datastore'
-import type { BasicProfile, ImageMetadata, ImageSources } from '@ceramicstudio/idx-constants'
+import type { BasicProfile, ImageMetadata, ImageSources }  from '@datamodels/identity-profile-basic'
 import { AccountID } from 'caip'
-
 import { IPFS_PREFIX, IPFS_URL } from '../constants'
 import type { DIDsData } from '../types'
-
 import { ceramic } from './ceramic'
 
 export type Dimensions = { height: number; width: number }
