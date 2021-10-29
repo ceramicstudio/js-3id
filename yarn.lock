@@ -1366,7 +1366,7 @@
     cross-fetch "^3.1.4"
     uint8arrays "^2.0.5"
 
-"@ceramicnetwork/cli@^1.4.0":
+"@ceramicnetwork/cli@^1.6.1":
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/cli/-/cli-1.6.1.tgz#818c185b9cdab26bdfc937ebb4377eeca7676c32"
   integrity sha512-bQKcST2Cn+6luBFOUv19GxlGxRI9siZyB85mrbkwlgUR120XmuR/PQIjBzCKypc9LcAyILEKZrqah1RYrgE8Tw==
@@ -1553,7 +1553,7 @@
     "@ceramicnetwork/common" "^1.7.0"
     "@ceramicnetwork/stream-caip10-link" "^1.1.8"
 
-"@ceramicnetwork/stream-caip10-link@^1.0.7", "@ceramicnetwork/stream-caip10-link@^1.1.5", "@ceramicnetwork/stream-caip10-link@^1.1.8":
+"@ceramicnetwork/stream-caip10-link@^1.0.7", "@ceramicnetwork/stream-caip10-link@^1.1.8":
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-caip10-link/-/stream-caip10-link-1.1.8.tgz#60a8b2242378e15481be60c57b9736c2bcfb571a"
   integrity sha512-f4OMCMdQ9VQrLd1raNl0rE20rDgmNoQHdUZIIplo0n2w2XQuZFkgprmqqtePrtEeogejdC+4MHk+oGjMN84tjg==
@@ -2077,12 +2077,12 @@
   resolved "https://registry.yarnpkg.com/@glazed/constants/-/constants-0.1.1.tgz#a5aea7bfd48f701c0be11a5f601f2ece7e3138ba"
   integrity sha512-lV9FmQ7xVNoAbegLs6dfv0gPOlrS0t6NU6qPD9xggU12Kiaqa4nQ7ufn2mVh1WYmVLDqP5fUs3/kTq6hbFtjzA==
 
-"@glazed/datamodel@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@glazed/datamodel/-/datamodel-0.1.2.tgz#abe9eca29e2ca395a44b57d26c4ea1bf9d1a56a3"
-  integrity sha512-bTmv/92rsOwKwGoftomVS3d2m4Ko2HPy2qSJY6BQR/3Ge3nZriyiboCvGb7y1h6MbpGURdq1iNakHQQU08gB7w==
+"@glazed/datamodel@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@glazed/datamodel/-/datamodel-0.2.0.tgz#81bde1f4eda2622a60f8377d900c0b2747ad615e"
+  integrity sha512-/xI+J6wyx6CE26vrM8aNizfswSBK+mj/09hzNuczKsDiHlADbJ2r8BT57Rr3HX0BxCkqe/HZiCjFS3vqrv9z3w==
   dependencies:
-    "@ceramicnetwork/stream-tile" "^1.2.0"
+    "@glazed/tile-loader" "^0.1.0"
 
 "@glazed/devtools@^0.1.3":
   version "0.1.3"
@@ -2106,14 +2106,24 @@
   resolved "https://registry.yarnpkg.com/@glazed/did-datastore-model/-/did-datastore-model-0.1.1.tgz#f5599b3f4d210d52a7d7858d19035e30ba0e8ed0"
   integrity sha512-I4DAyQyc0tF/hExQwaF2JMZ/GvYi4CUG2N0D+yFvwKnc2opz6zcuXi1hg3E9uttPi5MBR+ZzW62UmgZ7O+BJDw==
 
-"@glazed/did-datastore@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@glazed/did-datastore/-/did-datastore-0.1.4.tgz#6c3914d6a76d4570ea629105b91e5cfbfdb2c918"
-  integrity sha512-ZkWkepqCVVANJQ5DnnhOYkYKAR8dLMa/FKUwQzvCKVwH7TlHY4sxRCfZpUuW/QNF7cwQbrkmJEQkQyltRiFHEg==
+"@glazed/did-datastore@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@glazed/did-datastore/-/did-datastore-0.2.0.tgz#856c948f4cfa6de9f23d28bf49a14ad7e06c6961"
+  integrity sha512-2kUQiWfiU5kZR5/FcXrOxuHX+ym7P9XlhTBFBy6KyTndcBwXeyxcZu8lS3G+/G1i+X/VJY/HvMO/rQkEaj6BFA==
+  dependencies:
+    "@ceramicnetwork/streamid" "^1.3.1"
+    "@glazed/constants" "^0.1.1"
+    "@glazed/datamodel" "^0.2.0"
+    "@glazed/tile-loader" "^0.1.0"
+
+"@glazed/tile-loader@^0.1.0":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@glazed/tile-loader/-/tile-loader-0.1.1.tgz#ec3224cfd4cc3719a0311654c574bda20129234b"
+  integrity sha512-zjN83OdFz/KZRQxNXTddriTcUZedWgH5xuUJX9qI82oc8V6REaHSJUMVRhLhFHfX616uOglw/dkM3dINjIKszA==
   dependencies:
     "@ceramicnetwork/stream-tile" "^1.3.0"
-    "@glazed/constants" "^0.1.1"
-    "@glazed/datamodel" "^0.1.2"
+    dataloader "^2.0.0"
+    setimmediate "^1.0.5"
 
 "@glazed/types@^0.1.3":
   version "0.1.3"
@@ -6582,9 +6592,9 @@ aws4@^1.8.0:
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
 
 axe-core@^4.0.2:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.3.4.tgz#4f54afff45415b5dec220dec19505beb79c5fb2f"
-  integrity sha512-4Hk6iSA/H90rtiPoCpSkeJxNWCPBf7szwVvaUqrPdxo0j2Y04suHK9jPKXaE3WI7OET6wBSwsWw7FDc1DBq7iQ==
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.3.5.tgz#78d6911ba317a8262bfee292aeafcc1e04b49cc5"
+  integrity sha512-WKTW1+xAzhMS5dJsxWkliixlO/PqC4VhmO9T4juNYcaTg9jzWiJsou6m5pxWYGfigWbwzJWeFY6z47a+4neRXA==
 
 axios@^0.18.0:
   version "0.18.1"
@@ -9675,6 +9685,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+dataloader@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-2.0.0.tgz#41eaf123db115987e21ca93c005cd7753c55fe6f"
+  integrity sha512-YzhyDAwA4TaQIhM5go+vCLmU0UikghC/t9DTQYZR2M/UvZ1MdOhPezSDZcjj9uqQJOMqjLcpWtyW2iNINdlatQ==
 
 datastore-core@^4.0.0:
   version "4.0.0"

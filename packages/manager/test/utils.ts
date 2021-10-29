@@ -6,11 +6,10 @@ import { model as keychainModel } from '@datamodels/3id-keychain'
 import { ModelManager } from '@glazed/devtools'
 
 export const idxModelManager = (ceramic: CeramicClient): ModelManager => {
-    const manager = new ModelManager(ceramic)
-    manager.addJSONModel(cryptoAccountsModel)
-    manager.addJSONModel(webAccountsModel)
-    manager.addJSONModel(profileModel)
-    manager.addJSONModel(keychainModel)
-    return manager
+  const manager = new ModelManager(ceramic)
+  manager.addJSONModel(cryptoAccountsModel)
+  manager.addJSONModel(webAccountsModel)
+  manager.addJSONModel(profileModel)
+  manager.addJSONModel(keychainModel)
+  return manager
 }
-  
