@@ -1,0 +1,22 @@
+$placeholder: #5d40fb;
+.btn {
+    display: block;
+    text-align: center;
+
+    padding: 13px 0px;
+    border-radius: 10px;
+    margin-bottom: 3px;
+    width: 100%;
+
+    background-color: $placeholder;
+    color: white;
+
+    cursor: pointer;
+
+    transition: ease background-color 0.3s;
+
+    &:hover {
+      transition: ease background-color 0.3s;
+      background-color: darken($placeholder, 5%);
+    }
+}
