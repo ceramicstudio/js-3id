@@ -1,17 +1,17 @@
 import styles from './HeaderContainer.module.scss'
-// import Avatar from 'boring-avatars'
+import Avatar from 'boring-avatars'
 
 // Add fetch did data when did is availabe 
 // this should just render based on that 
 
-// const boringOrAvatar = (
-//   <Avatar
-//     size={65}
-//     name={'self.id-connect'}
-//     variant="marble"
-//     colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-//   />
-// )
+const boringOrAvatar = (
+  <Avatar
+    size={65}
+    name={'self.id-connect'}
+    variant="marble"
+    colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
+  />
+)
   
 export default function HeaderContainer() {
   return(
@@ -31,7 +31,7 @@ export default function HeaderContainer() {
       </div>
       <div className={styles['image-container']}>
         <div className={styles.avatar}>
-          {/* {boringOrAvatar} */}
+          {boringOrAvatar}
         </div>
       </div>
     </div>

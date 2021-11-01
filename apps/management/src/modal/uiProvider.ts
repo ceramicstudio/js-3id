@@ -7,19 +7,8 @@ import type {
   RPCErrorObject,
 } from 'rpc-utils'
 import { deferred } from '../utils'
-import { reqStateAtom } from './state'
-import { useAtom } from 'jotai'
-import { useCallback } from 'react'
 
-
-export function useThreeIDService() {
-
-  const [requestState, setRequestState] = useAtom(reqStateAtom)
-
-  const provider = useCallback(() => {
-    console.log('hello')
-
-    const connectService = new ThreeIDService()
+export function getUIProivder(setRequestState) {
     let iframeDisplay: DisplayConnectClientRPC
     if (window.parent) {
       iframeDisplay = new DisplayConnectClientRPC(window.parent)
@@ -69,13 +58,15 @@ export function useThreeIDService() {
       }
     }
 
+    // TODO close on any cancellation
+
     //Create a 3ID Connect UI Provider
-    const provider = new UIProvider(UIMethods)
-    return provider
-  },[])
+    return new UIProvider(UIMethods)
+}
 
-  // TODO set up service 
-
-
-  return [provider]
+export function create3IDService(setRequestState) {
+  const connectService = new ThreeIDService()
+  const provider = getUIProivder(setRequestState)
+  // REmove closing and just handle with cancellation 
+  connectService.start(provider, () => {}, CERAMIC_URL)
 }

@@ -9,18 +9,9 @@ import {reqStateAtom } from '../state'
 import { useAtom } from 'jotai'
   
 export default function ModalContainer() {
-  const [provider] = useThreeIDService()
-  const [reqState, ] = useAtom(reqStateAtom)
- 
-  const login = useCallback(() => {
-    const uimanager = new ThreeIDManagerUI(provider())
-    uimanager.promptMigration({ legacyDid: ''})
-  }, [])
-
   return(
     <div className={styles.modal}>
       <HeaderContainer />
-      <button onClick={login} />
       <ModalContent />
       <ModalFooter/>
     </div>
