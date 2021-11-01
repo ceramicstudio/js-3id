@@ -2,7 +2,8 @@ import type { Manager } from '@3id/manager'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import type { AccountID } from 'caip'
-import type { Deferred } from './utils'
+import type { UIRequest, UIMethodName  } from '@3id/ui-provider'
+import { Deferred } from './utils'
 
 export type DIDData = {
   accounts: Array<AccountID>
@@ -21,9 +22,10 @@ export type RemoteProxy = {
   provider: AuthProvider
 }
 
-
-export type ResponseState =  {
-  promise: Deferred<Boolean>
+export type RequestState<K extends UIMethodName = UIMethodName> = {
+  type: K
+  params:UIRequest<K>['params'],
+  respond: Deferred<boolean>
 }
 
 

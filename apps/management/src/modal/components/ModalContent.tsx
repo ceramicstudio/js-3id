@@ -1,20 +1,19 @@
 import styles from './ModalContent.module.scss'
 import Permissions from './Permissions'
 import PrimaryButton from './PrimaryButton'
-import { reqStateAtom, resStatusAtom} from '../state'
+import { reqStateAtom } from '../state'
 import { useAtom } from 'jotai'
 
 export default function ModalContent() {
-  const [responseStatus, setResponseStatus] = useAtom(resStatusAtom)
-  const [requestState, setRequestState] = useAtom(reqStateAtom)  
+  const [reqState, ] = useAtom(reqStateAtom)
   return(
     <div className={styles.body}>
       <div className={styles.inner}>
         A request
-        {requestState?.method}
+        {reqState?.type}
         <Permissions/>
         <div className={styles.bottom}>
-          <PrimaryButton label="Accept" onClick={()=>responseStatus?.promise.resolve(true)}/>
+          <PrimaryButton label="Accept" onClick={()=>reqState?.respond.resolve(true)}/>
         </div>
       </div>
     </div>

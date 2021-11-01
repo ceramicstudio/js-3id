@@ -7,16 +7,14 @@ import type {
   RPCErrorObject,
 } from 'rpc-utils'
 import { deferred } from '../utils'
-import { resStatusAtom, reqStateAtom } from './state'
+import { reqStateAtom } from './state'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
-import { ResponseState } from '../types'
 
 
 export function useThreeIDService() {
 
   const [requestState, setRequestState] = useAtom(reqStateAtom)
-  const [responseStatus, setResponseStatus] =  useAtom(resStatusAtom)
 
   const provider = useCallback(() => {
     console.log('hello')
@@ -29,46 +27,40 @@ export function useThreeIDService() {
 
     const UIMethods: UIProviderHandlers = {
       prompt_migration: async (_ctx = {}, params: MigrationParams): Promise<MigrationRes> => {
-        setRequestState({type: 'prompt_migration', params })
-        const promise = deferred<Boolean>()
-        setResponseStatus({ promise })
-        const migration = await promise
+        const respond = deferred<boolean>()
+        setRequestState({type: 'prompt_migration', params, respond })
+        const migration = await respond
         console.log({ migration })
-
         return { migration } 
       },
       prompt_migration_skip: async (ctx, params: {}): Promise<MigrationSkipRes> => {
-        setRequestState({type: 'prompt_migration_skip', params })
-        const promise = deferred<Boolean>()
-        setResponseStatus({ promise })
-        const skip = await promise
+        const respond = deferred<boolean>()
+        setRequestState({type: 'prompt_migration_skip', params, respond })
+        const skip = await respond
         return { skip } 
       },
       prompt_migration_fail: async (ctx, params: {}): Promise<MigrationFailRes> => {
-        setRequestState({type: 'prompt_migration_fail', params })
-        const promise = deferred<Boolean>()
-        setResponseStatus({ promise })
-        const createNew = await promise
+        const respond = deferred<boolean>()
+        setRequestState({type: 'prompt_migration_fail', params, respond })
+        const createNew = await respond
         return { createNew } 
       },
       prompt_account: async (ctx, params: {}): Promise<AccountRes> => {
-        setRequestState({type: 'prompt_account', params })
-        const promise = deferred<Boolean>()
-        setResponseStatus({ promise })
-        const createNew = await promise
+        const respond = deferred<boolean>()
+        setRequestState({type: 'prompt_account', params, respond })
+        const createNew = await respond
         return { createNew } 
       },
-      // Permission request for app to access 3id-connect
       prompt_authenticate: async (ctx, params: AuthParams): Promise<AuthRes> => {
-        setRequestState({type: 'prompt_authenticate', params })
-        const promise = deferred<Boolean>()
-        setResponseStatus({ promise })
-        const allow = await promise
-        return { allow } 
+        const respond = deferred<boolean>()
+        setRequestState({type: 'prompt_authenticate', params, respond })
+        const allow = await respond
+        return { allow }
       },
       inform_error: (ctx, params: RPCErrorObject) => {
-        setRequestState({type: 'inform_error', params })
-        // change type void
+        const respond = deferred<boolean>()
+        setRequestState({type: 'inform_error', params, respond })
+        // response may be to close window
         return null
       },
       inform_close: (ctx, params) => {
