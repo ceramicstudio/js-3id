@@ -12,8 +12,7 @@ import selfIdLogo from './self.id.svg'
 type HeaderProps = {
   did?: string
   type: string
-  closeButton: JSX.Element
-  connectService: ConnectServiceType
+  // closeButton: () => {}
 }
 
 type ThreeIDProfile = {
@@ -26,7 +25,7 @@ type ThreeIDProfile = {
       }
     | undefined
 }
-const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
+const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
   const [userData, setUserData] = React.useState<ThreeIDProfile | null>({
     name: undefined,
     image: undefined,
@@ -64,45 +63,45 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     }
     return <div className="details"></div>
   }
-  const setup = () => {
-    if (connectService.idx) {
-      return true
-    }
-    if (!connectService.ceramic) {
-      throw new Error('Ceramic instance not found.')
-    } else {
-      const ceramic: CeramicApi = connectService.ceramic
-      try {
-        connectService.idx = new IDX({ ceramic })
-        return true
-      } catch (e) {
-        console.error(e)
-        return false
-      }
-    }
-  }
+  // const setup = () => {
+  //   if (connectService.idx) {
+  //     return true
+  //   }
+  //   if (!connectService.ceramic) {
+  //     throw new Error('Ceramic instance not found.')
+  //   } else {
+  //     const ceramic: CeramicApi = connectService.ceramic
+  //     try {
+  //       connectService.idx = new IDX({ ceramic })
+  //       return true
+  //     } catch (e) {
+  //       console.error(e)
+  //       return false
+  //     }
+  //   }
+  // }
 
-  const updateData = async () => {
-    try {
-      if (!connectService.idx) {
-        throw new Error('IDX instance could not be started.')
-      } else {
-        const data: ThreeIDProfile | null = await connectService.idx.get('basicProfile', did)
-        if (data !== null) {
-          setUserData(data)
-        }
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  // const updateData = async () => {
+  //   try {
+  //     if (!connectService.idx) {
+  //       throw new Error('IDX instance could not be started.')
+  //     } else {
+  //       const data: ThreeIDProfile | null = await connectService.idx.get('basicProfile', did)
+  //       if (data !== null) {
+  //         setUserData(data)
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.error(e)
+  //   }
+  // }
 
-  React.useEffect(() => {
-    setup()
-    if (did) {
-      updateData()
-    }
-  }, [did])
+  // React.useEffect(() => {
+  //   setup()
+  //   if (did) {
+  //     updateData()
+  //   }
+  // }, [did])
 
   const boringOrAvatar = userData?.image ? (
     <div
@@ -123,7 +122,7 @@ const Header = ({ did, type, closeButton, connectService }: HeaderProps) => {
     <div className="head">
       <div className="head-container">
         {headerData()}
-        {closeButton}
+        {/* {closeButton} */}
       </div>
       <div className="logo-container">
         <a

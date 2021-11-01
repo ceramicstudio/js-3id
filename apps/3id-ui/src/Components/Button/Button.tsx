@@ -1,34 +1,48 @@
 import React from 'react'
-import type { Store } from '../../Types'
+import { useAtom } from 'jotai'
+import type { Atom } from 'jotai'
 
+import { UIState, AcceptState } from '../../State'
+
+import { ButtonType } from '../../Types'
 import './Button.scss'
 type ButtonProps = {
-  btnType?: string
-  btnFunction: Function
-  store: Store
+  state: Atom<ButtonType>
 }
 
-const Button = ({ btnType, btnFunction, store }: ButtonProps) => {
-  const [isLoading, setLoading] = React.useState(false)
-  const [body, setBody] = React.useState('hi')
+const Button = ({ state }: ButtonProps) => {
+  const [buttonState, setButtonState] = useAtom(state)
+  const [uiState] = useAtom(UIState)
 
   React.useEffect(() => {
-    setLoading(store.loading)
-    setBody(store.body)
-  })
+    console.log('Initial State: ', buttonState)
+  }, [])
+
+  const clickFunction = () => {
+    //@ts-ignore
+    setButtonState({
+      ...buttonState,
+      loading: true,
+      body: '',
+    })
+    console.log('Updated State: ', buttonState)
+    if (buttonState.resolve !== undefined) {
+      return buttonState.resolve
+    } else if (uiState.deferredPromise) {
+      return uiState.deferredPromise.resolve(true)
+    } else {
+      return () => {}
+    }
+  }
 
   return (
     <button
-      disabled={isLoading === true ? true : false}
-      className={`btn ${btnType || 'primary'}`}
+      disabled={buttonState.loading === true ? true : false}
+      className={`btn ${buttonState.class || 'primary'}`}
       onClick={() => {
-        store.set({
-          loading: true,
-        })
-        setLoading(true)
-        btnFunction()
+        clickFunction()
       }}>
-      {isLoading === true ? <div className="loader"></div> : ''} {body}
+      {buttonState.loading === true ? <div className="loader"></div> : undefined} {buttonState.body}
     </button>
   )
 }

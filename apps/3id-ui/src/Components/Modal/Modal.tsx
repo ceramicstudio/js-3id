@@ -1,24 +1,21 @@
 import React from 'react'
+import { useAtom } from 'jotai'
 
 import './Modal.scss'
 
 import Header from '../Header/Header'
 import Content from '../Content/Content'
+import Button from '../Button/Button'
 
 import { didShorten } from '../../utils'
-import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
+import { UIState, AcceptState, DeclineState } from '../../State'
 
-type ModalProps = {
-  request: RequestType
-  buttons: ButtonsType
-  connectService: ConnectServiceType
-}
+export const Modal = () => {
+  const [uiDetails] = useAtom(UIState)
 
-export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   const permissions = ['Store data', 'Read data']
 
-  const type = request.type
-  const { acceptNode, declineNode, closeNode } = buttons
+  const type = uiDetails.params.type
 
   const permissionDisplay = (
     <div className="permissions">
@@ -43,14 +40,16 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               {document.referrer}
             </a>{' '}
             is requesting permission to connect to your decentralized identity.{' '}
-            {request.paths === undefined || request.paths.length === 0
+            {uiDetails?.params?.paths === undefined || uiDetails.params.paths.length === 0
               ? ''
-              : `and ${request?.paths?.length} data source ${
-                  request?.paths?.length > 1 ? 's.' : '.'
+              : `and ${uiDetails.params.paths.length} data source ${
+                  uiDetails.params.paths.length > 1 ? 's.' : '.'
                 }`}
             {permissionDisplay}
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            <Button state={AcceptState} />
+          </div>
         </>
       )
     } else if (type === 'account') {
@@ -63,17 +62,17 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
             {permissionDisplay}
           </div>
           <div className="bottom">
-            {acceptNode}
-            {declineNode}
+            <Button state={AcceptState} />
+            <Button state={AcceptState} />
           </div>
         </>
       )
     } else if (type === 'migration') {
       let formattedDid = ''
-      if (request.did) {
-        formattedDid = didShorten(request.did)
-      } else if (request.legacyDid) {
-        formattedDid = didShorten(request.legacyDid)
+      if (uiDetails?.params?.did) {
+        formattedDid = didShorten(uiDetails.params.did)
+      } else if (uiDetails?.params?.legacyDid) {
+        formattedDid = didShorten(uiDetails.params.legacyDid)
       }
       body = (
         <>
@@ -89,7 +88,9 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               Learn More
             </a>
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            <Button state={AcceptState} />
+          </div>
         </>
       )
     } else if (type === 'migration_fail') {
@@ -106,7 +107,9 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
               Learn More
             </a>
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            <Button state={AcceptState} />
+          </div>
         </>
       )
     } else if (type === 'inform_error') {
@@ -115,9 +118,11 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
           <div>
             The following error has occured while we were processing your request:
             <br />
-            {request.message}
+            {uiDetails?.params?.message}
           </div>
-          <div className="bottom">{acceptNode}</div>
+          <div className="bottom">
+            <Button state={AcceptState} />
+          </div>
         </>
       )
     } else {
@@ -133,10 +138,9 @@ export const Modal = ({ request, buttons, connectService }: ModalProps) => {
   return (
     <div className="modal">
       <Header
-        closeButton={closeNode}
-        did={request.did || request.legacyDid}
-        type={request.type}
-        connectService={connectService}
+        did={uiDetails?.params?.did || uiDetails?.params?.legacyDid}
+        type={uiDetails.params.type}
+        // closeButton={uiDetails.closeNode}
       />
       <Content message={handleModal()} />
     </div>
