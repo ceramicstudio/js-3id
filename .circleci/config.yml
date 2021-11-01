@@ -138,10 +138,10 @@ workflows:
             - test-and-build
           filters:
             branches:
-              only: master
+              only: main
       - deploy-clay:
           requires:
             - test-and-build
           filters:
             branches:
-              only: master
+              only: main
