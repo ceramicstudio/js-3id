@@ -24,6 +24,7 @@ export type UIState = {
 
 export type ButtonType = {
   loading: boolean
+<<<<<<< HEAD
   class: 'primary' | 'secondary'
   body?: string
   resolve?: PromiseLike<boolean>
@@ -32,4 +33,18 @@ export type ButtonType = {
 export type Deferred<T> = Promise<T> & {
   resolve: (value?: T | PromiseLike<T>) => void
   reject: (reason?: any) => void
+=======
+  body: string
+  click?: Function
+  class?: string
+  set: Function
+  get: Function
+>>>>>>> feat/3id-ui-polish
+}
+
+export type StoreBody = {
+  loading: boolean
+  body: string
+  click?: Function
+  class?: string
 }

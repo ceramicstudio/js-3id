@@ -9,7 +9,6 @@ import type { ConnectServiceType } from '../../Types'
 import { iframeDisplay } from '../../utils'
 
 import './Header.scss'
-import selfIdLogo from './self.id.svg'
 
 type HeaderProps = {
   did?: string
@@ -33,15 +32,7 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
     image: undefined,
   })
   const headerData = () => {
-    if (type === 'authenticate') {
-      if (did !== undefined) {
-        return (
-          <div className="details">
-            <code>{didShorten(`${did}`)}</code>
-          </div>
-        )
-      }
-    } else if (type === 'account') {
+    if (type === 'migration_skip') {
       return (
         <div className="details">
           <a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
@@ -60,10 +51,22 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
           </a>
         </div>
       )
+    } else if (did !== undefined) {
+      return (
+        <div className="details">
+          <code>{didShorten(`${did}`)}</code>
+        </div>
+      )
     } else {
-      return <div className="details"></div>
+      return (
+        <div className="details">
+          Powered by{' '}
+          <a href="https://self.id" rel="noopener noreferrer" target="_blank">
+            Self.id
+          </a>
+        </div>
+      )
     }
-    return <div className="details"></div>
   }
   // const setup = () => {
   //   if (connectService.idx) {
@@ -134,15 +137,15 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
           x
         </div>
       </div>
-      <div className="logo-container">
+      {/* <div className="logo-container">
         <a
           href="https://ceramic.network"
           rel="noopener noreferrer"
           target="_blank"
           className="logo col-12">
-          <img src={selfIdLogo} alt="self.id logo" />
+          Powered by <b>Self.id</b>
         </a>
-      </div>
+      </div> */}
       <div className="image-container">
         <div
           className="appIcon"

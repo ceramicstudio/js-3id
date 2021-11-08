@@ -14,6 +14,7 @@ export const ipfsToImg = (url: string) => {
   return formattedUrl
 }
 
+<<<<<<< HEAD
 export function deferred<T>(): Deferred<T> {
   let methods
   const promise = new Promise<T>((resolve, reject): void => {
@@ -22,3 +23,9 @@ export function deferred<T>(): Deferred<T> {
   return Object.assign(promise, methods) as Deferred<T>
 }
 export const iframeDisplay = new DisplayConnectClientRPC(window.parent)
+=======
+export const urlToHost = (url: string) => {
+  const parsed = new URL(url)
+  return parsed.hostname
+}
+>>>>>>> feat/3id-ui-polish

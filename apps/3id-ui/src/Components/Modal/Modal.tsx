@@ -7,8 +7,13 @@ import Header from '../Header/Header'
 import Content from '../Content/Content'
 import Button from '../Button/Button'
 
+<<<<<<< HEAD
 import { didShorten } from '../../utils'
 import { UIState, AcceptState, DeclineState } from '../../State'
+=======
+import { didShorten, urlToHost } from '../../utils'
+import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
+>>>>>>> feat/3id-ui-polish
 
 export const Modal = () => {
   const [uiDetails] = useAtom(UIState)
@@ -37,7 +42,7 @@ export const Modal = () => {
         <>
           <div>
             <a href={document.referrer} target="_blank" rel="noopener noreferrer">
-              {document.referrer}
+              {urlToHost(document.referrer)}
             </a>{' '}
             is requesting permission to connect to your decentralized identity.{' '}
             {uiDetails?.params?.paths === undefined || uiDetails.params.paths.length === 0
@@ -45,11 +50,15 @@ export const Modal = () => {
               : `and ${uiDetails.params.paths.length} data source ${
                   uiDetails.params.paths.length > 1 ? 's.' : '.'
                 }`}
-            {permissionDisplay}
           </div>
+<<<<<<< HEAD
           <div className="bottom">
             <Button state={AcceptState} />
           </div>
+=======
+          {permissionDisplay}
+          <div className="bottom">{acceptNode}</div>
+>>>>>>> feat/3id-ui-polish
         </>
       )
     } else if (type === 'account') {
@@ -57,8 +66,8 @@ export const Modal = () => {
         <>
           <div>
             <br />
-            <a href={document.referrer}>{document.referrer}</a> is requesting permission to interact
-            with your decentralized ID. Connect your wallet.
+            <a href={document.referrer}>{urlToHost(document.referrer)}</a> is requesting permission
+            to interact with your decentralized ID. Connect your wallet.
             {permissionDisplay}
           </div>
           <div className="bottom">
@@ -77,19 +86,15 @@ export const Modal = () => {
       body = (
         <>
           <div>
-            <br />
             Your 3Box DID <code>{formattedDid}</code> will be migrated.
-            <br />
-            <br />
-            <a
-              href="developers.ceramic.network/authentication/legacy/3id-connect-migration"
-              rel="noopener noreferrer"
-              target="_blank">
-              Learn More
-            </a>
           </div>
           <div className="bottom">
+<<<<<<< HEAD
             <Button state={AcceptState} />
+=======
+            {acceptNode}
+            {declineNode}
+>>>>>>> feat/3id-ui-polish
           </div>
         </>
       )
@@ -108,14 +113,26 @@ export const Modal = () => {
             </a>
           </div>
           <div className="bottom">
+<<<<<<< HEAD
             <Button state={AcceptState} />
+=======
+            {acceptNode}
+            {declineNode}
+>>>>>>> feat/3id-ui-polish
           </div>
         </>
       )
-    } else if (type === 'inform_error') {
+    } else if (type === 'migration_skip') {
+      let formattedDid = ''
+      if (request.did) {
+        formattedDid = didShorten(request.did)
+      } else if (request.legacyDid) {
+        formattedDid = didShorten(request.legacyDid)
+      }
       body = (
         <>
           <div>
+<<<<<<< HEAD
             The following error has occured while we were processing your request:
             <br />
             {uiDetails?.params?.message}
@@ -123,6 +140,21 @@ export const Modal = () => {
           <div className="bottom">
             <Button state={AcceptState} />
           </div>
+=======
+            Your 3Box DID {formattedDid} could not be migrated, continue with a new account?
+          </div>
+          <div className="bottom">
+            {acceptNode}
+            {declineNode}
+          </div>
+        </>
+      )
+    } else if (type === 'inform_error') {
+      body = (
+        <>
+          <div>An error has occurred while authenticating, unable to connect</div>
+          <div className="bottom">{acceptNode}</div>
+>>>>>>> feat/3id-ui-polish
         </>
       )
     } else {

@@ -16,7 +16,7 @@ $placeholder: #5d40fb;
 
   color: white;
 
-  min-height: 125px;
+  height: 125px;
 
   align-items: center;
   justify-content: center;
@@ -90,10 +90,12 @@ $placeholder: #5d40fb;
     justify-content: space-between;
 
     width: 100%;
-    margin: 10px 0;
+    // position: relative;
+    // padding-top: 10px;
     .details {
       font-size: 13px;
       font-weight: 500;
+      margin-top: 15px;
       a {
         border-bottom: 1px solid white;
         padding-bottom: 3px;
@@ -104,15 +106,13 @@ $placeholder: #5d40fb;
         }
       }
     }
-    .close-container {
-      width: 100%;
-      text-align: right;
-      margin-top: 5px;
-      .close-btn {
-        position: relative;
-        display: inline;
-        cursor: pointer;
-      }
+    .close-btn {
+      display: inline-block;
+      cursor: pointer;
+      margin-top: 15px;
+      // position: relative;
+      // top: 10px;
+      // right: 5px;
     }
   }
 }
