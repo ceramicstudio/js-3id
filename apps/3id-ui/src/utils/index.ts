@@ -1,3 +1,4 @@
+import { DisplayConnectClientRPC } from '@3id/connect-display'
 import * as hexToRgb from 'hex-to-rgb'
 import type { Deferred } from '../Types'
 
@@ -20,3 +21,4 @@ export function deferred<T>(): Deferred<T> {
   })
   return Object.assign(promise, methods) as Deferred<T>
 }
+export const iframeDisplay = new DisplayConnectClientRPC(window.parent)

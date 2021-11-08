@@ -17,7 +17,7 @@ const authenticate = async () => {
   const authProvider = new EthereumAuthProvider(ethProvider, addresses[0])
   await threeIdConnect.connect(authProvider)
 
-  const ceramic = new Ceramic(CERAMIC_URL)
+  const ceramic = new Ceramic('localhost:7007')
   const did = new DID({
     provider: threeIdConnect.getDidProvider(),
     resolver: ThreeIdResolver.getResolver(ceramic),

@@ -6,6 +6,8 @@ import type { CeramicApi } from '@ceramicnetwork/common'
 import { didShorten, ipfsToImg } from '../../utils'
 import type { ConnectServiceType } from '../../Types'
 
+import { iframeDisplay } from '../../utils'
+
 import './Header.scss'
 import selfIdLogo from './self.id.svg'
 
@@ -103,6 +105,8 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
   //   }
   // }, [did])
 
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16)
+
   const boringOrAvatar = userData?.image ? (
     <div
       className="avatarImage"
@@ -122,7 +126,13 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
     <div className="head">
       <div className="head-container">
         {headerData()}
-        {/* {closeButton} */}
+        <div
+          className="close-btn"
+          onClick={() => {
+            iframeDisplay.hide()
+          }}>
+          x
+        </div>
       </div>
       <div className="logo-container">
         <a
@@ -134,6 +144,13 @@ const Header = ({ did, type /*, closeButton*/ }: HeaderProps) => {
         </a>
       </div>
       <div className="image-container">
+        <div
+          className="appIcon"
+          style={{
+            backgroundColor: randomColor,
+          }}>
+          L
+        </div>
         <div className="avatar">{boringOrAvatar}</div>
       </div>
     </div>

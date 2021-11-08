@@ -1,19 +1,17 @@
 import React from 'react'
 
 import { ThreeIDService } from '@3id/service'
-import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { UIProvider, UIProviderHandlers } from '@3id/ui-provider'
 import { RPCErrorObject } from 'rpc-utils'
 import { useAtom } from 'jotai'
 
 import { CERAMIC_URL } from '../../contants'
 import { AcceptState, DeclineState, UIState } from '../../State'
-import { deferred } from '../../utils'
+import { deferred, iframeDisplay } from '../../utils'
 import Modal from '../Modal/Modal'
 
 const EventProvider = () => {
   const connectService = new ThreeIDService()
-  const iframeDisplay = new DisplayConnectClientRPC(window.parent)
 
   const [uiState, setUIState] = useAtom(UIState)
   const [acceptState, setAcceptState] = useAtom(AcceptState)

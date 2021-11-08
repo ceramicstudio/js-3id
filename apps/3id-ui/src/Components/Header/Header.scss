@@ -1,4 +1,13 @@
 $placeholder: #5d40fb;
+
+@function set-text-color($color) {
+  @if (lightness($color) > 45) {
+    @return #333; // Lighter color, return black
+  } @else {
+    @return #e4e4e4; // Darker color, return white
+  }
+}
+
 .head {
   display: flex;
   flex-direction: column;
@@ -37,7 +46,12 @@ $placeholder: #5d40fb;
   }
   .image-container {
     position: relative;
-    top: 50px;
+    top: 60px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    justify-content: space-around;
     .avatar {
       svg,
       img {
@@ -48,6 +62,22 @@ $placeholder: #5d40fb;
         height: 65px;
         width: 65px;
       }
+    }
+    .appIcon {
+      $bkg: rgb(random(255), random(255), random(255));
+      background-color: $bkg;
+      color: set-text-color(($bkg));
+      height: 65px;
+      width: 65px;
+      border: 3px solid white;
+      border-radius: 5px;
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 5px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .avatar {
