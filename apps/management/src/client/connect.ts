@@ -17,11 +17,13 @@ export function notifyDone() {
 
 export function getManager(provider: any): Manager {
   const authProvider = new EthereumAuthProvider(provider, provider.selectedAddress)
+  // @ts-ignore
   return new Manager(authProvider, { ceramic })
 }
 
 export function createRemoteProxy(target: Window): RemoteProxy {
   const provider = new AuthProviderClient(target)
+  // @ts-ignore
   const manager = new Manager(provider, { ceramic })
   return { manager, provider }
 }

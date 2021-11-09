@@ -19,9 +19,21 @@ export type ServiceState = {
 
 export const serviceStateAtom = atom<ServiceState | null>(null)
 
-serviceStateAtom.onMount = (setAtom) => {
-  const provider = getUIProivder(setAtom)
+
+export const initAtom = atom(null, (get, set) => {
   const dataStore = createDIDDataStore()
+  const provider = getUIProivder((update) => set(reqStateAtom, update))
   const threeidService = create3IDService(provider, dataStore)
-  setAtom({ threeidService, dataStore, ceramic: dataStore.ceramic})
+  set(serviceStateAtom, { threeidService, dataStore, ceramic: dataStore.ceramic})
+})
+
+initAtom.onMount = (setAtom) => {
+  setAtom()
 }
+
+// serviceStateAtom.onMount = (setAtom) => {
+//   const provider = getUIProivder(setAtom)
+//   const dataStore = createDIDDataStore()
+//   const threeidService = create3IDService(provider, dataStore)
+//   setAtom({ threeidService, dataStore, ceramic: dataStore.ceramic})
+// }

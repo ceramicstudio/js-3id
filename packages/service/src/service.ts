@@ -10,8 +10,6 @@ import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 
 import Url from 'url-parse'
 import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider'
 import { DIDDataStore } from '@glazed/did-datastore'
-
-import type { UserRequestCancel } from './types'
 import { rpcError } from './utils'
 // import { expose } from 'postmsg-rpc'
 const { expose } = require('postmsg-rpc')
@@ -27,7 +25,6 @@ type Methods = DIDProviderMethods
  */
 export class ThreeIDService {
   uiManager: ThreeIDManagerUI | undefined
-  cancel: UserRequestCancel | undefined
   dataStore: DIDDataStore | undefined
   threeId: ThreeIdProvider | undefined
   provider: DIDProvider | undefined
@@ -42,8 +39,7 @@ export class ThreeIDService {
    * @param     {Network}     network              Network to run service on, testnet-clay, dev-unstable, local and mainnet are supported or API url
    */
   // @ts-ignore method override
-  start(uiProvider: UIProvider, cancel: UserRequestCancel, dataStore: DIDDataStore): void {
-    this.cancel = cancel
+  start(uiProvider: UIProvider, dataStore: DIDDataStore): void {
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.dataStore = dataStore
     this.manageApp = new DisplayManageClientRPC()
@@ -159,9 +155,6 @@ export class ThreeIDService {
     did?: string
   ): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
-    this.cancel!(() => {
-      throw new Error('3id-connect: Request not authorized')
-    })
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
     const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
@@ -170,20 +163,14 @@ export class ThreeIDService {
 
   async requestHandler(message: RPCRequest<Methods, keyof Methods>): Promise<string> {
     const domain = new Url(document.referrer).host
-
-    const responsePromise = new Promise((resolve, reject) => {
-      // Register request cancel calback
-      this.cancel!(() => resolve(rpcError(message.id!)))
-      if (message.method.startsWith('did')) {
-        this.requestHandlerDid(message, domain).then(resolve, reject)
-      } else {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
-        reject(new ThreeIDError(4, msg))
-      }
-    })
-
-    return JSON.stringify(await responsePromise)
+    if (message.method.startsWith('did')) {
+      const res = await this.requestHandlerDid(message, domain)
+      return JSON.stringify(res)
+    } else {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
+      return JSON.stringify(new ThreeIDError(4, msg))
+    }
   }
 
   /**
@@ -229,7 +216,8 @@ export class ThreeIDService {
       void this.uiManager.noftifyClose()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
     } catch (e) {
-      if ((e as Error).toString().includes('authorized')) {
+      const err = (e as Error).toString()
+      if (err.includes('authorized') || err.includes('cancellation')) {
         void this.uiManager.noftifyClose()
         return rpcError(message.id!)
       }

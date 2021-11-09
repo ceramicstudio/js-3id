@@ -2,15 +2,17 @@ import { CERAMIC_URL } from '../constants'
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { MigrationParams, MigrationRes, UIProvider, UIProviderHandlers, ThreeIDManagerUI, AuthParams, MigrationSkipRes, MigrationFailRes, AccountRes, AuthRes  } from '@3id/ui-provider'
-import type {
+import {
   RPCErrorObject,
+  RPCError
 } from 'rpc-utils'
 import { deferred } from '../utils'
-import { didDataAtom } from './state'
-import { useAtom } from 'jotai'
+import { ServiceState } from './state'
+import { useAtom, SetStateAction } from 'jotai'
 import { loadProfile } from '../data/idx'
+import type { DIDsData, RequestState, Response } from '../types'
 
-export function getUIProivder(setRequestState) {
+export function getUIProivder(setRequestState: (update: SetStateAction<RequestState | null>) => void) {
 
     // TODO move
     let iframeDisplay: DisplayConnectClientRPC
@@ -18,40 +20,50 @@ export function getUIProivder(setRequestState) {
       iframeDisplay = new DisplayConnectClientRPC(window.parent)
     }
 
+    // TODO move iframe display
     const UIMethods: UIProviderHandlers = {
       prompt_migration: async (_ctx = {}, params: MigrationParams): Promise<MigrationRes> => {
-        const respond = deferred<boolean>()
+        await iframeDisplay.display(undefined, '100%', '100%')
+        const respond = deferred<Response>()
         setRequestState({type: 'prompt_migration', params, respond })
-        const migration = await respond
-        console.log({ migration })
-        return { migration } 
+        const res = await respond
+        if (res.error) throw new RPCError(4100, 'cancellation')
+        return { migration: res.result } 
       },
       prompt_migration_skip: async (ctx, params: {}): Promise<MigrationSkipRes> => {
-        const respond = deferred<boolean>()
+        await iframeDisplay.display(undefined, '100%', '100%')
+        const respond = deferred<Response>()
         setRequestState({type: 'prompt_migration_skip', params, respond })
-        const skip = await respond
-        return { skip } 
+        const res = await respond
+        if (res.error) throw new RPCError(4100, 'cancellation')
+        return { skip: res.result } 
       },
       prompt_migration_fail: async (ctx, params: {}): Promise<MigrationFailRes> => {
-        const respond = deferred<boolean>()
+        await iframeDisplay.display(undefined, '100%', '100%')
+        const respond = deferred<Response>()
         setRequestState({type: 'prompt_migration_fail', params, respond })
-        const createNew = await respond
-        return { createNew } 
+        const res = await respond
+        if (res.error) throw new RPCError(4100, 'cancellation')
+        return { createNew: res.result } 
       },
       prompt_account: async (ctx, params: {}): Promise<AccountRes> => {
-        const respond = deferred<boolean>()
+        await iframeDisplay.display(undefined, '100%', '100%')
+        const respond = deferred<Response>()
         setRequestState({type: 'prompt_account', params, respond })
-        const createNew = await respond
-        return { createNew } 
+        const res = await respond
+        if (res.error) throw new RPCError(4100, 'cancellation')
+        return { createNew: res.result } 
       },
       prompt_authenticate: async (ctx, params: AuthParams): Promise<AuthRes> => {
-        const respond = deferred<boolean>()
+        await iframeDisplay.display(undefined, '100%', '100%')
+        const respond = deferred<Response>()
         setRequestState({type: 'prompt_authenticate', params, respond })
-        const allow = await respond
-        return { allow }
+        const res = await respond
+        if (res.error) throw new RPCError(4100, 'cancellation')
+        return { allow: res.result }
       },
       inform_error: (ctx, params: RPCErrorObject) => {
-        const respond = deferred<boolean>()
+        const respond = deferred<Response>()
         setRequestState({type: 'inform_error', params, respond })
         // response may be to close window
         return null

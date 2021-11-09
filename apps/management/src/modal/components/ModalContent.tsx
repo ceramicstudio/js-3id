@@ -13,7 +13,7 @@ export default function ModalContent() {
         {reqState?.type}
         <Permissions/>
         <div className={styles.bottom}>
-          <PrimaryButton label="Accept" onClick={()=>reqState?.respond.resolve(true)}/>
+          <PrimaryButton label="Accept" onClick={()=>reqState?.respond.resolve({error: 'cancellation'})}/>
         </div>
       </div>
     </div>

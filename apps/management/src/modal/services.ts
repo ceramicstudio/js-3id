@@ -7,9 +7,8 @@ import CeramicClient from '@ceramicnetwork/http-client'
 
 export function create3IDService(uiProvider: UIProvider, didDataStore: DIDDataStore ) {
   const connectService = new ThreeIDService()
-  // REmove closing and just handle with cancellation 
-  // TODO service consume didDatastore
-  connectService.start(uiProvider, () => {}, didDataStore)
+  // TODO
+  connectService.start(uiProvider, didDataStore)
   return connectService
 }
 

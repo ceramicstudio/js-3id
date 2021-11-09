@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "build:prod": "npm run build && rm -rf ../../public/management && mkdir -p ../../public && mv ./out ../../public/management",
+    "build:prod": "npm run build && rm -rf ../../public && mv ./out ../../public",
     "dev:build": "NEXT_PUBLIC_CERAMIC_NETWORK=local npm run build:prod",
     "build:dev": "NEXT_PUBLIC_CERAMIC_NETWORK=dev-unstable npm run build:prod",
     "build:test": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7777 npm run build:prod",

@@ -37,7 +37,7 @@ export class Manager {
   // needs work on wording for "account", did, caip10 etc
   constructor(
     authprovider: AuthProvider,
-    opts: { store?: DIDStore; ceramic?: CeramicClient; cache?: LinkCache, dataStore: DIDDataStore }
+    opts: { store?: DIDStore; ceramic?: CeramicApi; cache?: LinkCache, dataStore?: DIDDataStore }
   ) {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()

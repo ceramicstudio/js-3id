@@ -22,10 +22,20 @@ export type RemoteProxy = {
   provider: AuthProvider
 }
 
+export type ErrorType = 'cancellation'
+
+export type Response = {
+  result: boolean
+  error?: never
+} | {
+  result?: never
+  error: ErrorType
+}
+
 export type RequestState<K extends UIMethodName = UIMethodName> = {
   type: K
   params:UIRequest<K>['params'],
-  respond: Deferred<boolean>
+  respond: Deferred<Response>
 }
 
 

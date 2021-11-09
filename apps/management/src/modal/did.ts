@@ -5,3 +5,4 @@
 // export async function loadDIDData(dataStore: DIDDataStore, did: string): Promise<BasicProfile | null> {
 //   return await dataStore.get('basicProfile', did)
 // }
+export {}
