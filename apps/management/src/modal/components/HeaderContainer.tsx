@@ -1,8 +1,8 @@
 import styles from './HeaderContainer.module.scss'
 import Avatar from 'boring-avatars'
+import { useDIDBasicProfile } from '../hooks'
+import { useEffect } from 'react'
 
-// Add fetch did data when did is availabe 
-// this should just render based on that 
 
 const boringOrAvatar = (
   <Avatar
@@ -14,6 +14,14 @@ const boringOrAvatar = (
 )
   
 export default function HeaderContainer() {
+
+
+
+  const [ basicProfile, loadBasicProfile ] = useDIDBasicProfile()
+  useEffect(() => {
+    void loadBasicProfile()
+  }, [])
+
   return(
     <div className={styles.head}>
       <div className={styles['head-container']}>

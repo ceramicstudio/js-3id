@@ -1,5 +1,4 @@
 import { CERAMIC_URL } from '../constants'
-
 import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
 import { MigrationParams, MigrationRes, UIProvider, UIProviderHandlers, ThreeIDManagerUI, AuthParams, MigrationSkipRes, MigrationFailRes, AccountRes, AuthRes  } from '@3id/ui-provider'
@@ -7,8 +6,13 @@ import type {
   RPCErrorObject,
 } from 'rpc-utils'
 import { deferred } from '../utils'
+import { didDataAtom } from './state'
+import { useAtom } from 'jotai'
+import { loadProfile } from '../data/idx'
 
 export function getUIProivder(setRequestState) {
+
+    // TODO move
     let iframeDisplay: DisplayConnectClientRPC
     if (window.parent) {
       iframeDisplay = new DisplayConnectClientRPC(window.parent)
@@ -62,11 +66,4 @@ export function getUIProivder(setRequestState) {
 
     //Create a 3ID Connect UI Provider
     return new UIProvider(UIMethods)
-}
-
-export function create3IDService(setRequestState) {
-  const connectService = new ThreeIDService()
-  const provider = getUIProivder(setRequestState)
-  // REmove closing and just handle with cancellation 
-  connectService.start(provider, () => {}, CERAMIC_URL)
 }
