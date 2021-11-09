@@ -16,6 +16,7 @@ import { DIDStore, LinkCache } from './stores'
 import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration'
 import type { AuthConfig, SeedConfig } from './types'
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link'
+import { CeramicApi } from '@ceramicnetwork/common'
 
 let CERAMIC_API = 'https://ceramic-clay.3boxlabs.com'
 let DID_MIGRATION = true
@@ -30,19 +31,19 @@ export class Manager {
   store: DIDStore
   cache: LinkCache
   dataStore: DIDDataStore
-  ceramic: CeramicClient
+  ceramic: CeramicApi
   threeIdProviders: Record<string, ThreeIdProvider>
 
   // needs work on wording for "account", did, caip10 etc
   constructor(
     authprovider: AuthProvider,
-    opts: { store?: DIDStore; ceramic?: CeramicClient; cache?: LinkCache }
+    opts: { store?: DIDStore; ceramic?: CeramicClient; cache?: LinkCache, dataStore: DIDDataStore }
   ) {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
-    this.ceramic = opts.ceramic || new CeramicClient(CERAMIC_API)
-    this.dataStore = new DIDDataStore({ ceramic: this.ceramic, model: idxModel })
+    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: new CeramicClient(CERAMIC_API), model: idxModel })
+    this.ceramic = opts.ceramic || this.dataStore.ceramic
     this.threeIdProviders = {}
   }
 
