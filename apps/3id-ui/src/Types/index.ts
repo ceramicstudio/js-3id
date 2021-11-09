@@ -9,37 +9,29 @@ export type RequestType = {
   message?: string
 }
 
+export type ButtonsType = {
+  acceptNode: JSX.Element
+  declineNode: JSX.Element
+  closeNode: JSX.Element
+}
+
 export type ConnectServiceType = {
   idx?: IDX
   ceramic?: CeramicClient
 }
 
-export type UIState = {
-  params: RequestType
-  acceptButton: ButtonType
-  declineButton: ButtonType
-  deferredPromise?: Deferred<boolean>
-  closeNode: () => {}
-}
-
-export type ButtonType = {
+export type AtomType = {
   loading: boolean
-<<<<<<< HEAD
-  class: 'primary' | 'secondary'
-  body?: string
-  resolve?: PromiseLike<boolean>
+  body: string
 }
 
-export type Deferred<T> = Promise<T> & {
-  resolve: (value?: T | PromiseLike<T>) => void
-  reject: (reason?: any) => void
-=======
+export type Store = {
+  loading: boolean
   body: string
   click?: Function
   class?: string
   set: Function
   get: Function
->>>>>>> feat/3id-ui-polish
 }
 
 export type StoreBody = {

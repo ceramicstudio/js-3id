@@ -7,13 +7,8 @@ import Header from '../Header/Header'
 import Content from '../Content/Content'
 import Button from '../Button/Button'
 
-<<<<<<< HEAD
-import { didShorten } from '../../utils'
-import { UIState, AcceptState, DeclineState } from '../../State'
-=======
 import { didShorten, urlToHost } from '../../utils'
 import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
->>>>>>> feat/3id-ui-polish
 
 export const Modal = () => {
   const [uiDetails] = useAtom(UIState)
@@ -51,14 +46,8 @@ export const Modal = () => {
                   uiDetails.params.paths.length > 1 ? 's.' : '.'
                 }`}
           </div>
-<<<<<<< HEAD
-          <div className="bottom">
-            <Button state={AcceptState} />
-          </div>
-=======
           {permissionDisplay}
           <div className="bottom">{acceptNode}</div>
->>>>>>> feat/3id-ui-polish
         </>
       )
     } else if (type === 'account') {
@@ -89,12 +78,8 @@ export const Modal = () => {
             Your 3Box DID <code>{formattedDid}</code> will be migrated.
           </div>
           <div className="bottom">
-<<<<<<< HEAD
-            <Button state={AcceptState} />
-=======
             {acceptNode}
             {declineNode}
->>>>>>> feat/3id-ui-polish
           </div>
         </>
       )
@@ -113,12 +98,8 @@ export const Modal = () => {
             </a>
           </div>
           <div className="bottom">
-<<<<<<< HEAD
-            <Button state={AcceptState} />
-=======
             {acceptNode}
             {declineNode}
->>>>>>> feat/3id-ui-polish
           </div>
         </>
       )
@@ -132,15 +113,6 @@ export const Modal = () => {
       body = (
         <>
           <div>
-<<<<<<< HEAD
-            The following error has occured while we were processing your request:
-            <br />
-            {uiDetails?.params?.message}
-          </div>
-          <div className="bottom">
-            <Button state={AcceptState} />
-          </div>
-=======
             Your 3Box DID {formattedDid} could not be migrated, continue with a new account?
           </div>
           <div className="bottom">
@@ -154,7 +126,6 @@ export const Modal = () => {
         <>
           <div>An error has occurred while authenticating, unable to connect</div>
           <div className="bottom">{acceptNode}</div>
->>>>>>> feat/3id-ui-polish
         </>
       )
     } else {

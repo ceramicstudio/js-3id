@@ -3,16 +3,9 @@ import ReactDOM from 'react-dom'
 
 import './index.css'
 import App from './Components/App/App'
+import Button from './Components/Button/Button'
 import reportWebVitals from './reportWebVitals'
 
-<<<<<<< HEAD
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-)
-=======
 import { CERAMIC_URL } from './contants'
 import { AcceptStore, DeclineStore } from './State/Button'
 import type { ButtonsType, RequestType } from './Types'
@@ -203,6 +196,5 @@ const closing = (cb: any) => {
 
 // connectService.start(provider, closing, 'https://ceramic-clay.3boxlabs.com')
 connectService.start(provider, closing, CERAMIC_URL)
->>>>>>> feat/3id-ui-polish
 
 reportWebVitals()
