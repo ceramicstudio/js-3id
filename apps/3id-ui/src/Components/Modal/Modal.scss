@@ -62,14 +62,14 @@ $placeholder: #5d40fb;
           text-align: left;
           display: flex;
           align-items: center;
-
+          margin-top: 10px;
           margin-bottom: 10px;
           .permission-note {
             display: inline-block;
             background: $placeholder;
-            height: 20px;
-            width: 20px;
-            border-radius: 2.5px;
+            height: 10px;
+            width: 10px;
+            border-radius: 5rem;
             margin-right: 10px;
           }
         }
