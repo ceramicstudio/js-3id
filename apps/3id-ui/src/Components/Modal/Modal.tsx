@@ -5,7 +5,7 @@ import './Modal.scss'
 import Header from '../Header/Header'
 import Content from '../Content/Content'
 
-import { didShorten, urlToHost } from '../../utils'
+import { detectContrast, didShorten, urlToHost } from '../../utils'
 import { ButtonsType, ConnectServiceType, RequestType } from '../../Types'
 
 type ModalProps = {

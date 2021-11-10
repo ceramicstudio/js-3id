@@ -16,3 +16,23 @@ export const urlToHost = (url: string) => {
   const parsed = new URL(url)
   return parsed.hostname
 }
+
+/**
+ * @param color MUST be a Hex Color
+ * returns an int between 0 and 255.
+ * 0 is black, 255 is white
+ *
+ * Suggested use: if above 127 then use font white, else black
+ */
+export const detectContrast = (color: string) => {
+  const background = hexToRgb(color)
+
+  const contrast = Math.round(
+    (parseInt(background[0]) * 299 +
+      parseInt(background[1]) * 587 +
+      parseInt(background[2]) * 114) /
+      1000
+  )
+  console.log(contrast)
+  return contrast
+}
