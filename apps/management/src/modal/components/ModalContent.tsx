@@ -1,20 +1,23 @@
 import styles from './ModalContent.module.scss'
 import Permissions from './Permissions'
 import PrimaryButton from './PrimaryButton'
-import { reqStateAtom } from '../state'
+import Request from './Request'
+import Actions from './Actions'
+import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
+import { testUIReq } from '../uiProvider'
+import { useCallback } from 'react'
 
 export default function ModalContent() {
   const [reqState, ] = useAtom(reqStateAtom)
+  const [serviceState, ] = useAtom(serviceStateAtom)
+
   return(
     <div className={styles.body}>
       <div className={styles.inner}>
-        A request
-        {reqState?.type}
+        <Request/>
         <Permissions/>
-        <div className={styles.bottom}>
-          <PrimaryButton label="Accept" onClick={()=>reqState?.respond.resolve({error: 'cancellation'})}/>
-        </div>
+        <Actions/>
       </div>
     </div>
   )

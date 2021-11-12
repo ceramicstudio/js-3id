@@ -1,11 +1,16 @@
-import { atom, useAtom } from 'jotai'
-import type { DIDsData, RequestState } from '../types'
+import { atom } from 'jotai'
+import type { RequestState } from '../types'
 import { create3IDService, createDIDDataStore } from './services'
-import { getUIProivder } from './uiProvider'
+import { getUIProivder} from './uiProvider'
+import { testUIReq } from './uiProvider'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import { ThreeIDService } from '@3id/service'
 import { DIDDataStore } from '@glazed/did-datastore'
 import type { CeramicApi } from '@ceramicnetwork/common'
+import { UIProvider } from '@3id/ui-provider'
+import { ThreeIDManagerUI  } from '@3id/ui-provider'
+import { deferred } from '../utils'
+import type { Response } from '../types'
 
 
 export const didDataAtom = atom<BasicProfile | null>(null)
@@ -15,6 +20,7 @@ export type ServiceState = {
   threeidService: ThreeIDService
   ceramic: CeramicApi 
   dataStore: DIDDataStore
+  provider: UIProvider
 }
 
 export const serviceStateAtom = atom<ServiceState | null>(null)
@@ -23,17 +29,19 @@ export const serviceStateAtom = atom<ServiceState | null>(null)
 export const initAtom = atom(null, (get, set) => {
   const dataStore = createDIDDataStore()
   const provider = getUIProivder((update) => set(reqStateAtom, update))
+  const update = {
+    type: "prompt_account",
+    params: {},
+    respond: deferred<Response>()
+  }
+  //@ts-ignore
+  set(reqStateAtom, update)
   const threeidService = create3IDService(provider, dataStore)
-  set(serviceStateAtom, { threeidService, dataStore, ceramic: dataStore.ceramic})
+  set(serviceStateAtom, { threeidService, dataStore, ceramic: dataStore.ceramic, provider})
+  // // Testing 
+  // testUIReq(provider,'prompt_account')
 })
 
 initAtom.onMount = (setAtom) => {
   setAtom()
 }
-
-// serviceStateAtom.onMount = (setAtom) => {
-//   const provider = getUIProivder(setAtom)
-//   const dataStore = createDIDDataStore()
-//   const threeidService = create3IDService(provider, dataStore)
-//   setAtom({ threeidService, dataStore, ceramic: dataStore.ceramic})
-// }

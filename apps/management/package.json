@@ -23,6 +23,7 @@
     "boring-avatars": "^1.5.8",
     "caip": "^0.9.2",
     "grommet": "^2.16.3",
+    "hex-to-rgb": "^1.0.1",
     "jotai": "^0.16.8",
     "next": "10.2.3",
     "polished": "^4.1.3",

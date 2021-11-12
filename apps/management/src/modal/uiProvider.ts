@@ -1,16 +1,12 @@
-import { CERAMIC_URL } from '../constants'
-import { ThreeIDService } from '@3id/service'
 import { DisplayConnectClientRPC } from '@3id/connect-display'
-import { MigrationParams, MigrationRes, UIProvider, UIProviderHandlers, ThreeIDManagerUI, AuthParams, MigrationSkipRes, MigrationFailRes, AccountRes, AuthRes  } from '@3id/ui-provider'
+import { MigrationParams, MigrationRes, UIProvider, UIProviderHandlers, ThreeIDManagerUI, AuthParams, MigrationSkipRes, MigrationFailRes, AccountRes, AuthRes, UIMethodName  } from '@3id/ui-provider'
 import {
   RPCErrorObject,
   RPCError
 } from 'rpc-utils'
 import { deferred } from '../utils'
-import { ServiceState } from './state'
-import { useAtom, SetStateAction } from 'jotai'
-import { loadProfile } from '../data/idx'
-import type { DIDsData, RequestState, Response } from '../types'
+import type { SetStateAction } from 'jotai'
+import type { RequestState, Response } from '../types'
 
 export function getUIProivder(setRequestState: (update: SetStateAction<RequestState | null>) => void) {
 
@@ -41,6 +37,7 @@ export function getUIProivder(setRequestState: (update: SetStateAction<RequestSt
       prompt_migration_fail: async (ctx, params: {}): Promise<MigrationFailRes> => {
         await iframeDisplay.display(undefined, '100%', '100%')
         const respond = deferred<Response>()
+        console.log('fail')
         setRequestState({type: 'prompt_migration_fail', params, respond })
         const res = await respond
         if (res.error) throw new RPCError(4100, 'cancellation')
@@ -74,8 +71,19 @@ export function getUIProivder(setRequestState: (update: SetStateAction<RequestSt
       }
     }
 
-    // TODO close on any cancellation
-
-    //Create a 3ID Connect UI Provider
     return new UIProvider(UIMethods)
+}
+
+export function testUIReq(uiProvider: UIProvider, request: UIMethodName) {
+  const uiManager = new ThreeIDManagerUI(uiProvider)
+  uiManager.promptMigrationFail()
+  // switch (request) {
+  //   case 'prompt_account':
+  //     // uiManager.promptAccount()
+  //     uiManager.promptMigrationFail()
+  //     console.log('yo')
+  //     break;
+  //   default:
+  //     console.log('no matching request')
+  // }
 }

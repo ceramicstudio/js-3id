@@ -19,7 +19,7 @@ const DISPLAY_IFRAME_STYLE = `border:none; border:0; z-index: ${
 const DISPLAY_MANAGE_STYLE = `border:none; border:0; z-index: ${
   TORUS_CONSENT_ZINDEX - 1
 }; position: fixed; width: 100%; height: 100%; top: 0; left: 0;`
-const IFRAME_TOP = `top: 10px; right: 10px`
+const IFRAME_TOP = `top: 0px; right: 0px`
 const IFRAME_BOTTOM = `bottom: 0px; left: 0px;`
 
 // @ts-ignore

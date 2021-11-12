@@ -1,10 +1,54 @@
 $placeholder: #5d40fb;
 
+@font-face {
+  font-family: Segment;
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: local('Segment Regular'), local('Segment-Regular'),
+    url('../../../assets/Segment-Regular.woff2') format('woff2'),
+    url('../../../assets/Segment-Regular.woff') format('woff');
+}
+@font-face {
+  font-family: Segment;
+  font-style: normal;
+  font-weight: 500;
+  font-display: fallback;
+  src: local('Segment Medium'), local('Segment-Medium'),
+    url('../../../assets/Segment-Medium.woff2') format('woff2'),
+    url('../../../assets/Segment-Medium.woff') format('woff');
+}
+@font-face {
+  font-family: Segment;
+  font-style: normal;
+  font-weight: 600;
+  font-display: fallback;
+  src: local('Segment SemiBold'), local('Segment-SemiBold'),
+    url('../../../assets/Segment-SemiBold.woff2') format('woff2'),
+    url('../../../assets/Segment-SemiBold.woff') format('woff');
+}
+
+
+@mixin slide {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .modal {
   transition: ease 0.3s all;
   background-color: white;
   position: fixed;
-  top: 15px;
 
   $width: 450px;
 
@@ -13,7 +57,7 @@ $placeholder: #5d40fb;
   min-width: ($width/2);
   max-width: $width;
 
-  right: calc(50vw - 10%);
+  top: 20vh;
 
   margin: 0;
 
@@ -26,8 +70,25 @@ $placeholder: #5d40fb;
   font-size: 15px;
 
   box-shadow: 4px 6px 19px 5px rgba(0, 0, 0, 0.49);
+
+  @include slide;
+  animation-name: slideInFromTop;
 }
 
 .logo_control {
   text-decoration: none;
+}
+
+.App {
+  position: absolute;
+  overflow: hidden;
+  text-align: center;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
