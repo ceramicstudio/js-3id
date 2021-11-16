@@ -12,6 +12,7 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
         return (
             <>
               <div>
+                <br />
                 <span className={styles.origin}>
                   {urlToHost(document.referrer)}
                 </span>{' '}
@@ -35,8 +36,9 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
       return (
         <>
           <div>
-            Your 3Box DID <code>{didShorten(request.params?.legacyDid)}</code> will be migrated.
+            Your 3Box DID <span className={styles.origin} >{didShorten(request.params?.legacyDid)}</span> will be migrated.
           </div>
+          <br />
         </>
       )
     },
@@ -45,27 +47,29 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
         <>
           <div>
             You have a 3Box account we are unable to migrate, continue with a new account?
-            <br />
-            <br />
-            <a href={migrationInfoLink} rel="noopener noreferrer" target="_blank">
-              Learn More
-            </a>
           </div>
+          <br />
         </>
       )
     },
     'prompt_migration_skip': (request) => {
       return (
-        <div>
-          Your 3Box DID could not be migrated, continue with a new account? 
-        </div>
+        <>
+          <div>
+            Your 3Box DID could not be migrated, continue with a new account? 
+          </div>
+          <br />
+        </>
       )
     },
     'inform_error': (request) => {
       return (
-        <div>
-          An error has occurred while authenticating, unable to connect
-        </div>
+        <>
+          <div>
+            An error has occurred while authenticating, unable to connect.
+          </div>
+          <br />
+        </>
       )
     },
     'inform_close': (request) => (<></>)

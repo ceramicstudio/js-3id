@@ -16,12 +16,12 @@ $placeholder: #5d40fb;
 
   color: white;
 
-  height: 90px;
+  // height: 95px;
 
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  // justify-content: center;
 
-  padding: 30px 15px 5px;
+  padding: 0px 15px 0px 15px;
 
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -46,12 +46,12 @@ $placeholder: #5d40fb;
   }
   .image-container {
     position: relative;
-    top: 30px;
+    top: 15px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    width: 90%;
-    justify-content: space-around;
+    width: 100%;
+    justify-content: center;
     .avatar {
       svg,
       img {
@@ -59,8 +59,8 @@ $placeholder: #5d40fb;
         border-radius: 50px;
       }
       img {
-        height: 65px;
-        width: 65px;
+        height: 75px;
+        width: 75px;
       }
     }
     .appIcon {
@@ -74,6 +74,7 @@ $placeholder: #5d40fb;
       font-size: 24px;
       font-weight: 600;
       margin-bottom: 5px;
+      margin-right: 40px;
 
       display: flex;
       justify-content: center;
@@ -90,17 +91,15 @@ $placeholder: #5d40fb;
     justify-content: space-between;
 
     width: 100%;
-    padding-top: 26px;
+    padding: 12px 0px 25px 0px;
 
     .details {
       font-size: 12px;
       font-weight: 500;
       padding: 7px 30px;
-      background-color: #5137db;
       border-radius: 8px;
       width: 60%;
       color: #c9c1f2;
-
 
       a {
         border-bottom: 1px solid white;
@@ -112,6 +111,12 @@ $placeholder: #5d40fb;
         }
       }
     }
+
+    .dark {
+      background-color: #5137db;
+    }
+
+
     .close-btn {
       display: inline-block;
       cursor: pointer;

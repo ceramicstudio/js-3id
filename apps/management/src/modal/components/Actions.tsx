@@ -18,7 +18,7 @@ export default function Actions() {
 		return(
 			<div className={styles.actions}>
 				<PrimaryButton label="Continue" onClick={()=>resTrue(reqState)}/>
-				<SecondaryButton label="Cancel" onClick={()=>resFalse(reqState)}/>
+				<br />
 			</div>
 		)
 	} else if (reqState?.type === 'prompt_account') {

@@ -14,12 +14,14 @@ import type { BasicProfile } from '@datamodels/identity-profile-basic'
 const headerData = (did?: string) => {
   if (did !== undefined) {
     return (
-      <div className={styles.details}>
+      <div className={`${styles.details} ${styles.dark}`}>
         <code>{didShorten(`${did}`)}</code>
       </div>
     )
   } 
-  return(<></>)
+  return(
+    <div className={styles.details}></div>
+  )
 }
 
 const boringOrAvatar = (basicProfile?: BasicProfile, did?: string) =>  {
@@ -31,7 +33,7 @@ const boringOrAvatar = (basicProfile?: BasicProfile, did?: string) =>  {
       }}></div>
   ) : (
     <Avatar
-      size={65}
+      size={75}
       name={did || 'self.id-connect'}
       variant="marble"
       colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
@@ -47,11 +49,34 @@ export default function HeaderContainer() {
     void loadBasicProfile()
   }, [])
 
+  const imageHeaders  =
+  reqState?.type === 'prompt_authenticate' || reqState?.type === 'prompt_account'  ? (
+    <div className={styles['image-container']}>
+    <div
+      className={styles.appIcon}
+    >
+      {/* TODO */}
+      L
+    </div>
+    <div className={styles.avatar}>
+      {boringOrAvatar(basicProfile || undefined, reqState?.params.did )}
+    </div>
+  </div>
+  ) : (
+   <></>
+  )
+
+  const headerStyle = 
+    reqState?.type === 'prompt_authenticate' || reqState?.type === 'prompt_account'  ? {
+      height: 131 
+    } : { }
+
+
   // TODO migration, error headers, types
   return (
-    <div className={styles.head}>
+    <div className={styles.head} style={headerStyle}>
       <div className={styles['head-container']}>
-        {headerData(reqState?.params.did)}
+        {headerData(reqState?.params.did || reqState?.params.legacyDid)}
         <div
           className={styles['close-btn']}
           onClick={() => {
@@ -60,17 +85,7 @@ export default function HeaderContainer() {
           <img src={close} />
         </div>
       </div>
-      <div className={styles['image-container']}>
-        <div
-          className={styles.appIcon}
-        >
-          {/* TODO */}
-          L
-        </div>
-        <div className={styles.avatar}>
-          {boringOrAvatar(basicProfile || undefined, reqState?.params.did )}
-        </div>
-      </div>
+      {imageHeaders}
     </div>
   )
 }
