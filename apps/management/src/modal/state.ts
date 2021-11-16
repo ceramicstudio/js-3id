@@ -8,7 +8,6 @@ import { ThreeIDService } from '@3id/service'
 import { DIDDataStore } from '@glazed/did-datastore'
 import type { CeramicApi } from '@ceramicnetwork/common'
 import { UIProvider } from '@3id/ui-provider'
-import { ThreeIDManagerUI  } from '@3id/ui-provider'
 import { deferred } from '../utils'
 import type { Response } from '../types'
 
@@ -25,10 +24,10 @@ export type ServiceState = {
 
 export const serviceStateAtom = atom<ServiceState | null>(null)
 
-
 export const initAtom = atom(null, (get, set) => {
   const dataStore = createDIDDataStore()
   const provider = getUIProivder((update) => set(reqStateAtom, update))
+  // TESTING
   const update = {
     type: "prompt_account",
     params: {},

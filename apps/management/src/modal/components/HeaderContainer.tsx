@@ -5,72 +5,39 @@ import { useEffect } from 'react'
 import close from '../../../assets/close.svg'
 import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
+import { didShorten, ipfsToImg } from '../../utils'
+import type { BasicProfile } from '@datamodels/identity-profile-basic'
 
-// TODO cleanup
-const headerData = (type:string, did: string) => {
-  if (type === 'migration_skip') {
+// TODO
+// can show legacy did for migration 
+// can who CAIP10 for account request
+const headerData = (did?: string) => {
+  if (did !== undefined) {
     return (
       <div className={styles.details}>
-        <a href="https://ceramic.network" rel="noopener noreferrer" target="_blank">
-          What is this?
-        </a>
+        <code>{didShorten(`${did}`)}</code>
       </div>
     )
-  } else if (type === 'migration') {
-    return (
-      <div className={styles.details}>
-        <a
-          href="https://developers.ceramic.network/authentication/legacy/3id-connect-migration"
-          rel="noopener noreferrer"
-          target="_blank">
-          How migration works?
-        </a>
-      </div>
-    )
-  } else if (did !== undefined) {
-    return (
-      <div className={styles.details}>
-        {/* <code>{didShorten(`${did}`)}</code> */}
-        <code>{did}</code>
-      </div>
-    )
-  } else {
-    return (
-      <div className={styles.details}>
-        Powered by{' '}
-        <a href="https://self.id" rel="noopener noreferrer" target="_blank">
-          Self.id
-        </a>
-      </div>
-    )
-  }
+  } 
+  return(<></>)
 }
 
-const boringOrAvatar = (
-  <Avatar
-    size={75}
-    name={'self.id-connect'}
-    variant="marble"
-    colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-  />
-)
-
-const randomColor = Math.floor(Math.random() * 16777215).toString(16)
-
-// const boringOrAvatar = userData?.image ? (
-//   <div
-//     className="avatarImage"
-//     style={{
-//       backgroundImage: ipfsToImg(userData.image.original.src),
-//     }}></div>
-// ) : (
-//   <Avatar
-//     size={65}
-//     name={did || 'self.id-connect'}
-//     variant="marble"
-//     colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
-//   />
-// )
+const boringOrAvatar = (basicProfile?: BasicProfile, did?: string) =>  {
+    return basicProfile?.image ? (
+    <div
+      className="avatarImage"
+      style={{
+        backgroundImage: ipfsToImg(basicProfile?.image.original.src),
+      }}></div>
+  ) : (
+    <Avatar
+      size={65}
+      name={did || 'self.id-connect'}
+      variant="marble"
+      colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}
+    />
+  )
+}
   
 export default function HeaderContainer() {
   const [ basicProfile, loadBasicProfile ] = useDIDBasicProfile()
@@ -80,11 +47,11 @@ export default function HeaderContainer() {
     void loadBasicProfile()
   }, [])
 
-  // get request states as well
+  // TODO migration, error headers, types
   return (
     <div className={styles.head}>
       <div className={styles['head-container']}>
-        {headerData('auth_req', 'mydidsd')}
+        {headerData(reqState?.params.did)}
         <div
           className={styles['close-btn']}
           onClick={() => {
@@ -96,13 +63,12 @@ export default function HeaderContainer() {
       <div className={styles['image-container']}>
         <div
           className={styles.appIcon}
-          style={{
-            backgroundColor: randomColor,
-          }}>
+        >
+          {/* TODO */}
           L
         </div>
         <div className={styles.avatar}>
-          {boringOrAvatar}
+          {boringOrAvatar(basicProfile || undefined, reqState?.params.did )}
         </div>
       </div>
     </div>
