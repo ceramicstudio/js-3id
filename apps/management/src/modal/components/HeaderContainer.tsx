@@ -48,7 +48,7 @@ const headerData = (type:string, did: string) => {
 
 const boringOrAvatar = (
   <Avatar
-    size={65}
+    size={75}
     name={'self.id-connect'}
     variant="marble"
     colors={['#FF0092', '#FFCA1B', '#B6FF00', '#228DFF', '#BA01FF']}

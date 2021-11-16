@@ -49,13 +49,14 @@ $placeholder: #5d40fb;
   transition: ease 0.3s all;
   background-color: white;
   position: fixed;
+  color: #484364;
 
-  $width: 450px;
+  // $width: 450px;
 
   width: 25%;
 
-  min-width: ($width/2);
-  max-width: $width;
+  min-width: 325px;
+  max-width: 325px;
 
   top: 20vh;
 

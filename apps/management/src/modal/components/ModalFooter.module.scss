@@ -1,0 +1,24 @@
+$placeholder: #5d40fb;
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 18px 10px 0px;
+  text-align: right;
+  
+  .poweredBy {
+    font-size: 10px;
+    color: #aba7c3;
+
+    a {
+      color: #aba7c3;
+      text-decoration: none;
+      font-weight: 800;
+      color: #928bb6;
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+}

@@ -16,12 +16,12 @@ $placeholder: #5d40fb;
 
   color: white;
 
-  height: 125px;
+  height: 90px;
 
   align-items: center;
   justify-content: center;
 
-  padding: 5px 15px 5px;
+  padding: 30px 15px 5px;
 
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -46,11 +46,11 @@ $placeholder: #5d40fb;
   }
   .image-container {
     position: relative;
-    top: 60px;
+    top: 30px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    width: 100%;
+    width: 90%;
     justify-content: space-around;
     .avatar {
       svg,
@@ -64,15 +64,15 @@ $placeholder: #5d40fb;
       }
     }
     .appIcon {
-      $bkg: rgb(random(255), random(255), random(255));
+      $bkg: #f17b73;
       background-color: $bkg;
-      color: set-text-color(($bkg));
-      height: 65px;
-      width: 65px;
+      color: #484364;
+      height: 75px;
+      width: 75px;
       border: 3px solid white;
       border-radius: 5px;
-      font-size: 20px;
-      font-weight: 500;
+      font-size: 24px;
+      font-weight: 600;
       margin-bottom: 5px;
 
       display: flex;
@@ -90,11 +90,18 @@ $placeholder: #5d40fb;
     justify-content: space-between;
 
     width: 100%;
-    
+    padding-top: 26px;
+
     .details {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
-      margin-top: 15px;
+      padding: 7px 30px;
+      background-color: #5137db;
+      border-radius: 8px;
+      width: 60%;
+      color: #c9c1f2;
+
+
       a {
         border-bottom: 1px solid white;
         padding-bottom: 3px;
@@ -108,7 +115,12 @@ $placeholder: #5d40fb;
     .close-btn {
       display: inline-block;
       cursor: pointer;
-      margin-top: 15px;
+      opacity: 30%;
+      padding-top: 7px;
+      &:hover {
+        cursor: pointer;
+      opacity: 60%;
+      }
     }
   }
 }
