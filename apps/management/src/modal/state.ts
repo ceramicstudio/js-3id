@@ -35,36 +35,42 @@ export const initAtom = atom(null, (get, set) => {
       origin: undefined,
       paths: []
     },
-    respond: deferred<Response>()
+    respond: deferred<Response>(),
+    status: 'active'
   }
   // TODO, need CAIP or move close button
   // const update = {
   //   type: "prompt_account",
   //   params: {
   //   },
-  //   respond: deferred<Response>()
+  //   respond: deferred<Response>(),
+  //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration",
   //   params: {
   //     legacyDid: 'did:3id:jmz1...23nqr',
   //   },
-  //   respond: deferred<Response>()
+   //   respond: deferred<Response>(),
+  //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_skip",
   //   params: {},
-  //   respond: deferred<Response>()
+   //   respond: deferred<Response>(),
+  //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_fail",
   //   params: {},
-  //   respond: deferred<Response>()
+   //   respond: deferred<Response>(),
+  //   status: 'active'
   // }
   // const update = {
   //   type: "inform_error",
   //   params: {},
-  //   respond: deferred<Response>()
+   //   respond: deferred<Response>(),
+  //   status: 'active'
   // }
 
   //@ts-ignore

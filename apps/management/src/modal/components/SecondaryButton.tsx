@@ -1,12 +1,5 @@
 import styles from './SecondaryButton.module.scss'
-
-// TODO MOVE 
-type ButtonProps = {
-  label: string
-  loading?: boolean
-  onClick?: (this: any, e: any) => void
-  href?: string
-}
+import type { ButtonProps } from '../../types'
 
 export default function SecondaryButton(props: ButtonProps) {
 

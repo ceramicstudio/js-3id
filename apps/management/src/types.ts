@@ -36,6 +36,13 @@ export type RequestState<K extends UIMethodName = UIMethodName> = {
   type: K
   params:UIRequest<K>['params'],
   respond: Deferred<Response>
+  status: 'active' | 'pending'
 }
 
+export type ButtonProps = {
+  label: string
+  onClick?: (this: any, e: any) => void
+  status?: 'active' | 'pending',
+  href?: string
+}
 

@@ -1,32 +1,14 @@
 import styles from './PrimaryButton.module.scss'
+import type { ButtonProps } from '../../types'
 
-type ButtonProps = {
-  label: string
-  loading?: boolean
-  onClick: (this: any, e: any) => void
-}
-
-// TODO add button loading state 
-// <button
+// TODO button 
 // disabled={isLoading === true ? true : false}
-// className={`btn ${localStore.class || 'primary'}`}
-// onClick={() => {
-//   store.set({
-//     loading: true,
-//   })
-//   setLoading(true)
-//   {
-//     localStore.click ? localStore.click() : btnFunction()
-//   }
-//   // btnFunction()
-// }}>
-// {isLoading === true ? <div className="loader"></div> : ''} {body}
-// </button>
 
 export default function PrimaryButton(props: ButtonProps) {
   return (
-    <div className={styles.btn} onClick={props.onClick}>
-      {props.label}
+    <div className={styles.btn} onClick={props.onClick} >
+      {props.status === 'pending' ? 'Loading' : props.label} 
+      {props.status === 'pending' ? <div className={styles.loader}></div> : ''} 
     </div>
   )
 }
