@@ -28,15 +28,15 @@ export const initAtom = atom(null, (get, set) => {
   const dataStore = createDIDDataStore()
   const provider = getUIProivder((update) => set(reqStateAtom, update))
   // TESTING
-  // const update = {
-  //   type: "prompt_authenticate",
-  //   params: {
-  //     did: 'did:3:jmz1...23nqr',
-  //     origin: undefined,
-  //     paths: []
-  //   },
-  //   respond: deferred<Response>()
-  // }
+  const update = {
+    type: "prompt_authenticate",
+    params: {
+      did: 'did:3:jmz1...23nqr',
+      origin: undefined,
+      paths: []
+    },
+    respond: deferred<Response>()
+  }
   // TODO, need CAIP or move close button
   // const update = {
   //   type: "prompt_account",
@@ -44,13 +44,13 @@ export const initAtom = atom(null, (get, set) => {
   //   },
   //   respond: deferred<Response>()
   // }
-  const update = {
-    type: "prompt_migration",
-    params: {
-      legacyDid: 'did:3id:jmz1...23nqr',
-    },
-    respond: deferred<Response>()
-  }
+  // const update = {
+  //   type: "prompt_migration",
+  //   params: {
+  //     legacyDid: 'did:3id:jmz1...23nqr',
+  //   },
+  //   respond: deferred<Response>()
+  // }
   // const update = {
   //   type: "prompt_migration_skip",
   //   params: {},
