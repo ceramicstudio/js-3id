@@ -33,7 +33,8 @@ export const initAtom = atom(null, (get, set) => {
     params: {
       did: 'did:3:jmz1...23nqr',
       origin: undefined,
-      paths: []
+      paths: [],
+      caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
     },
     respond: deferred<Response>(),
     status: 'active'
@@ -42,6 +43,7 @@ export const initAtom = atom(null, (get, set) => {
   // const update = {
   //   type: "prompt_account",
   //   params: {
+  //     caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
   //   },
   //   respond: deferred<Response>(),
   //   status: 'active'
@@ -50,25 +52,29 @@ export const initAtom = atom(null, (get, set) => {
   //   type: "prompt_migration",
   //   params: {
   //     legacyDid: 'did:3id:jmz1...23nqr',
+  //     caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
   //   },
   //    respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_skip",
-  //   params: {},
-  //    respond: deferred<Response>(),
+  //   params: {
+  //     caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
+  //   },
+  //   respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_fail",
-  //   params: {},
+  //    params: {
+  //     caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
+  //   },
   //    respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "inform_error",
-  //   params: {},
   //    respond: deferred<Response>(),
   //   status: 'active'
   // }

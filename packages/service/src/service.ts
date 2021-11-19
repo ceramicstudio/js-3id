@@ -98,7 +98,7 @@ export class ThreeIDService {
 
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
-      const createNew = (await this.uiManager.promptAccount()).createNew
+      const createNew = (await this.uiManager.promptAccount({ caip10: accountId })).createNew
       if (!createNew) {
         await this.manageApp.display(accountId)
       }
@@ -106,10 +106,10 @@ export class ThreeIDService {
 
     if (DID_MIGRATION && newAccount) {
       if (willFail || muportDid) {
-        await this.uiManager.promptMigrationSkip()
+        await this.uiManager.promptMigrationSkip({ caip10: accountId })
       }
       if (legacyDid) {
-        await this.uiManager.promptMigration({ legacyDid })
+        await this.uiManager.promptMigration({ legacyDid, caip10: accountId })
       }
     }
 
@@ -120,7 +120,7 @@ export class ThreeIDService {
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch (e) {
       if (legacyDid) {
-        await this.uiManager.promptMigrationFail()
+        await this.uiManager.promptMigrationFail({ caip10: accountId })
         // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {

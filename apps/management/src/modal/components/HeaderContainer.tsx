@@ -5,17 +5,31 @@ import { useEffect } from 'react'
 import close from '../../../assets/close.svg'
 import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
-import { didShorten, ipfsToImg } from '../../utils'
+import { didShorten, ipfsToImg, formatCAIP10 } from '../../utils'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
+import { RequestState } from '../../types'
 
-// TODO
-// can show legacy did for migration 
-// can who CAIP10 for account request
-const headerData = (did?: string) => {
-  if (did !== undefined) {
+const headerData = (req: RequestState) => {
+  if (!req) {
+    return(
+      <div className={styles.details}></div>
+    )
+  }
+
+  let headerStr
+  if (req.type === 'prompt_authenticate') {
+    headerStr = didShorten(req.params.did)
+  } else if (req.type === 'prompt_migration') {
+    headerStr = didShorten(req.params.legacyDid)
+  } else if (req.type === 'prompt_migration_fail' || req.type === 'prompt_migration_skip') {
+    console.log(req.params.caip10)
+    headerStr = formatCAIP10(req.params.caip10)
+  }
+
+  if (headerStr !== undefined) {
     return (
       <div className={`${styles.details} ${styles.dark}`}>
-        <code>{didShorten(`${did}`)}</code>
+        <code>{headerStr}</code>
       </div>
     )
   } 
@@ -76,7 +90,7 @@ export default function HeaderContainer() {
   return (
     <div className={styles.head} style={headerStyle}>
       <div className={styles['head-container']}>
-        {headerData(reqState?.params.did || reqState?.params.legacyDid)}
+        {headerData(reqState)}
         <div
           className={styles['close-btn']}
           onClick={() => {

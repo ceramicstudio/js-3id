@@ -1,4 +1,5 @@
 import * as hexToRgb from 'hex-to-rgb'
+import { AccountID } from 'caip'
 
 /** @internal */
 export type Deferred<T> = Promise<T> & {
@@ -20,6 +21,11 @@ export const hexToRGBA = (hex: string, opacity?: number | null): string =>
 
 export const didShorten = (did: string): string =>
   `${did.substring(0, 10)}...${did.substring(did.length - 5, did.length)}`
+
+export function formatCAIP10 (caip: string): string {
+  const account =  new AccountID(caip)
+  return `${account.address.slice(0, 8)}…${account.address.slice(-8)}`
+}
 
 export const ipfsToImg = (url: string) => {
   let formattedUrl = url.split('ipfs://')[1]

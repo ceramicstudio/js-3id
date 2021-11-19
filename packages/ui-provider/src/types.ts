@@ -9,6 +9,15 @@ import type {
 
 export type MigrationParams = {
   legacyDid: string
+  caip10: string
+}
+
+export type MigrationFailParams = {
+  caip10: string
+}
+
+export type AccountParams = {
+  caip10: string
 }
 
 export type MigrationRes = {
@@ -39,9 +48,9 @@ export type AuthRes = {
 
 export type UIProviderMethods = {
   prompt_migration: { params: MigrationParams; result: MigrationRes }
-  prompt_migration_skip: { params: {}; result: MigrationSkipRes }
-  prompt_migration_fail: { params: {}; result: MigrationFailRes }
-  prompt_account: { params: {}; result: AccountRes }
+  prompt_migration_skip: { params: MigrationFailParams; result: MigrationSkipRes }
+  prompt_migration_fail: { params: MigrationFailParams; result: MigrationFailRes }
+  prompt_account: { params: AccountParams; result: AccountRes }
   prompt_authenticate: { params: AuthParams; result: AuthRes }
   inform_error: { params: RPCErrorObject; result: null }
   inform_close: { params: {}; result: null }
