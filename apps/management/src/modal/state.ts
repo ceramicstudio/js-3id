@@ -51,25 +51,25 @@ export const initAtom = atom(null, (get, set) => {
   //   params: {
   //     legacyDid: 'did:3id:jmz1...23nqr',
   //   },
-   //   respond: deferred<Response>(),
+  //    respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_skip",
   //   params: {},
-   //   respond: deferred<Response>(),
+  //    respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "prompt_migration_fail",
   //   params: {},
-   //   respond: deferred<Response>(),
+  //    respond: deferred<Response>(),
   //   status: 'active'
   // }
   // const update = {
   //   type: "inform_error",
   //   params: {},
-   //   respond: deferred<Response>(),
+  //    respond: deferred<Response>(),
   //   status: 'active'
   // }
 

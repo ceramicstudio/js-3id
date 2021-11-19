@@ -38,7 +38,6 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
           <div>
             Your 3Box DID <span className={styles.origin} >{didShorten(request.params?.legacyDid)}</span> will be migrated.
           </div>
-          <br />
         </>
       )
     },
@@ -48,7 +47,6 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
           <div>
             You have a 3Box account we are unable to migrate, continue with a new account?
           </div>
-          <br />
         </>
       )
     },
@@ -58,7 +56,6 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
           <div>
             Your 3Box DID could not be migrated, continue with a new account? 
           </div>
-          <br />
         </>
       )
     },
@@ -79,7 +76,7 @@ export default function Request() {
   const [reqState, ] = useAtom(reqStateAtom)
 
   return(
-    <div >
+    <div className={styles.textWrap}>
       { reqState?.type ? 
         // @ts-ignore
         requestPrompt[reqState.type](reqState) 
