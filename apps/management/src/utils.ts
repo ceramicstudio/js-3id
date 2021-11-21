@@ -38,6 +38,11 @@ export const urlToHost = (url: string) => {
   return parsed.hostname
 }
 
+export const urlToIcon = (url: string) => {
+  const host = urlToHost(url)
+  return host.slice(0,1).toUpperCase()
+}
+
 /**
  * @param color MUST be a Hex Color
  * returns an int between 0 and 255.

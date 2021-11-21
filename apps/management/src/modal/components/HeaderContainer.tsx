@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import close from '../../../assets/close.svg'
 import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
-import { didShorten, ipfsToImg, formatCAIP10 } from '../../utils'
+import { didShorten, ipfsToImg, formatCAIP10, urlToIcon } from '../../utils'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import { RequestState } from '../../types'
 
@@ -69,8 +69,7 @@ export default function HeaderContainer() {
     <div
       className={styles.appIcon}
     >
-      {/* TODO */}
-      L
+      {urlToIcon(document.referrer)}
     </div>
     <div className={styles.avatar}>
       {boringOrAvatar(basicProfile || undefined, reqState?.params.did )}
