@@ -13,7 +13,7 @@ export const BASE_IFRAME_DEV_URL = 'https://app-dev.3idconnect.org'
 export const BASE_IFRAME_CLAY_URL = 'https://app-clay.3idconnect.org'
 export const BASE_IFRAME_MAIN_URL = 'https://app.3idconnect.org'
 export const BASE_IFRAME_LOCAL_URL = `http://localhost:30001`
-export const DEFAULT_IFRAME_MANAGE_PATH = `/management/index.html`
+export const DEFAULT_IFRAME_MANAGE_PATH = `/management`
 
 export const CERAMIC_NETWORK_API: Record<Network, string> = {
   'dev-unstable': DEV_API_URL,

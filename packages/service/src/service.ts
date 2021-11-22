@@ -104,13 +104,8 @@ export class ThreeIDService {
       }
     }
 
-    if (DID_MIGRATION && newAccount) {
-      if (willFail || muportDid) {
-        await this.uiManager.promptMigrationSkip({ caip10: accountId })
-      }
-      if (legacyDid) {
-        await this.uiManager.promptMigration({ legacyDid, caip10: accountId })
-      }
+    if (DID_MIGRATION && newAccount && legacyDid && !willFail) {
+      await this.uiManager.promptMigration({ legacyDid, caip10: accountId })
     }
 
     let did: string

@@ -5,7 +5,6 @@ import Request from './Request'
 import Actions from './Actions'
 import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
-import { testUIReq } from '../uiProvider'
 import { useCallback } from 'react'
 
 export default function ModalContent() {

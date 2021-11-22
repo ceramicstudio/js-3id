@@ -18,11 +18,13 @@ const headerData = (req: RequestState) => {
 
   let headerStr
   if (req.type === 'prompt_authenticate') {
+    // @ts-ignore
     headerStr = didShorten(req.params.did)
   } else if (req.type === 'prompt_migration') {
+     // @ts-ignore
     headerStr = didShorten(req.params.legacyDid)
   } else if (req.type === 'prompt_migration_fail' || req.type === 'prompt_migration_skip') {
-    console.log(req.params.caip10)
+     // @ts-ignore
     headerStr = formatCAIP10(req.params.caip10)
   }
 
@@ -72,7 +74,10 @@ export default function HeaderContainer() {
       {urlToIcon(document.referrer)}
     </div>
     <div className={styles.avatar}>
-      {boringOrAvatar(basicProfile || undefined, reqState?.params.did )}
+      {
+        // @ts-ignore
+        boringOrAvatar(basicProfile || undefined, reqState?.params.did  )
+      }
     </div>
   </div>
   ) : (
@@ -89,7 +94,7 @@ export default function HeaderContainer() {
   return (
     <div className={styles.head} style={headerStyle}>
       <div className={styles['head-container']}>
-        {headerData(reqState)}
+        {reqState ? headerData(reqState) : null}
         <div
           className={styles['close-btn']}
           onClick={() => {

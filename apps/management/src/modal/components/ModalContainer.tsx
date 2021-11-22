@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ThreeIDManagerUI, } from '@3id/ui-provider'
 import {initAtom } from '../state'
 import { useAtom } from 'jotai'
+// @ts-ignore
 import * as hexToRgb from 'hex-to-rgb'
   
 // TODO MOVE

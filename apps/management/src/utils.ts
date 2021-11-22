@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as hexToRgb from 'hex-to-rgb'
 import { AccountID } from 'caip'
 

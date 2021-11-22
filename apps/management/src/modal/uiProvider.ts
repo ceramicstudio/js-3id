@@ -75,17 +75,3 @@ export function getUIProivder(setRequestState: (update: SetStateAction<RequestSt
 
     return new UIProvider(UIMethods)
 }
-
-export function testUIReq(uiProvider: UIProvider, request: UIMethodName) {
-  const uiManager = new ThreeIDManagerUI(uiProvider)
-  uiManager.promptMigrationFail()
-  // switch (request) {
-  //   case 'prompt_account':
-  //     // uiManager.promptAccount()
-  //     uiManager.promptMigrationFail()
-  //     console.log('yo')
-  //     break;
-  //   default:
-  //     console.log('no matching request')
-  // }
-}
