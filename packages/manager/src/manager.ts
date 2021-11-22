@@ -165,7 +165,9 @@ export class Manager {
     })
     const didInstance = new DID({ provider: didProvider, resolver: resolver })
     await didInstance.authenticate()
+    // TODO should be same instance
     await this.ceramic.setDID(didInstance)
+    await this.dataStore.ceramic.setDID(didInstance)
 
     return this.threeIdProviders[did]
   }
