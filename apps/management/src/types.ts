@@ -44,5 +44,6 @@ export type ButtonProps = {
   onClick?: (this: any, e: any) => void
   status?: 'active' | 'pending',
   href?: string
+  loadingLabel?: string
 }
 

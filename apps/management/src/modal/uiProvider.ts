@@ -39,7 +39,6 @@ export function getUIProivder(setRequestState: (update: SetStateAction<RequestSt
       prompt_migration_fail: async (ctx, params: {}): Promise<MigrationFailRes> => {
         await iframeDisplay.display(undefined, '100%', '100%')
         const respond = deferred<Response>()
-        console.log('fail')
         setRequestState({type: 'prompt_migration_fail', params, respond, status  })
         const res = await respond
         if (res.error) throw new RPCError(4100, 'cancellation')

@@ -6,7 +6,7 @@ $placeholder: #5d40fb;
 
   border: none;
 
-  padding: 13px 0px;
+  padding: 17px 0px;
   border-radius: 10px;
   margin-bottom: 3px;
   width: 100%;
@@ -37,8 +37,8 @@ $placeholder: #5d40fb;
 
 .loader {
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
+  width: 8px;
+  height: 8px;
   vertical-align: text-bottom;
   border: 0.25em solid currentColor;
   border-right-color: transparent;
@@ -46,7 +46,8 @@ $placeholder: #5d40fb;
   -webkit-animation: spin 1s linear infinite;
   -moz-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
-  margin-right: 10px;
+  margin-left: 10px;
+  opacity: 70%;
 }
 @-moz-keyframes spin {
   100% {

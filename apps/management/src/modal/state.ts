@@ -39,14 +39,14 @@ export const initAtom = atom(null, (get, set) => {
   //   status: 'active'
   // }
   // TODO, need CAIP or move close button
-  // const update = {
-  //   type: "prompt_account",
-  //   params: {
-  //     caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
-  //   },
-  //   respond: deferred<Response>(),
-  //   status: 'active'
-  // }
+  const update = {
+    type: "prompt_account",
+    params: {
+      caip10: '0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1'
+    },
+    respond: deferred<Response>(),
+    status: 'active'
+  }
   // const update = {
   //   type: "prompt_migration",
   //   params: {
@@ -79,7 +79,7 @@ export const initAtom = atom(null, (get, set) => {
   // }
 
   //@ts-ignore
-  // set(reqStateAtom, update)
+  set(reqStateAtom, update)
   const threeidService = create3IDService(provider, dataStore)
   set(serviceStateAtom, { threeidService, dataStore, ceramic: dataStore.ceramic, provider})
   // // Testing 
