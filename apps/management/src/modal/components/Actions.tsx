@@ -46,10 +46,17 @@ export default function Actions() {
 		return(
 			<div className={styles.actions}>
 				<PrimaryButton label="Link existing account" onClick={clickFalse} status={reqState.status} loadingLabel="Sign messages in your wallet"/>
-				<SecondaryButton label="Create new account" onClick={() => clickTrue(reqState)} status={reqState.status} loadingLabel=" "/>
+				<SecondaryButton label="Create new account" onClick={clickTrue} status={reqState.status} loadingLabel=" "/>
 			</div>
 		)
-	} else {
+  } else if (reqState?.type === 'inform_error') {
+		return(
+			<div className={styles.actions}>
+				<PrimaryButton label='Close' onClick={() => reqState.respond.resolve({error: 'cancellation'})} status={reqState.status}/>
+				<br/>
+			</div>
+		)
+  } else {
 		return (<></>)
 	}
 }

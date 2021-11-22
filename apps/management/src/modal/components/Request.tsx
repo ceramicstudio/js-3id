@@ -37,39 +37,30 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
     },
     'prompt_migration': (request) => {
       return (
-        <>
-          <div>
-            Your 3Box DID <span className={styles.origin} >{didShorten(request.params?.legacyDid)}</span> will be migrated.
-          </div>
-        </>
+        <div>
+          Your 3Box DID <span className={styles.origin} >{didShorten(request.params?.legacyDid)}</span> will be migrated.
+        </div>
       )
     },
     'prompt_migration_fail': (request) => {
       return (
-        <>
-          <div>
-            You have a 3Box account we are unable to migrate, continue with a new account?
-          </div>
-        </>
+        <div>
+          You have a 3Box account we are unable to migrate, continue with a new account?
+        </div>
       )
     },
     'prompt_migration_skip': (request) => {
       return (
-        <>
-          <div>
-            Your 3Box DID could not be migrated, continue with a new account? 
-          </div>
-        </>
+        <div>
+          Your 3Box DID could not be migrated, continue with a new account? 
+        </div>
       )
     },
     'inform_error': (request) => {
       return (
-        <>
-          <div>
-           Oops, looks like there was a problem signing in. Close window and try again.
-          </div>
-          <br />
-        </>
+        <div>
+          Oops, looks like there was a problem signing in. Close window and try again.
+        </div>
       )
     },
     'inform_close': (request) => (<></>)

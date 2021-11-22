@@ -60,10 +60,11 @@ export function getUIProivder(setRequestState: (update: SetStateAction<RequestSt
         if (res.error) throw new RPCError(4100, 'cancellation')
         return { allow: res.result }
       },
-      inform_error: (ctx, params: RPCErrorObject) => {
+      inform_error: async (ctx, params: RPCErrorObject) => {
         const respond = deferred<Response>()
         setRequestState({type: 'inform_error', params, respond, status  })
-        // response may be to close window
+        const res = await respond
+        if (res.error && iframeDisplay) iframeDisplay.hide()
         return null
       },
       inform_close: (ctx, params) => {
