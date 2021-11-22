@@ -45,8 +45,8 @@ export default function Actions() {
 	} else if (reqState?.type === 'prompt_account') {
 		return(
 			<div className={styles.actions}>
-				<PrimaryButton label="Connect to existing ID" onClick={clickTrue} status={reqState.status}/>
-				<SecondaryButton label="Create a new ID" onClick={()=>resFalse(reqState)} status={reqState.status}/>
+				<PrimaryButton label="Link existing account" onClick={()=>resFalse(reqState)} status={reqState.status}/>
+				<SecondaryButton label="Create new account" onClick={clickTrue} status={reqState.status}/>
 			</div>
 		)
 	} else {

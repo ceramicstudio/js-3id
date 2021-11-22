@@ -76,7 +76,14 @@ export class ThreeIDService {
 
     //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
 
-    let legacyDid = await legacyDidPromise
+    let legacyDid
+
+    try {
+      legacyDid = await legacyDidPromise
+    } catch(e) {
+      legacyDid = null
+    }
+
     let muportDid
 
     if (legacyDid) {

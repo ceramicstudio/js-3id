@@ -2,7 +2,7 @@ import { reqStateAtom, serviceStateAtom } from '../state'
 import { useAtom } from 'jotai'
 import type { RequestState } from '../../types'
 import type { UIMethodName  } from '@3id/ui-provider'
-import { didShorten, urlToHost } from '../../utils'
+import { didShorten, urlToHost, formatCAIP10 } from '../../utils'
 import styles from './Request.module.scss'
 
 const migrationInfoLink = "https://developers.ceramic.network/authentication/legacy/3id-connect-migration"
@@ -26,8 +26,11 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
         <>
           <div>
             <br />
-            <span className={styles.origin} >{urlToHost(document.referrer)}</span> is requesting permission
-            to interact with your decentralized ID. Connect your wallet.
+            <span className={styles.origin} >{urlToHost(document.referrer)}</span> uses Ceramic for data storage. 
+            Your address  <span className={styles.origin} >{
+              // @ts-ignore
+              formatCAIP10(request.params.caip10)
+            }</span> doesn't have a Ceramic account. To get started, create a new account or link your address to an existing account. 
           </div>
         </>
       )
@@ -63,7 +66,7 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
       return (
         <>
           <div>
-            An error has occurred while authenticating, unable to connect.
+           Oops, looks like there was a problem signing in. Close window and try again.
           </div>
           <br />
         </>

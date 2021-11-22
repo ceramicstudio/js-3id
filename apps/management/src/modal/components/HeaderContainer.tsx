@@ -23,7 +23,7 @@ const headerData = (req: RequestState) => {
   } else if (req.type === 'prompt_migration') {
      // @ts-ignore
     headerStr = didShorten(req.params.legacyDid)
-  } else if (req.type === 'prompt_migration_fail' || req.type === 'prompt_migration_skip') {
+  } else if (req.type === 'prompt_account' || req.type === 'prompt_migration_fail' || req.type === 'prompt_migration_skip') {
      // @ts-ignore
     headerStr = formatCAIP10(req.params.caip10)
   }
