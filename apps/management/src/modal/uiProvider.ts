@@ -8,7 +8,7 @@ import { deferred } from '../utils'
 import type { SetStateAction } from 'jotai'
 import type { RequestState, Response } from '../types'
 
-export function getUIProivder(setRequestState: (update: SetStateAction<RequestState | null>) => void) {
+export function getUIProvider(setRequestState: (update: SetStateAction<RequestState | null>) => void) {
 
     // TODO move
     let iframeDisplay: DisplayConnectClientRPC

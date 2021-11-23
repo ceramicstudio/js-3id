@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import type { RequestState } from '../types'
 import { create3IDService, createDIDDataStore } from './services'
-import { getUIProivder} from './uiProvider'
+import { getUIProvider} from './uiProvider'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import { ThreeIDService } from '@3id/service'
 import { DIDDataStore } from '@glazed/did-datastore'
@@ -25,7 +25,7 @@ export const serviceStateAtom = atom<ServiceState | null>(null)
 
 export const initAtom = atom(null, (get, set) => {
   const dataStore = createDIDDataStore()
-  const provider = getUIProivder((update) => set(reqStateAtom, update))
+  const provider = getUIProvider((update) => set(reqStateAtom, update))
   // TESTING
   // const update = {
   //   type: "prompt_authenticate",

@@ -42,7 +42,7 @@ export class Manager {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
-    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: new CeramicClient(CERAMIC_API), model: idxModel })
+    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), model: idxModel })
     this.ceramic = opts.ceramic || this.dataStore.ceramic
     this.threeIdProviders = {}
   }
