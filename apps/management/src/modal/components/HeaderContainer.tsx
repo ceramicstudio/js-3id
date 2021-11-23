@@ -59,7 +59,7 @@ const boringOrAvatar = (basicProfile?: BasicProfile, did?: string) =>  {
   
 export default function HeaderContainer() {
   const [ basicProfile, loadBasicProfile ] = useDIDBasicProfile()
-  const [reqState, ] = useAtom(reqStateAtom)
+  const [reqState] = useAtom(reqStateAtom)
 
   useEffect(() => {
     void loadBasicProfile()
@@ -76,13 +76,11 @@ export default function HeaderContainer() {
     <div className={styles.avatar}>
       {
         // @ts-ignore
-        boringOrAvatar(basicProfile || undefined, reqState?.params.did  )
+        boringOrAvatar(basicProfile, reqState?.params.did  )
       }
     </div>
   </div>
-  ) : (
-   <></>
-  )
+  ) : null
 
   const headerStyle = 
     reqState?.type === 'prompt_authenticate' || reqState?.type === 'prompt_account'  ? {

@@ -10,7 +10,7 @@ const migrationFailLink = "https://developers.ceramic.network/authentication/3id
 export default function Actions() {
   const [reqState, setReqState] = useAtom(reqStateAtom)
 
-  if (!reqState) return (<></>)
+  if (!reqState) return null
 
   const clickTrue = () => {
     setReqState(Object.assign({}, reqState, {status: 'pending'}))
@@ -57,7 +57,7 @@ export default function Actions() {
 			</div>
 		)
   } else {
-		return (<></>)
+		return null
 	}
 }
 

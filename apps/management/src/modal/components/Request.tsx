@@ -5,9 +5,7 @@ import type { UIMethodName  } from '@3id/ui-provider'
 import { didShorten, urlToHost, formatCAIP10 } from '../../utils'
 import styles from './Request.module.scss'
 
-const migrationInfoLink = "https://developers.ceramic.network/authentication/legacy/3id-connect-migration"
-
-const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.Element } = {
+const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.Element | null } = {
     'prompt_authenticate': (request) => {
         return (
             <>
@@ -16,7 +14,7 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
                 <span className={styles.origin}>
                   {urlToHost(document.referrer)}
                 </span>{' '}
-                is requesting permission to connect to your decentralized identity.
+                is requesting to read and store data in your Ceramic account.
               </div>
             </>
           )
@@ -63,11 +61,11 @@ const requestPrompt: { [K in UIMethodName]: (request: RequestState<K>) => JSX.El
         </div>
       )
     },
-    'inform_close': (request) => (<></>)
+    'inform_close': (request) => null
 } 
 
 export default function Request() {
-  const [reqState, ] = useAtom(reqStateAtom)
+  const [reqState ] = useAtom(reqStateAtom)
 
   return(
     <div className={styles.textWrap}>
