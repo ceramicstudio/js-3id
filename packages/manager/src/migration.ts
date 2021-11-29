@@ -150,11 +150,14 @@ export const legacyDIDLinkExist = async (accountId: string): Promise<string | nu
     const { did } = res.data
     return did
   } catch (err) {
-    console.log(
-      'Note: 404 Error is expected behavior, and indicates the user does not have a legacy 3Box profile.'
-    )
-    if (errorNotFound(err)) return null
-    throw new Error(`Error while resolve V03ID`)
+    if (errorNotFound(err)) {
+      console.log(
+        'Note: 404 Error is expected behavior, and indicates the user does not have a legacy 3Box profile.'
+      )
+      return null
+    }
+    console.error(`Error while resolving V03ID`)
+    return null
   }
 }
 

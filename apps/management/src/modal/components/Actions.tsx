@@ -45,7 +45,7 @@ export default function Actions() {
 	} else if (reqState?.type === 'prompt_account') {
 		return(
 			<div className={styles.actions}>
-				<PrimaryButton label="Link existing account" onClick={clickFalse} status={reqState.status} loadingLabel="Sign messages in your wallet"/>
+				<PrimaryButton label="Link existing account" onClick={clickFalse} status={reqState.status} loadingLabel="Sign two messages in your wallet"/>
 				<SecondaryButton label="Create new account" onClick={clickTrue} status={reqState.status} loadingLabel=" "/>
 			</div>
 		)
