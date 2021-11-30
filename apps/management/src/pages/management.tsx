@@ -8,7 +8,7 @@ const IdentitySelect = dynamic(() => import('../client/components/LoadIdentitySe
 
 export default function Home() {
   return (
-    <Box>
+    <Box background={{color: 'white'}} height={{min: '100vh'}}>
       <Box alignSelf="center" margin="large" width="large">
         <IdentitySelect />
       </Box>

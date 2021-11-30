@@ -38,7 +38,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: white;
+    background-color: rgba(37, 41, 46, 0.5);
     font-family: Segment, sans-serif;
     height: 100vh;
   }
