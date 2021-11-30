@@ -1,0 +1,131 @@
+$placeholder: #5d40fb;
+
+@function set-text-color($color) {
+  @if (lightness($color) > 45) {
+    @return #333; // Lighter color, return black
+  } @else {
+    @return #e4e4e4; // Darker color, return white
+  }
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+
+  background-color: $placeholder;
+
+  color: white;
+
+  // height: 95px;
+
+  // align-items: center;
+  // justify-content: center;
+
+  padding: 0px 15px 0px 15px;
+
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .did {
+    background-color: darken($placeholder, 10%);
+  }
+
+  .logo-container {
+    display: block;
+    text-align: center;
+    width: 100%;
+    .logo {
+      display: block;
+      width: 100%;
+    }
+  }
+  .image-container {
+    position: relative;
+    top: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    justify-content: center;
+    .avatar {
+      svg,
+      img {
+        border: 4px solid white;
+        border-radius: 50px;
+      }
+      img {
+        height: 75px;
+        width: 75px;
+      }
+    }
+    .appIcon {
+      $bkg: #f17b73;
+      background-color: $bkg;
+      color: #484364;
+      height: 75px;
+      width: 75px;
+      border: 4px solid white;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      margin-right: 40px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .avatar {
+    margin-bottom: 20px;
+  }
+  .head-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 12px 0px 25px 0px;
+
+    .details {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 30px;
+      border-radius: 8px;
+      width: 60%;
+      color: #c9c1f2;
+
+      a {
+        border-bottom: 1px solid white;
+        padding-bottom: 3px;
+        transition: ease padding-bottom 0.3s;
+        &:hover {
+          padding-bottom: 5px;
+          transition: ease padding-bottom 0.3s;
+        }
+      }
+    }
+
+    .dark {
+      background-color: #5137db;
+    }
+
+
+    .close-btn {
+      display: inline-block;
+      cursor: pointer;
+      opacity: 30%;
+      padding-top: 7px;
+      &:hover {
+        cursor: pointer;
+      opacity: 60%;
+      }
+    }
+  }
+}

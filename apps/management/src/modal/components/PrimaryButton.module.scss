@@ -1,0 +1,67 @@
+$placeholder: #5d40fb;
+
+.btn {
+  display: block;
+  text-align: center;
+
+  border: none;
+
+  padding: 17px 0px;
+  border-radius: 10px;
+  margin-bottom: 3px;
+  width: 100%;
+
+  background-color: $placeholder;
+  color: white;
+
+  cursor: pointer;
+
+  transition: ease background-color 0.3s;
+
+  &.secondary {
+    background-color: transparent;
+    color: #333;
+    border: none;
+    &:hover {
+      background-color: transparent;
+    }
+  }
+  &:hover {
+    transition: ease background-color 0.3s;
+    background-color: darken($placeholder, 5%);
+  }
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.loader {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+  opacity: 70%;
+}
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,35 @@
+.body {
+  height: 100%;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  // min-height: 300px;
+
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+
+  font-size: 13px;
+  .inner {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    align-items: stretch;
+    justify-content: space-around;
+
+    padding: 15px 15px 5px 15px;
+
+    width: 80%;
+    height: 100%;
+    margin: 22px auto 0px auto;
+    text-align: center;
+
+    .images {
+      color: black;
+    }
+  }
+}

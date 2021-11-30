@@ -1,21 +1,17 @@
 import type { Manager } from '@3id/manager'
-import { IDX } from '@ceramicstudio/idx'
-import type { BasicProfile, ImageMetadata, ImageSources } from '@ceramicstudio/idx-constants'
+import { DIDDataStore } from '@glazed/did-datastore'
+import type { BasicProfile, ImageMetadata, ImageSources }  from '@datamodels/identity-profile-basic'
 import { AccountID } from 'caip'
-
 import { IPFS_PREFIX, IPFS_URL } from '../constants'
 import type { DIDsData } from '../types'
-
 import { ceramic } from './ceramic'
 
 export type Dimensions = { height: number; width: number }
 export type SizeMode = 'contain' | 'cover'
 
-export const idx = new IDX({ ceramic })
-
-export async function loadProfile(did: string): Promise<BasicProfile | null> {
+export async function loadProfile(did: string, dataStore: DIDDataStore): Promise<BasicProfile | null> {
   try {
-    return await idx.get('basicProfile', did)
+    return await dataStore.get('basicProfile', did)
   } catch (err) {
     return null
   }
@@ -91,15 +87,16 @@ export function getImageSrc(sources: ImageSources, dimensions: Dimensions, mode?
 }
 
 export async function getDIDsData(manager: Manager): Promise<DIDsData> {
+  const dataStore = manager.dataStore
   const dids = (await manager.listDIDS()) ?? []
   const entries = await Promise.all(
-    dids.map(async (did) => {
-      const accountsObj = await idx.get<Map<string, string>>('cryptoAccounts', did)
+    dids.map(async (did:string) => {
+      const accountsObj = await dataStore.get('cryptoAccounts', did)
       const accounts = accountsObj ? Object.keys(accountsObj) : []
       return {
         did,
         accounts: accounts.map((account) => new AccountID(account)),
-        profile: await loadProfile(did),
+        profile: await loadProfile(did, dataStore),
       }
     })
   )

@@ -1,17 +1,7 @@
-import { Box, Text } from 'grommet'
-import dynamic from 'next/dynamic'
+import ModalContainer from '../modal/components/ModalContainer'
 
-const IdentitySelect = dynamic(() => import('../client/components/LoadIdentitySelect'), {
-  loading: () => <Text>Loading...</Text>,
-  ssr: false,
-})
-
-export default function Home() {
+export default function Modal() {
   return (
-    <Box>
-      <Box alignSelf="center" margin="large" width="large">
-        <IdentitySelect />
-      </Box>
-    </Box>
+    <ModalContainer />
   )
 }

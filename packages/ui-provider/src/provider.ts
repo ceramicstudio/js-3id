@@ -2,6 +2,8 @@ import type {
   UIProviderMethods,
   MigrationParams,
   UIProviderClient,
+  MigrationFailParams,
+  AccountParams,
   AuthParams,
   UIProviderInterface,
   UIRequest,
@@ -38,28 +40,22 @@ export class ThreeIDManagerUI {
   }
 
   async promptMigration(params: MigrationParams) {
-    return this._client.request('prompt_migration', {
-      legacyDid: params.legacyDid,
-    })
+    return this._client.request('prompt_migration', params)
   }
 
-  async promptMigrationSkip(params = {}) {
+  async promptMigrationSkip(params: MigrationFailParams) {
     return this._client.request('prompt_migration_skip', params)
   }
 
-  async promptMigrationFail(params = {}) {
+  async promptMigrationFail(params: MigrationFailParams) {
     return this._client.request('prompt_migration_fail', params)
   }
 
   async promptAuthenticate(params: AuthParams) {
-    return this._client.request('prompt_authenticate', {
-      origin: params.origin,
-      paths: params.paths,
-      did: params.did,
-    })
+    return this._client.request('prompt_authenticate', params)
   }
 
-  async promptAccount(params = {}) {
+  async promptAccount(params: AccountParams) {
     return this._client.request('prompt_account', params)
   }
 

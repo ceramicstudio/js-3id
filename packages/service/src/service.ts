@@ -1,33 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 
-import { ThreeIDError, assert, isValidNetwork, apiByNetwork, Network } from '@3id/common'
+import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
-import CeramicClient from '@ceramicnetwork/http-client'
-import { IDX } from '@ceramicstudio/idx'
 import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
 import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider'
-
-import type { UserRequestCancel } from './types'
+import { DIDDataStore } from '@glazed/did-datastore'
 import { rpcError } from './utils'
 // import { expose } from 'postmsg-rpc'
 const { expose } = require('postmsg-rpc')
 
-const DEFAULT_NETWORK = 'mainnet'
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
 // Any other supported method?
 type Methods = DIDProviderMethods
-
-const getCeramicApi = (network?: string) => {
-  return isValidNetwork(network || '')
-    ? apiByNetwork(network as Network)
-    : network || apiByNetwork(DEFAULT_NETWORK)
-}
 
 /**
  *  ConnectService runs a 3ID DID provider instance and rpc server with
@@ -35,11 +25,8 @@ const getCeramicApi = (network?: string) => {
  */
 export class ThreeIDService {
   uiManager: ThreeIDManagerUI | undefined
-  cancel: UserRequestCancel | undefined
-
-  ceramic: CeramicClient | undefined
+  dataStore: DIDDataStore | undefined
   threeId: ThreeIdProvider | undefined
-  idx: IDX | undefined
   provider: DIDProvider | undefined
 
   manageApp: DisplayManageClientRPC | undefined
@@ -52,11 +39,9 @@ export class ThreeIDService {
    * @param     {Network}     network              Network to run service on, testnet-clay, dev-unstable, local and mainnet are supported or API url
    */
   // @ts-ignore method override
-  start(uiProvider: UIProvider, cancel: UserRequestCancel, network: Network | string): void {
-    const ceramicUrl = getCeramicApi(network)
-    this.cancel = cancel
+  start(uiProvider: UIProvider, dataStore: DIDDataStore): void {
     this.uiManager = new ThreeIDManagerUI(uiProvider)
-    this.ceramic = new CeramicClient(ceramicUrl, { syncInterval: 30 * 60 * 1000 })
+    this.dataStore = dataStore
     this.manageApp = new DisplayManageClientRPC()
     expose('send', this.requestHandler.bind(this), {
       postMessage: window.parent.postMessage.bind(window.parent),
@@ -70,9 +55,10 @@ export class ThreeIDService {
   ): Promise<void> {
     assert.isDefined(this.uiManager, 'UI Manager must be defined')
     assert.isDefined(this.manageApp, 'manageApp must be defined')
+    assert.isDefined(this.dataStore, 'dataStore must be defined')
 
     const authProviderRelay = new AuthProviderClient(window.parent)
-    const manage = new Manager(authProviderRelay, { ceramic: this.ceramic })
+    const manage = new Manager(authProviderRelay, { dataStore: this.dataStore })
 
     //TODO if exist in state, return before even looking up links
     const existLocally = await manage.cache.getLinkedDid(accountId)
@@ -90,7 +76,14 @@ export class ThreeIDService {
 
     //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
 
-    let legacyDid = await legacyDidPromise
+    let legacyDid
+
+    try {
+      legacyDid = await legacyDidPromise
+    } catch(e) {
+      legacyDid = null
+    }
+
     let muportDid
 
     if (legacyDid) {
@@ -112,19 +105,14 @@ export class ThreeIDService {
 
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
-      const createNew = (await this.uiManager.promptAccount()).createNew
+      const createNew = (await this.uiManager.promptAccount({ caip10: accountId })).createNew
       if (!createNew) {
         await this.manageApp.display(accountId)
       }
     }
 
-    if (DID_MIGRATION && newAccount) {
-      if (willFail || muportDid) {
-        await this.uiManager.promptMigrationSkip()
-      }
-      if (legacyDid) {
-        await this.uiManager.promptMigration({ legacyDid })
-      }
+    if (DID_MIGRATION && newAccount && legacyDid && !willFail) {
+      await this.uiManager.promptMigration({ legacyDid, caip10: accountId })
     }
 
     let did: string
@@ -134,7 +122,7 @@ export class ThreeIDService {
       did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
     } catch (e) {
       if (legacyDid) {
-        await this.uiManager.promptMigrationFail()
+        await this.uiManager.promptMigrationFail({ caip10: accountId })
         // If migration fails, continue with new did instead
         did = await manage.createAccount({ skipMigration: true })
       } else {
@@ -150,7 +138,7 @@ export class ThreeIDService {
     if (muportDid) {
       //Try to migrate profile data still for muport did
       try {
-        const migration = new Migrate3IDV0(this.provider, manage.idx)
+        const migration = new Migrate3IDV0(this.provider, manage.dataStore)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
         // If not available, continue
@@ -169,9 +157,6 @@ export class ThreeIDService {
     did?: string
   ): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
-    this.cancel!(() => {
-      throw new Error('3id-connect: Request not authorized')
-    })
     const userReq = this._createUserRequest(authReq, domain, did)
     if (!userReq) return
     const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
@@ -180,20 +165,14 @@ export class ThreeIDService {
 
   async requestHandler(message: RPCRequest<Methods, keyof Methods>): Promise<string> {
     const domain = new Url(document.referrer).host
-
-    const responsePromise = new Promise((resolve, reject) => {
-      // Register request cancel calback
-      this.cancel!(() => resolve(rpcError(message.id!)))
-      if (message.method.startsWith('did')) {
-        this.requestHandlerDid(message, domain).then(resolve, reject)
-      } else {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
-        reject(new ThreeIDError(4, msg))
-      }
-    })
-
-    return JSON.stringify(await responsePromise)
+    if (message.method.startsWith('did')) {
+      const res = await this.requestHandlerDid(message, domain)
+      return JSON.stringify(res)
+    } else {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
+      return JSON.stringify(new ThreeIDError(4, msg))
+    }
   }
 
   /**
@@ -239,7 +218,8 @@ export class ThreeIDService {
       void this.uiManager.noftifyClose()
       return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
     } catch (e) {
-      if ((e as Error).toString().includes('authorized')) {
+      const err = (e as Error).toString()
+      if (err.includes('authorized') || err.includes('cancellation')) {
         void this.uiManager.noftifyClose()
         return rpcError(message.id!)
       }

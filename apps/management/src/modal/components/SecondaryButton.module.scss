@@ -1,0 +1,32 @@
+$placeholder: #5d40fb;
+
+.linkWrap {
+  text-decoration: none;
+}
+
+.btn {
+  display: block;
+  text-align: center;
+
+  border: none;
+
+  padding: 17px 0px;
+  border-radius: 10px;
+  margin-bottom: 3px;
+  width: 100%;
+  color: $placeholder;
+  background-color: #fff;
+
+//   text-decoration: underline;
+
+  cursor: pointer;
+
+  &:hover {
+    transition: ease background-color 0.3s;
+    color: darken($placeholder, 5%);
+    text-decoration: underline;
+  }
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
