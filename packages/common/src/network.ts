@@ -15,7 +15,8 @@ export const BASE_IFRAME_DEV_URL = `https://app-dev.3idconnect.org/${version}`
 export const BASE_IFRAME_CLAY_URL = `https://app-clay.3idconnect.org/${version}`
 export const BASE_IFRAME_MAIN_URL = `https://app.3idconnect.org/${version}`
 export const BASE_IFRAME_LOCAL_URL = `http://localhost:30001/${version}`
-export const DEFAULT_IFRAME_MANAGE_PATH = `/management`
+export const DEFAULT_IFRAME_MANAGE_PATH = `/management.html`
+export const DEFAULT_IFRAME_PATH = `/index.html`
 
 export const CERAMIC_NETWORK_API: Record<Network, string> = {
   'dev-unstable': DEV_API_URL,
@@ -32,6 +33,7 @@ export const CERAMIC_NETWORK_IFRAME: Record<Network, string> = {
 }
 
 export const iframeManageUrl = (base: string) => `${base}${DEFAULT_IFRAME_MANAGE_PATH}`
-export const iframeByNetwork = (network: Network) => CERAMIC_NETWORK_IFRAME[network]
+export const iframeUrl = (base: string) => `${base}${DEFAULT_IFRAME_PATH}`
+export const iframeByNetwork = (network: Network) => CERAMIC_NETWORK_IFRAME[network] 
 export const apiByNetwork = (network: Network) => CERAMIC_NETWORK_API[network]
 export const isValidNetwork = (network: string) => VALID_NETWORKS.includes(network)

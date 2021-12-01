@@ -11,7 +11,7 @@ import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
 import type { Subscription } from 'rxjs'
 import { DidProviderProxy } from './didProviderProxy'
-import { isValidNetwork, iframeByNetwork, iframeManageUrl, Network } from '@3id/common'
+import { isValidNetwork, iframeByNetwork, iframeManageUrl, Network, iframeUrl } from '@3id/common'
 
 const DEFAULT_NETWORK = 'testnet-clay'
 
@@ -65,11 +65,11 @@ export class ThreeIdConnect {
   constructor(network?: string) {
     assertBrowser()
 
-    const iframeUrl = isValidNetwork(network || '')
+    const iframeDomain = isValidNetwork(network || '')
       ? iframeByNetwork(network as Network)
       : network || iframeByNetwork(DEFAULT_NETWORK)
-    this.iframe = createConnectIframe(iframeUrl)
-    this.manageUrl = iframeManageUrl(iframeUrl)
+    this.iframe = createConnectIframe(iframeUrl(iframeDomain))
+    this.manageUrl = iframeManageUrl(iframeDomain)
 
     this.iframeLoadedPromise = new Promise((resolve) => {
       this.iframe.onload = () => {
