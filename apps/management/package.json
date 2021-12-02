@@ -10,7 +10,7 @@
     "dev:build": "NEXT_PUBLIC_CERAMIC_NETWORK=local npm run build:prod",
     "build:dev": "NEXT_PUBLIC_CERAMIC_NETWORK=dev-unstable npm run build:prod",
     "build:test": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7777 npm run build:prod",
-    "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/management && mkdir -p ../../public-clay && mv ./out ../../public-clay/management"
+    "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/v1 && mkdir -p ../../public-clay/v1 && mv ./out/* ../../public-clay/v1"
   },
   "dependencies": {
     "3id-did-provider": "^1.1.0",

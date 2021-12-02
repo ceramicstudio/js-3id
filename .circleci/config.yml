@@ -89,7 +89,7 @@ jobs:
           to: 's3://3id-connect-dev-ceramic/v1'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /v1
+          command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /v1 /v1/*
 
   deploy-prod:
     working_directory: ~/3id-connect
@@ -105,7 +105,7 @@ jobs:
           to: 's3://3id-connect-prod-ceramic/v1'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /v1
+          command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /v1 /v1/*
 
   deploy-clay:
     working_directory: ~/3id-connect
@@ -121,7 +121,7 @@ jobs:
           to: 's3://3id-connect-clay-ceramic/v1'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E11EBQ4LUR3PLA --paths /v1
+          command: aws cloudfront create-invalidation --distribution-id E11EBQ4LUR3PLA --paths /v1 /v1/*
 
 workflows:
   build-deploy:
