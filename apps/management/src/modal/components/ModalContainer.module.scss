@@ -1,34 +1,5 @@
 $placeholder: #5d40fb;
 
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 400;
-  font-display: fallback;
-  src: local('Segment Regular'), local('Segment-Regular'),
-    url('../../../assets/Segment-Regular.woff2') format('woff2'),
-    url('../../../assets/Segment-Regular.woff') format('woff');
-}
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 500;
-  font-display: fallback;
-  src: local('Segment Medium'), local('Segment-Medium'),
-    url('../../../assets/Segment-Medium.woff2') format('woff2'),
-    url('../../../assets/Segment-Medium.woff') format('woff');
-}
-@font-face {
-  font-family: Segment;
-  font-style: normal;
-  font-weight: 600;
-  font-display: fallback;
-  src: local('Segment SemiBold'), local('Segment-SemiBold'),
-    url('../../../assets/Segment-SemiBold.woff2') format('woff2'),
-    url('../../../assets/Segment-SemiBold.woff') format('woff');
-}
-
-
 @mixin slide {
   animation-duration: 0.3s;
   animation-timing-function: ease-in;
@@ -67,7 +38,7 @@ $placeholder: #5d40fb;
   display: flex;
   flex-direction: column;
 
-  font-family: 'Segment', sans-serif;
+  font-family: Segment, sans-serif;
   font-size: 15px;
 
   box-shadow: 4px 6px 19px 5px rgba(0, 0, 0, 0.49);
