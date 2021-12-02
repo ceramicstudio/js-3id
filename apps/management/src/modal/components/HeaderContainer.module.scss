@@ -83,6 +83,11 @@ $placeholder: #5d40fb;
   }
   .avatar {
     margin-bottom: 20px;
+
+    .avatarImg {
+      border: 4px solid white;
+      border-radius: 50px;
+    }
   }
   .head-container {
     display: flex;

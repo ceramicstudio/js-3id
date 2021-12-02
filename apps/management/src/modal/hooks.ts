@@ -9,14 +9,13 @@ export function useDIDBasicProfile(): [BasicProfile | null, () => Promise<void>]
     const [didData, setDidData] = useAtom(didDataAtom)
     const [serviceState,] = useAtom(serviceStateAtom)
     const [reqState,] = useAtom(reqStateAtom)
-    
-    const did = (reqState?.params as AuthParams)?.did
-    // TODO
+  
     const load = useCallback(async () => {
+      const did = (reqState?.params as AuthParams)?.did
       if (!serviceState?.dataStore || !did) return 
       const data = await loadProfile(did, serviceState.dataStore)
       setDidData(data)
-    }, [did])
+    }, [reqState])
   
     return [didData, load]
   }

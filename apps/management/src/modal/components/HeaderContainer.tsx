@@ -3,11 +3,12 @@ import Avatar from 'boring-avatars'
 import { useDIDBasicProfile } from '../hooks'
 import { useEffect } from 'react'
 import close from '../../../assets/close.svg'
-import { reqStateAtom, serviceStateAtom } from '../state'
+import { reqStateAtom } from '../state'
 import { useAtom } from 'jotai'
 import { didShorten, ipfsToImg, formatCAIP10, urlToIcon } from '../../utils'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
 import { RequestState } from '../../types'
+import { Avatar as AvatarImg } from 'grommet'
 
 const headerData = (req: RequestState) => {
   if (!req) {
@@ -42,11 +43,7 @@ const headerData = (req: RequestState) => {
 
 const boringOrAvatar = (basicProfile?: BasicProfile, did?: string) =>  {
     return basicProfile?.image ? (
-    <div
-      className="avatarImage"
-      style={{
-        backgroundImage: ipfsToImg(basicProfile?.image.original.src),
-      }}></div>
+      <AvatarImg className={styles.avatarImg} size="85px" src={ipfsToImg(basicProfile?.image.original.src)} />
   ) : (
     <Avatar
       size={75}
@@ -63,7 +60,7 @@ export default function HeaderContainer() {
 
   useEffect(() => {
     void loadBasicProfile()
-  }, [])
+  }, [reqState])
 
   const imageHeaders  =
   reqState?.type === 'prompt_authenticate' || reqState?.type === 'prompt_account'  ? (
