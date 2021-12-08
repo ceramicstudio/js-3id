@@ -2,7 +2,7 @@
 
 import { ThreeIDError, assert } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0 } from '@3id/manager'
+import { Manager, legacyDIDLinkExist, willMigrationFail, Migrate3IDV0, waitMS } from '@3id/manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import ThreeIdProvider from '3id-did-provider'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
@@ -62,7 +62,10 @@ export class ThreeIDService {
 
     //TODO if exist in state, return before even looking up links
     const existLocally = await manage.cache.getLinkedDid(accountId)
-    const existNetwork = await manage.linkInNetwork(accountId)
+    
+    const existNetwork = !existLocally ? 
+      await Promise.race([manage.linkInNetwork(accountId), waitMS(1500)]) : 
+      existLocally
 
     const newAccount = !existNetwork && !existLocally
 
