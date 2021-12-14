@@ -8,8 +8,7 @@ jobs:
     working_directory: ~/3id-connect
     docker:
       - image: cimg/node:16.9.1
-        environment:
-          NODE_ENV: development
+      
     steps:
       - checkout
 
@@ -35,7 +34,7 @@ jobs:
 
       - when:
           condition:
-            equal: [develop, << pipeline.git.branch >>]
+            equal: [build/node-env-ver, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
@@ -44,7 +43,7 @@ jobs:
       - when:
           condition:
             not:
-              equal: [develop, << pipeline.git.branch >>]
+              equal: [build/node-env-ver, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
@@ -53,7 +52,7 @@ jobs:
       - when:
           condition:
             not:
-              equal: [develop, << pipeline.git.branch >>]
+              equal: [build/node-env-ver, << pipeline.git.branch >>]
           steps:
             - run:
                 name: build
@@ -131,7 +130,7 @@ workflows:
             - test-and-build
           filters:
             branches:
-              only: develop
+              only: build/node-env-ver
       - deploy-prod:
           requires:
             - test-and-build
