@@ -21,6 +21,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo chmod -R 777 /usr/local
             npm i -g lerna
             yarn install --frozen-lockfile
 
