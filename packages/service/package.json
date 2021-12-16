@@ -1,6 +1,6 @@
 {
   "name": "@3id/service",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "author": "Ceramic Studio",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
@@ -39,10 +39,10 @@
   "dependencies": {
     "3id-did-provider": "^1.1.0",
     "@3id/common": "^0.3.0",
-    "@3id/connect-display": "^0.2.1",
-    "@3id/manager": "^0.2.6",
-    "@3id/ui-provider": "^0.2.4",
-    "@3id/window-auth-provider": "^0.2.5",
+    "@3id/connect-display": "^0.3.0",
+    "@3id/manager": "^0.3.0",
+    "@3id/ui-provider": "^0.3.0",
+    "@3id/window-auth-provider": "^0.3.0",
     "@babel/runtime": "7.16.3",
     "@ceramicnetwork/http-client": "^1.5.0",
     "errors-utils": "^0.1.0",

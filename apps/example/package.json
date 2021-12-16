@@ -1,6 +1,6 @@
 {
   "name": "3id-example-app",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "server:app": "http-server -c-1 -p 30000 .",
@@ -10,7 +10,7 @@
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm start"
   },
   "dependencies": {
-    "@3id/connect": "^0.2.5",
+    "@3id/connect": "^0.3.0",
     "@babel/runtime": "7.16.3",
     "@ceramicnetwork/3id-did-resolver": "^1.4.9",
     "@ceramicnetwork/http-client": "^1.5.0",
