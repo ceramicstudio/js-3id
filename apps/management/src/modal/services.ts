@@ -4,6 +4,7 @@ import type {  UIProvider } from '@3id/ui-provider'
 import { aliases as idxAliases } from '@3id/model'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { CeramicClient } from '@ceramicnetwork/http-client'
+import { TileLoader } from '@glazed/tile-loader'
 
 export function create3IDService(uiProvider: UIProvider, didDataStore: DIDDataStore ) {
   const connectService = new ThreeIDService()
@@ -14,5 +15,6 @@ export function create3IDService(uiProvider: UIProvider, didDataStore: DIDDataSt
 
 export function createDIDDataStore() {
   const ceramic = new CeramicClient(CERAMIC_URL, { syncInterval: 30 * 60 * 1000 })
-  return new DIDDataStore({ ceramic, model: idxAliases })
+  const loader = new TileLoader({ ceramic, cache: true })
+  return new DIDDataStore({ ceramic, model: idxAliases, loader })
 }
