@@ -12,7 +12,7 @@ import { Manager } from '../src'
 describe('3ID Manager', () => {
   jest.setTimeout(60000)
 
-  const ceramic = new Ceramic('http://localhost:7777')
+  const ceramic = new Ceramic('http://localhost:7777', { syncInterval: 30 * 60 * 1000 })
   const dataStore = new DIDDataStore({ ceramic, model: idxModel })
 
   beforeAll(async () => {
@@ -42,7 +42,6 @@ describe('3ID Manager', () => {
     const links = await dataStore.get('cryptoAccounts', did)
     expect(links[accountId]).toBeTruthy()
   })
-
 
   test('creates/loads existing did in network', async () => {
     const authProvider = await createAuthProvider(2)

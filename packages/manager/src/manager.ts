@@ -45,8 +45,8 @@ export class Manager {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
-    this.loader = new TileLoader({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), cache: true })
-    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), model: idxModel, loader: this.loader })
+    this.loader = new TileLoader({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 }), cache: true })
+    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 }), model: idxModel, loader: this.loader })
     this.ceramic = opts.ceramic || this.dataStore.ceramic
     this.threeIdProviders = {}
   }
@@ -54,7 +54,7 @@ export class Manager {
   async preload(accountId: string): Promise<void> {
     const definitionIDs = Object.values(idxModel.definitions)
     const schemaQueries = Object.values(idxModel.schemas).map((val) => keyToQuery(val.split('//')[1]))
-    definitionIDs.forEach((val) => this.dataStore.getDefinition(val))
+    definitionIDs.forEach((val) => void this.dataStore.getDefinition(val))
     const preloadFamilies = ['IDX', 'authLink', ...definitionIDs] 
     const did = await this.linkInNetwork(accountId)
 
