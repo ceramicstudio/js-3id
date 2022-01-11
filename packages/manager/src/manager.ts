@@ -7,6 +7,7 @@ import type { CryptoAccountLinks } from '@datamodels/identity-accounts-crypto'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { model as idxModel } from './__generated__/model'
 import { hash } from '@stablelib/sha256'
+import { TileLoader, getDeterministicQuery, keyToQuery } from '@glazed/tile-loader'
 import ThreeIdProvider from '3id-did-provider'
 import { fromString } from 'uint8arrays'
 import KeyDidResolver from 'key-did-resolver'
@@ -34,6 +35,7 @@ export class Manager {
   dataStore: DIDDataStore
   ceramic: CeramicApi
   threeIdProviders: Record<string, ThreeIdProvider>
+  loader: TileLoader
 
   // needs work on wording for "account", did, caip10 etc
   constructor(
@@ -43,9 +45,27 @@ export class Manager {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
-    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), model: idxModel })
+    this.loader = new TileLoader({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), cache: true })
+    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), model: idxModel, loader: this.loader })
     this.ceramic = opts.ceramic || this.dataStore.ceramic
     this.threeIdProviders = {}
+  }
+
+  async preload(accountId: string): Promise<void> {
+    const definitionIDs = Object.values(idxModel.definitions)
+    const schemaQueries = Object.values(idxModel.schemas).map((val) => keyToQuery(val.split('//')[1]))
+    definitionIDs.forEach((val) => this.dataStore.getDefinition(val))
+    const preloadFamilies = ['IDX', 'authLink', ...definitionIDs] 
+    const did = await this.linkInNetwork(accountId)
+
+    if (did != null) {
+      const queries = await Promise.all(preloadFamilies.map(async family => {
+        return await getDeterministicQuery({ controllers: [did], family })
+      }))
+      await this.loader.loadMany(queries.concat(schemaQueries))
+    } else {
+      await this.loader.loadMany(schemaQueries)
+    }
   }
 
   // Create DID
