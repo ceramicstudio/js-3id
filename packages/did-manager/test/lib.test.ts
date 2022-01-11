@@ -36,12 +36,36 @@ describe('3ID Manager', () => {
     expect(links[toLegacyAccountId(accountId.toString())]).toBeTruthy()
   })
 
+  test('creates/loads new did with preload', async () => {
+    // auth provider create
+    const authProvider = await createAuthProvider(7)
+    const accountId = (await authProvider.accountId()).toString()
+    const manager = new Manager(authProvider, { ceramic })
+    await manager.preload(accountId)
+    const did = await manager.createAccount()
+    // expect link to be created
+    const links = await dataStore.get('cryptoAccounts', did)
+    expect(links[toLegacyAccountId(accountId.toString())]).toBeTruthy()
+  })
+
   test('creates/loads existing did in network', async () => {
     const authProvider = await createAuthProvider(2)
     const manager = new Manager(authProvider, { ceramic })
     const did1 = await manager.createAccount()
     manager.store.store.clearAll()
     const manager2 = new Manager(authProvider, { ceramic })
+    const did2 = await manager2.createAccount()
+    expect(did1).toEqual(did2)
+  })
+
+  test('creates/loads existing did in network with preload', async () => {
+    const authProvider = await createAuthProvider(8)
+    const manager = new Manager(authProvider, { ceramic })
+    const did1 = await manager.createAccount()
+    manager.store.store.clearAll()
+    const accountId = (await authProvider.accountId()).toString()
+    const manager2 = new Manager(authProvider, { ceramic })
+    await manager.preload(accountId)
     const did2 = await manager2.createAccount()
     expect(did1).toEqual(did2)
   })

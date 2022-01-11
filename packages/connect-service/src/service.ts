@@ -68,6 +68,7 @@ export class ThreeIDService {
 
     const authProviderRelay = new AuthProviderClient(window.parent)
     const manage = new Manager(authProviderRelay, { dataStore: this.dataStore })
+    void manage.preload(accountId)
 
     //TODO if exist in state, return before even looking up links
     const existLocally = await manage.cache.getLinkedDid(accountId)
