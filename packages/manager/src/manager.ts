@@ -45,9 +45,9 @@ export class Manager {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
-    this.loader = new TileLoader({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 }), cache: true })
-    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 }), model: idxModel, loader: this.loader })
-    this.ceramic = opts.ceramic || this.dataStore.ceramic
+    this.ceramic = opts.ceramic || opts.dataStore?.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
+    this.loader = new TileLoader({ ceramic: this.ceramic, cache: true })
+    this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: this.ceramic, model: idxModel, loader: this.loader })
     this.threeIdProviders = {}
   }
 
