@@ -6,6 +6,7 @@ import Ceramic from '@ceramicnetwork/http-client'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { model as idxModel } from '../src/__generated__/model'
 import { idxModelManager } from './utils'
+import type { TileDocument } from '@ceramicnetwork/stream-tile'
 
 import { Manager } from '../src'
 
@@ -18,6 +19,41 @@ describe('3ID Manager', () => {
   beforeAll(async () => {
     const manager = idxModelManager(ceramic)
     await manager.toPublished()
+  })
+
+  test('tile loader cache fail example', async () => {
+    // auth provider create
+    const authProvider = await createAuthProvider(8)
+    const cache = new Map<string, Promise<TileDocument>>()
+    const store = new DIDDataStore({ cache, ceramic, model: idxModel })
+    const manager = new Manager(authProvider, { dataStore: store })
+    await manager.createAccount()
+
+    const id = await manager.dataStore.set('basicProfile', {name: 'z'})
+    console.log(await manager.dataStore.get('basicProfile'))
+    //  null
+    console.log(await dataStore.get('basicProfile'))
+    //  null
+    console.log((await cache.get(id.toString())).content)
+    // { name: 'z' }
+
+    await manager.dataStore.set('basicProfile', {name: 'z', homeLocation:'111'})
+    console.log(await manager.dataStore.get('basicProfile'))
+    // { name: 'z' }
+    console.log(await dataStore.get('basicProfile'))
+    // { name: 'z' }
+    console.log((await cache.get(id.toString())).content)
+    //  { name: 'z' }
+
+    await manager.dataStore.set('basicProfile', {name: 'a', homeLocation:'222'})
+    console.log(await manager.dataStore.get('basicProfile'))
+    // { name: 'a', homeLocation: '222' }
+    console.log(await dataStore.get('basicProfile'))
+    // { name: 'a', homeLocation: '222' }
+    console.log((await cache.get(id.toString())).content)
+    //  { name: 'a', homeLocation: '222' }
+
+    throw new Error('unexpected logs')
   })
 
   test('creates/loads new did', async () => {
