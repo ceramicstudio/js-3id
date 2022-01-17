@@ -46,7 +46,7 @@ export class Manager {
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
     this.ceramic = opts.ceramic || opts.dataStore?.ceramic || new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
-    this.loader = new TileLoader({ ceramic: this.ceramic, cache: true })
+    this.loader = new TileLoader({ ceramic: this.ceramic, cache: false })
     this.dataStore = opts.dataStore || new DIDDataStore({ ceramic: this.ceramic, model: idxModel, loader: this.loader })
     this.threeIdProviders = {}
   }
@@ -148,6 +148,7 @@ export class Manager {
     const threeIdConfig = Object.assign(config, {
       getPermission,
       ceramic: this.ceramic,
+      dataStore: this.dataStore
     })
     const threeId = await ThreeIdProvider.create(threeIdConfig)
     this.threeIdProviders[threeId.id] = threeId

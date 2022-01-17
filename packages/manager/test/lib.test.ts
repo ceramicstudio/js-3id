@@ -6,7 +6,6 @@ import Ceramic from '@ceramicnetwork/http-client'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { model as idxModel } from '../src/__generated__/model'
 import { idxModelManager } from './utils'
-import type { TileDocument } from '@ceramicnetwork/stream-tile'
 
 import { Manager } from '../src'
 
@@ -21,40 +20,40 @@ describe('3ID Manager', () => {
     await manager.toPublished()
   })
 
-  test('tile loader cache fail example', async () => {
-    // auth provider create
-    const authProvider = await createAuthProvider(8)
-    const cache = new Map<string, Promise<TileDocument>>()
-    const store = new DIDDataStore({ cache, ceramic, model: idxModel })
-    const manager = new Manager(authProvider, { dataStore: store })
-    await manager.createAccount()
+  // test('tile loader cache fail example', async () => {
+  //   // auth provider create
+  //   const authProvider = await createAuthProvider(8)
+  //   const cache = new Map<string, Promise<TileDocument>>()
+  //   const store = new DIDDataStore({ cache, ceramic, model: idxModel })
+  //   const manager = new Manager(authProvider, { dataStore: store })
+  //   await manager.createAccount()
 
-    const id = await manager.dataStore.set('basicProfile', {name: 'z'})
-    console.log(await manager.dataStore.get('basicProfile'))
-    //  null
-    console.log(await dataStore.get('basicProfile'))
-    //  null
-    console.log((await cache.get(id.toString())).content)
-    // { name: 'z' }
+  //   const id = await manager.dataStore.set('basicProfile', {name: 'z'})
+  //   console.log(await manager.dataStore.get('basicProfile'))
+  //   //  null
+  //   console.log(await dataStore.get('basicProfile'))
+  //   //  null
+  //   // console.log((await cache.get(id.toString())).content)
+  //   // { name: 'z' }
 
-    await manager.dataStore.set('basicProfile', {name: 'z', homeLocation:'111'})
-    console.log(await manager.dataStore.get('basicProfile'))
-    // { name: 'z' }
-    console.log(await dataStore.get('basicProfile'))
-    // { name: 'z' }
-    console.log((await cache.get(id.toString())).content)
-    //  { name: 'z' }
+  //   await manager.dataStore.set('basicProfile', {name: 'z', homeLocation:'111'})
+  //   console.log(await manager.dataStore.get('basicProfile'))
+  //   // { name: 'z' }
+  //   console.log(await dataStore.get('basicProfile'))
+  //   // { name: 'z' }
+  //   // console.log((await cache.get(id.toString())).content)
+  //   //  { name: 'z' }
 
-    await manager.dataStore.set('basicProfile', {name: 'a', homeLocation:'222'})
-    console.log(await manager.dataStore.get('basicProfile'))
-    // { name: 'a', homeLocation: '222' }
-    console.log(await dataStore.get('basicProfile'))
-    // { name: 'a', homeLocation: '222' }
-    console.log((await cache.get(id.toString())).content)
-    //  { name: 'a', homeLocation: '222' }
+  //   await manager.dataStore.set('basicProfile', {name: 'a', homeLocation:'222'})
+  //   console.log(await manager.dataStore.get('basicProfile'))
+  //   // { name: 'a', homeLocation: '222' }
+  //   console.log(await dataStore.get('basicProfile'))
+  //   // { name: 'a', homeLocation: '222' }
+  //   // console.log((await cache.get(id.toString())).content)
+  //   //  { name: 'a', homeLocation: '222' }
 
-    throw new Error('unexpected logs')
-  })
+  //   throw new Error('unexpected logs')
+  // })
 
   test('creates/loads new did', async () => {
     // auth provider create
@@ -67,7 +66,7 @@ describe('3ID Manager', () => {
     expect(links[accountId]).toBeTruthy()
   })
 
-  test('creates/loads new did with preload', async () => {
+  test.skip('creates/loads new did with preload', async () => {
     // auth provider create
     const authProvider = await createAuthProvider(7)
     const accountId = (await authProvider.accountId()).toString()
@@ -89,7 +88,7 @@ describe('3ID Manager', () => {
     expect(did1).toEqual(did2)
   })
 
-  test('creates/loads existing did in network with preload', async () => {
+  test.skip('creates/loads existing did in network with preload', async () => {
     const authProvider = await createAuthProvider(8)
     const manager = new Manager(authProvider, { ceramic })
     const did1 = await manager.createAccount()
@@ -137,9 +136,6 @@ describe('3ID Manager', () => {
 
     // twitter & github migrated
     const aka = await dataStore.get('alsoKnownAs', did)
-    const aka2 = await manager.dataStore.get('alsoKnownAs', did)
-    console.log(aka)
-    console.log(aka2)
     expect(aka.accounts[0].claim).toMatchSnapshot()
     expect(aka.accounts[1].claim).toMatchSnapshot()
   })
