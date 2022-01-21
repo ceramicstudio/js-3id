@@ -1,15 +1,15 @@
-
 {
   "extends": "./tsconfig.build.json",
-  "include": ["packages", "types"],
+  "include": ["packages"],
   "compilerOptions": {
     "allowJs": false,
     "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types", "./types"],
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@3id/common": ["packages/common/src"],
       "@3id/connect": ["packages/connect/src"],
       "@3id/connect-display": ["packages/connect-display/src"],
+      "@3id/did-provider": ["packages/did-provider/src"],
       "@3id/manager": ["packages/manager/src"],
       "@3id/test-utils": ["packages/test-utils/src"],
       "@3id/window-auth-provider": ["packages/window-auth-provider/src"],

@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "target": "ES5",
     "lib": ["dom", "esnext"],
-    "keyofStringsOnly": true,
-    "importHelpers": true,
+    "target": "ES2020",
+    "importHelpers": false,
     "declaration": true,
-    "sourceMap": true,   
+    "sourceMap": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "jsx": "react",
     "esModuleInterop": true
   }
 }

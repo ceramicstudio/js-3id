@@ -11,24 +11,24 @@
   },
   "dependencies": {
     "@3id/connect": "^0.3.0",
-    "@babel/runtime": "7.16.3",
-    "@ceramicnetwork/3id-did-resolver": "^1.4.9",
-    "@ceramicnetwork/http-client": "^1.5.0",
-    "dids": "^2.4.2",
-    "web3modal": "^1.9.2"
+    "@babel/runtime": "7.16.7",
+    "@ceramicnetwork/3id-did-resolver": "^2.0.0-alpha.0",
+    "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
+    "dids": "^3.0.0-alpha.0",
+    "web3modal": "^1.9.5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.13",
-    "@babel/core": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-proposal-object-rest-spread": "^7.14.4",
-    "@babel/plugin-transform-runtime": "^7.16.4",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-typescript": "^7.12.13",
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.8",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/preset-typescript": "^7.16.7",
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "^8.2.2",
     "buffer": "^6.0.3",
-    "webpack": "^5.64.3",
+    "webpack": "^5.66.0",
     "webpack-cli": "^4.7.0"
   }
 }

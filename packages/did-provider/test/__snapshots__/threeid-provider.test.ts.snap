@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ThreeIdProvider .create Create instance with seed & v03ID 1`] = `
+Object {
+  "didDocument": Object {
+    "authentication": Array [
+      Object {
+        "controller": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu",
+        "id": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu#7uFZ8RP1qUVU87P",
+        "publicKeyBase58": "h3ZsRvyVTpF6NheK7BZGaKeFv2K4qZridCfaiVoNFeFf",
+        "type": "EcdsaSecp256k1Signature2019",
+      },
+    ],
+    "id": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu",
+    "keyAgreement": Array [
+      Object {
+        "controller": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu",
+        "id": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu#FRNNWcZDvDZcpVC",
+        "publicKeyBase58": "qFYM1z9dJUC1K7rphEDVCj8U1YTzeFDVXtsjTa2uSiS",
+        "type": "X25519KeyAgreementKey2019",
+      },
+    ],
+    "verificationMethod": Array [
+      Object {
+        "controller": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu",
+        "id": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu#7uFZ8RP1qUVU87P",
+        "publicKeyBase58": "h3ZsRvyVTpF6NheK7BZGaKeFv2K4qZridCfaiVoNFeFf",
+        "type": "EcdsaSecp256k1Signature2019",
+      },
+      Object {
+        "controller": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu",
+        "id": "did:3:bafyreidv6yl2bbmuslkqby45hdn6sd6ha22zlolxjjxxz4suuwfqpezewu#FRNNWcZDvDZcpVC",
+        "publicKeyBase58": "qFYM1z9dJUC1K7rphEDVCj8U1YTzeFDVXtsjTa2uSiS",
+        "type": "X25519KeyAgreementKey2019",
+      },
+    ],
+  },
+  "didDocumentMetadata": Object {
+    "versionId": "0",
+  },
+  "didResolutionMetadata": Object {
+    "contentType": "application/did+json",
+  },
+}
+`;

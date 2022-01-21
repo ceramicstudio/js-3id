@@ -43,12 +43,12 @@
     "@3id/manager": "^0.3.0",
     "@3id/ui-provider": "^0.3.0",
     "@3id/window-auth-provider": "^0.3.0",
-    "@babel/runtime": "7.16.3",
-    "@ceramicnetwork/http-client": "^1.5.0",
+    "@babel/runtime": "7.16.7",
+    "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
     "errors-utils": "^0.1.0",
     "postmsg-rpc": "^2.4.0",
-    "rpc-utils": "^0.4.0",
-    "url-parse": "^1.4.7"
+    "rpc-utils": "^0.6.0",
+    "url-parse": "^1.5.4"
   },
   "publishConfig": {
     "access": "public"
