@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Keyring Derives correct keys from seed 1`] = `
+Object {
+  "content": Object {
+    "publicKeys": Object {
+      "XQCT2xJHsdY6iJH": "z6LSqKWh3XQ7AfsJuE2KR23cozEut8D5CXQCT2xJHsdY6iJH",
+      "yh27jTt7Ny2Pwdy": "zQ3shrMGEKAjUTMmvDkcZ7Y3x9XnVjTH3myh27jTt7Ny2Pwdy",
+    },
+  },
+  "metadata": Object {
+    "controllers": Array [
+      "did:key:zQ3shQNcackrTByiYaPGso1Nt7b6r1gSMg4XXBmavzvTMqX1h",
+    ],
+    "family": "3id",
+  },
+}
+`;
+
+exports[`Keyring Derives correct keys from seed 2`] = `
+Object {
+  "content": Object {
+    "publicKeys": Object {
+      "XQCT2xJHsdY6iJH": "z6LSqKWh3XQ7AfsJuE2KR23cozEut8D5CXQCT2xJHsdY6iJH",
+      "yh27jTt7Ny2Pwdy": "zQ3shrMGEKAjUTMmvDkcZ7Y3x9XnVjTH3myh27jTt7Ny2Pwdy",
+    },
+  },
+  "metadata": Object {
+    "controllers": Array [
+      "did:key:zQ3shQNcackrTByiYaPGso1Nt7b6r1gSMg4XXBmavzvTMqX1h",
+    ],
+  },
+}
+`;
+
+exports[`Keyring Derives correct keys from seed 3`] = `
+Uint8Array [
+  202,
+  184,
+  127,
+  147,
+  222,
+  181,
+  132,
+  185,
+  227,
+  190,
+  245,
+  131,
+  105,
+  245,
+  254,
+  12,
+  206,
+  100,
+  188,
+  219,
+  82,
+  145,
+  229,
+  212,
+  206,
+  221,
+  91,
+  119,
+  181,
+  158,
+  76,
+  102,
+]
+`;
+
+exports[`Keyring Derives correct keys from seed 4`] = `
+Uint8Array [
+  240,
+  228,
+  194,
+  247,
+  108,
+  88,
+  145,
+  110,
+  194,
+  88,
+  242,
+  70,
+  133,
+  27,
+  234,
+  9,
+  29,
+  20,
+  212,
+  36,
+  122,
+  47,
+  195,
+  225,
+  134,
+  148,
+  70,
+  27,
+  24,
+  22,
+  225,
+  59,
+]
+`;
+
+exports[`Keyring Generates correct state if v03ID is set 1`] = `
+Object {
+  "metadata": Object {
+    "controllers": Array [
+      "did:key:zQ3shbBE65QyvqVfo5yNpzN4Qf4LypkgdsoMyjoWbWz79r6j4",
+    ],
+    "deterministic": true,
+    "family": "3id",
+  },
+}
+`;
+
+exports[`Keyring Generates correct state if v03ID is set 2`] = `
+Object {
+  "metadata": Object {
+    "controllers": Array [
+      "did:key:zQ3shbBE65QyvqVfo5yNpzN4Qf4LypkgdsoMyjoWbWz79r6j4",
+    ],
+    "deterministic": true,
+  },
+}
+`;

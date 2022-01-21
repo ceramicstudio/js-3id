@@ -1,0 +1,30 @@
+{
+  "name": "jest-environment-3id",
+  "version": "0.1.0",
+  "description": "3ID environment for Jest",
+  "author": "3Box Labs",
+  "license": "(Apache-2.0 OR MIT)",
+  "homepage": "https://github.com/ceramicstudio/js-3id#readme",
+  "keywords": [
+    "jest",
+    "ceramic",
+    "3id"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/js-3id",
+    "directory": "packages/jest-environment-3id"
+  },
+  "type": "module",
+  "main": "index.js",
+  "files": [],
+  "scripts": {
+    "lint": "eslint index.js --fix"
+  },
+  "dependencies": {
+    "@3id/model-manager": "^0.1.0",
+    "@ceramicnetwork/3id-did-resolver": "^2.0.0-alpha.0",
+    "jest-environment-ceramic": "^0.15.0-alpha.0",
+    "key-did-resolver": "^2.0.0-alpha.1"
+  }
+}
