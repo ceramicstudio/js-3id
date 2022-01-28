@@ -43,7 +43,6 @@ async function sign(
   protectedHeader: Record<string, any> = {},
   revocable?: boolean
 ): Promise<GeneralJWS> {
-  // console.log('DID provider sign', didWithFragment, payload)
   let [did, keyFragment] = didWithFragment.split('#') // eslint-disable-line prefer-const
   let kid, signer
   if (did.startsWith('did:key:')) {
@@ -63,7 +62,6 @@ async function sign(
     signer,
     header
   )
-  // console.log('DID provider signed', jws)
   return toGeneralJWS(jws)
 }
 

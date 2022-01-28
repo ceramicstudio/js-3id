@@ -1,7 +1,7 @@
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
 import { createClient, createServer } from '@ceramicnetwork/rpc-window'
 import type { ServerPayload } from '@ceramicnetwork/rpc-window'
-import { AccountID } from 'caip'
+import { AccountId } from 'caip'
 import type { RPCClient } from 'rpc-utils'
 import type { Observable } from 'rxjs'
 
@@ -29,9 +29,9 @@ export class AuthProviderClient<NS extends string> implements AuthProvider {
     this.client = createClient<AuthProviderMethods, NS>(namespace as NS, target)
   }
 
-  async accountId(): Promise<AccountID> {
+  async accountId(): Promise<AccountId> {
     const response = await this.client.request('accountId')
-    return new AccountID(response)
+    return new AccountId(response)
   }
 
   async authenticate(message: string): Promise<string> {

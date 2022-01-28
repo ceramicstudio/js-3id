@@ -1,0 +1,71 @@
+{
+  "name": "@3id/connect-service",
+  "version": "0.1.0-alpha.0",
+  "author": "3Box Labs",
+  "license": "(Apache-2.0 OR MIT)",
+  "homepage": "https://github.com/ceramicstudio/js-3id#readme",
+  "keywords": [
+    "3id",
+    "connect",
+    "service"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceramicstudio/js-3id",
+    "directory": "packages/connect-service"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build:clean": "del dist",
+    "build:js": "swc src -d ./dist --config-file ../../.swcrc",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
+    "build": "yarn build:clean && yarn build:types && yarn build:js",
+    "lint": "eslint src test --fix",
+    "test": "yarn node --experimental-json-modules --experimental-vm-modules $(yarn bin jest)",
+    "test:ci": "yarn test --ci --coverage",
+    "test:server": "rm -rf ./test/data && ../../node_modules/.bin/ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
+    "prepare": "yarn build",
+    "prepublishOnly": "package-check"
+  },
+  "dependencies": {
+    "@3id/common": "^0.4.0-alpha.0",
+    "@3id/connect-display": "^0.4.0-alpha.0",
+    "@3id/did-manager": "^0.1.0-alpha.0",
+    "@3id/did-provider": "^0.1.0-alpha.0",
+    "@3id/ui-provider": "^0.4.0-alpha.0",
+    "@3id/window-auth-provider": "^0.4.0-alpha.0",
+    "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
+    "errors-utils": "^0.2.0",
+    "postmsg-rpc": "^2.4.0",
+    "rpc-utils": "^0.6.0",
+    "url-parse": "^1.5.4"
+  },
+  "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.(t|j)s$": [
+        "@swc/jest",
+        {
+          "root": "../.."
+        }
+      ]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { AuthData, JWE as StoredJWE, WrappedJWE } from '@datamodels/3id-keychain'
+import type { AuthData, JWE as StoredJWE, WrappedJWE } from '@3id/model'
 import type { JWE } from 'did-jwt'
 import { DID } from 'dids'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
@@ -165,9 +165,9 @@ export class Keychain {
    *
    * @param     {String}            authId          An identifier for the auth method
    */
-  async remove(authId: string): Promise<void> {
-    // eslint-disable-line
+  remove(authId: string): Promise<void> {
     this.#pendingRms.push(authId)
+    return Promise.resolve()
   }
 
   /**

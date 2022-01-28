@@ -50,8 +50,8 @@
     "@stablelib/random": "^1.0.0",
     "@stablelib/x25519": "^1.0.0",
     "cids": "^1.1.6",
-    "dag-jose-utils": "^0.1.1",
-    "did-jwt": "^5.12.1",
+    "dag-jose-utils": "^2.0.0-alpha.0",
+    "did-jwt": "^5.12.4",
     "did-resolver": "^3.1.5",
     "dids": "^3.0.0-alpha.0",
     "fast-json-stable-stringify": "^2.1.0",
@@ -60,9 +60,6 @@
     "rpc-utils": "^0.6.0",
     "store": "^2.0.12",
     "uint8arrays": "^3.0.0"
-  },
-  "devDependencies": {
-    "@datamodels/3id-keychain": "^0.1.2"
   },
   "jest": {
     "extensionsToTreatAsEsm": [

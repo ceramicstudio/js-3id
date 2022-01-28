@@ -1,9 +1,9 @@
 {
   "name": "@3id/common",
-  "version": "0.3.0",
-  "author": "Ceramic Studio",
+  "version": "0.4.0-alpha.0",
+  "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
-  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "homepage": "https://github.com/ceramicstudio/js-3id#readme",
   "keywords": [
     "3id",
     "common"
@@ -13,38 +13,52 @@
     "url": "https://github.com/ceramicstudio/3id-connect",
     "directory": "packages/common"
   },
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/common.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/common.esm.js",
-    "default": "./dist/common.esm.js"
+    ".": "./dist/index.js"
   },
   "files": [
     "dist"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
+  "sideEffects": false,
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
-    "lint": "tsdx lint src test --fix",
-    "prepublish": "npm run build",
+    "build:clean": "del dist",
+    "build:js": "swc src -d ./dist --config-file ../../.swcrc",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
+    "build": "yarn build:clean && yarn build:types && yarn build:js",
+    "lint": "eslint src test --fix",
+    "test": "yarn node --experimental-json-modules --experimental-vm-modules $(yarn bin jest)",
+    "test:ci": "yarn test --ci --coverage",
+    "prepare": "yarn build",
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "errors-utils": "^0.1.0",
+    "errors-utils": "^0.2.0",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
-    "did-jwt": "^5.12.3",
-    "rpc-utils": "^0.6.0",
-    "tslib": "^2.1.0"
+    "did-jwt": "^5.12.4",
+    "rpc-utils": "^0.6.0"
   },
-  "publishConfig": {
-    "access": "public"
+  "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.(t|j)s$": [
+        "@swc/jest",
+        {
+          "root": "../.."
+        }
+      ]
+    }
   }
 }

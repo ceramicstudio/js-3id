@@ -1,9 +1,9 @@
 {
   "name": "@3id/window-auth-provider",
-  "version": "0.3.0",
-  "author": "Ceramic Studio",
+  "version": "0.4.0-alpha.0",
+  "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
-  "homepage": "https://github.com/ceramicstudio/3id-connect#readme",
+  "homepage": "https://github.com/ceramicstudio/js-3id#readme",
   "keywords": [
     "3id",
     "window",
@@ -11,42 +11,57 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceramicstudio/3id-connect",
+    "url": "https://github.com/ceramicstudio/js-3id",
     "directory": "packages/window-auth-provider"
   },
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/window-auth-provider.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/window-auth-provider.esm.js",
-    "default": "./dist/window-auth-provider.esm.js"
+    ".": "./dist/index.js"
   },
   "files": [
     "dist"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
+  "sideEffects": false,
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
-    "lint": "tsdx lint src test --fix",
-    "prepublish": "npm run build",
+    "build:clean": "del dist",
+    "build:js": "swc src -d ./dist --config-file ../../.swcrc",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
+    "build": "yarn build:clean && yarn build:types && yarn build:js",
+    "lint": "eslint src test --fix",
+    "test": "yarn node --experimental-json-modules --experimental-vm-modules $(yarn bin jest)",
+    "test:ci": "yarn test --ci --coverage",
+    "test:server": "rm -rf ./test/data && ../../node_modules/.bin/ceramic daemon --port 7777 --state-store-directory ./test/data --network inmemory",
+    "prepare": "yarn build",
     "prepublishOnly": "package-check"
   },
   "dependencies": {
     "@ceramicnetwork/rpc-window": "^0.6.0",
-    "caip": "^0.9.2"
+    "caip": "^1.0.0"
   },
   "devDependencies": {
     "@ceramicnetwork/blockchain-utils-linking": "^2.0.0-alpha.0",
     "rpc-utils": "^0.6.0",
-    "rxjs": "^7.5.2",
-    "tslib": "^2.1.0"
+    "rxjs": "^7.5.2"
   },
-  "publishConfig": {
-    "access": "public"
+  "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.(t|j)s$": [
+        "@swc/jest",
+        {
+          "root": "../.."
+        }
+      ]
+    }
   }
 }

@@ -1,10 +1,9 @@
 {
   "extends": "./tsconfig.build.json",
   "include": [
-    "./packages/datamodel/src",
-    "./packages/devtools/src",
-    "./packages/did-datastore/src",
-    "./packages/tile-loader/src"
+    "./packages/connect/src",
+    "./packages/did-manager/src",
+    "./packages/did-provider/src"
   ],
   "compilerOptions": {
     "jsx": "preserve",
@@ -12,14 +11,13 @@
     "skipLibCheck": true
   },
   "typedocOptions": {
-    "name": "Glaze API",
+    "name": "3ID API",
     "readme": "none",
     "entryDocument": "overview.md",
     "entryPoints": [
-      "./packages/datamodel/src/index.ts",
-      "./packages/devtools/src/index.ts",
-      "./packages/did-datastore/src/index.ts",
-      "./packages/tile-loader/src/index.ts"
+      "./packages/connect/src/index.ts",
+      "./packages/did-manager/src/index.ts",
+      "./packages/did-provider/src/index.ts"
     ],
     "disableSources": true,
     "excludeExternals": true,

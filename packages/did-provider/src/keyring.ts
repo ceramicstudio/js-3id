@@ -162,7 +162,8 @@ export class Keyring {
 
   async asymEncryptJWE(cleartext: Record<string, any>, kid?: string): Promise<JWE> {
     const encrypter = x25519Encrypter(this.getEncryptionPublicKey(), kid)
-    return createJWE(prepareCleartext(cleartext), [encrypter])
+    const payload = await prepareCleartext(cleartext)
+    return await createJWE(payload, [encrypter])
   }
 
   getSigner(version: string = LATEST): Signer {

@@ -1,4 +1,4 @@
-export { ThreeIDError, assert } from './errors'
-export * from './types'
-export * from './utils'
-export * from './network'
+export { ThreeIDError, assert } from './errors.js'
+export * from './types.js'
+export * from './utils.js'
+export * from './network.js'

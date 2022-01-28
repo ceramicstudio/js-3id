@@ -101,12 +101,9 @@ export class ThreeIdProvider {
     } else if (config.authSecret) {
       keychain = await Keychain.load(threeIdx, config.authSecret, makeTmpProvider)
     }
-    console.log('3IDX id', threeIdx.id)
     permissions.did = threeIdx.id
     const provider = new ThreeIdProvider(threeIdx, permissions, keychain as Keychain)
-    console.log('create ThreeIdProvider before attach DID provider')
     await provider.attachDIDProvider()
-    console.log('create ThreeIdProvider attached DID provider')
     if (config.authId && !(await keychain?.list())?.length) {
       // Add the auth method to the keychain
       await provider.keychain.add(config.authId, config.authSecret)
@@ -125,7 +122,6 @@ export class ThreeIdProvider {
    * @return    {DidProvider}                   The DIDProvider for this ThreeIdProvider instance
    */
   getDidProvider(forcedOrigin?: string): DidProvider {
-    console.log('3ID provider getDIDProvider', this.#keychain.keyring.keySets)
     return new DidProvider({
       keyring: this.#keychain.keyring,
       permissions: this.#permissions,

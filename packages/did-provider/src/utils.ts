@@ -1,7 +1,6 @@
+import type { JWE } from 'did-jwt'
 import stringify from 'fast-json-stable-stringify'
 import * as u8a from 'uint8arrays'
-
-import type { JWE } from 'did-jwt'
 
 const B16 = 'base16'
 const B64 = 'base64pad'
