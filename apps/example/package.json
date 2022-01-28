@@ -10,7 +10,7 @@
     "start:testnet": "CERAMIC_API=https://ceramic-clay.3boxlabs.com npm start"
   },
   "dependencies": {
-    "@3id/connect": "^0.3.0",
+    "@3id/connect": "^0.4.0-alpha.0",
     "@babel/runtime": "7.16.7",
     "@ceramicnetwork/3id-did-resolver": "^2.0.0-alpha.0",
     "@ceramicnetwork/http-client": "^2.0.0-alpha.0",

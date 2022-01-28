@@ -1,10 +1,9 @@
-import { type ModelTypes, model } from '@3id/model'
+import { type AuthData, type JWE, type ModelTypes, type WrappedJWE, model } from '@3id/model'
 import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver'
 import type { CeramicApi, CeramicCommit } from '@ceramicnetwork/common'
 import { SubscriptionSet } from '@ceramicnetwork/common'
 import type { StreamID } from '@ceramicnetwork/streamid'
 import type { TileDocument } from '@ceramicnetwork/stream-tile'
-import type { AuthData, JWE, WrappedJWE } from '@datamodels/3id-keychain'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { TileLoader } from '@glazed/tile-loader'
 import CID from 'cids'
@@ -14,7 +13,7 @@ import { getResolver as getKeyResolver } from 'key-did-resolver'
 
 import type { DidProvider } from './did-provider.js'
 import type { ThreeIdState } from './keyring.js'
-import { isDefined } from './utils'
+import { isDefined } from './utils.js'
 
 const isLegacyDid = (didId: string): boolean => {
   try {

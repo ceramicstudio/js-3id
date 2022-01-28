@@ -1,1 +1,0 @@
-export { ThreeIDService } from './service'

@@ -1,6 +1,7 @@
 {
-  "no-redeclare": "off",
-  "@typescript-eslint/no-redeclare": ["error"],
-  "extends": "./tsconfig.build.json",
-  "include": ["src", "test"]
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src"]
 }
