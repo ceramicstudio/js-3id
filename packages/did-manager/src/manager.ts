@@ -17,6 +17,10 @@ import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration.
 import { DIDStore, LinkCache } from './stores.js'
 import type { AuthConfig, SeedConfig } from './types.js'
 import { waitMS } from './utils.js'
+import { AccountId } from 'caip'
+
+export const legacyAccountId = (account: AccountId): string =>
+  `${account.address}@${account.chainId.toString()}`
 
 let CERAMIC_API = 'https://ceramic-clay.3boxlabs.com'
 let DID_MIGRATION = true
@@ -53,8 +57,10 @@ export class Manager {
   async createAccount(opts?: { legacyDid?: string; skipMigration?: boolean }): Promise<string> {
     const migrate = DID_MIGRATION && !opts?.skipMigration
     // If in memory return
-    const accountId = (await this.authProvider.accountId()).toString()
-    if (this.threeIdProviders[accountId]) return this.threeIdProviders[accountId].id
+    const accountId = await this.authProvider.accountId()
+    if (this.threeIdProviders[accountId.toString()]) {
+      return this.threeIdProviders[accountId.toString()].id
+    }
 
     try {
       const provider = await this.setDidByAccountId(accountId)
@@ -93,7 +99,7 @@ export class Manager {
 
     const configId = migrating
       ? (legacyConfig as SeedConfig)
-      : ({ authSecret, authId: accountId } as AuthConfig)
+      : ({ authSecret, authId: accountId.toString() } as AuthConfig)
     assert.isDefined<SeedConfig | AuthConfig>(configId, 'Identity Config to initialize identity')
     const did = await this._initIdentity(configId)
 
@@ -109,6 +115,7 @@ export class Manager {
           await migration.migrateAKALinks(did, profile3Box)
         }
         const res = await Promise.all([get3BoxLinkProof(did), promChain()])
+        console.log('rr', res)
         linkProof = res[0]
       } catch (e) {
         console.error(e)
@@ -172,7 +179,7 @@ export class Manager {
     return this.threeIdProviders[did]
   }
 
-  async setDidByAccountId(accountId: string): Promise<ThreeIdProvider> {
+  async setDidByAccountId(accountId: AccountId): Promise<ThreeIdProvider> {
     const did = await this.cache.getLinkedDid(accountId)
     assert.isDefined(did, 'Account does not exist')
     return this.setDid(did)
@@ -196,9 +203,9 @@ export class Manager {
     await accountLink.setDidProof(linkProof)
     await this.ceramic.pin.add(accountLink.id)
 
-    const links = Object.assign(existing, { [accountId.toString()]: accountLink.id.toUrl() })
+    const links = Object.assign(existing, { [legacyAccountId(accountId)]: accountLink.id.toUrl() })
     await this.dataStore.set('cryptoAccounts', links)
-    await this.cache.setLinkedDid(accountId.toString(), did)
+    await this.cache.setLinkedDid(accountId, did)
   }
 
   // add an AccountID to an existing DID (auth method and link)
@@ -209,7 +216,7 @@ export class Manager {
   }
 
   // return did if a link exist for AccountId/caip10 in network, otherwise null
-  async linkInNetwork(accountId: string): Promise<string | null> {
+  async linkInNetwork(accountId: AccountId): Promise<string | null> {
     try {
       const accountLink = await Caip10Link.fromAccount(this.ceramic, accountId, {
         anchor: false,

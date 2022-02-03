@@ -15,7 +15,7 @@ import { AuthProviderClient } from '@3id/window-auth-provider'
 import { DIDDataStore } from '@glazed/did-datastore'
 import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
 // @ts-ignore missing types
-import { expose } from 'postmsg-rpc'
+import postmsg from 'postmsg-rpc'
 import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
 import Url from 'url-parse'
 
@@ -52,7 +52,7 @@ export class ThreeIDService {
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.dataStore = dataStore
     this.manageApp = new DisplayManageClientRPC()
-    expose('send', this.requestHandler.bind(this), {
+    postmsg.expose('send', this.requestHandler.bind(this), {
       postMessage: window.parent.postMessage.bind(window.parent),
     })
   }

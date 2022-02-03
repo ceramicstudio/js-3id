@@ -6,7 +6,7 @@ import {
 import { createAuthProviderServer } from '@3id/window-auth-provider'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { DIDProvider } from 'dids'
-import { caller } from 'postmsg-rpc'
+import postmsg from 'postmsg-rpc'
 import { RPCClient } from 'rpc-utils'
 import type { RPCConnection } from 'rpc-utils'
 import type { Subscription } from 'rxjs'
@@ -22,7 +22,7 @@ type PostMessage = (
 ) => void
 
 const createRPCProvider = (postMessage: PostMessage): DIDProvider => {
-  const sendRPC = caller<Array<any>, string>('send', { postMessage })
+  const sendRPC = postmsg.caller<Array<any>, string>('send', { postMessage })
   return {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     send: async (req: any) => JSON.parse(await sendRPC(req)),

@@ -136,8 +136,7 @@ const errorNotFound = (err: any): boolean => {
   return false
 }
 
-export const legacyDIDLinkExist = async (accountId: string): Promise<string | null> => {
-  const account = new AccountId(accountId)
+export const legacyDIDLinkExist = async (account: AccountId): Promise<string | null> => {
   if (account.chainId.namespace !== 'eip155') {
     // Only attempt migration for Ethereum accounts
     return null
@@ -175,6 +174,7 @@ export const get3BoxProfile = async (did: string): Promise<any> => {
 export const get3BoxLinkProof = async (did: string): Promise<LinkProof | null> => {
   try {
     const { links } = await get3BoxConfig(did)
+    console.log('ll.0.0', links)
     const link = links.filter((e) => e.type === 'ethereum-eoa')[0]
     if (!link) return null
     //v1 to v2 link proof

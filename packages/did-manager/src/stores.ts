@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { toHex, fromHex } from '@3id/common'
 import store from 'store'
+import type { AccountId } from "caip";
 
 const DIDSTORE_PREFIX = 'ACC_'
 const LINKCACHE_PREFIX = 'LINK_'
@@ -8,7 +9,8 @@ const LINKCACHE_PREFIX = 'LINK_'
 const didToKey = (account: string): string => `${DIDSTORE_PREFIX}${account}`
 const didFromKey = (key: string): string => key.replace(DIDSTORE_PREFIX, '')
 
-const caipToKey = (account: string): string => `${LINKCACHE_PREFIX}${account}`
+const legacyAccountId = (account: AccountId) => `${account.address}@${account.chainId.toString()}`
+const caipToKey = (account: AccountId): string => `${LINKCACHE_PREFIX}${legacyAccountId(account)}`
 const caipFromKey = (key: string): string => key.replace(LINKCACHE_PREFIX, '')
 
 export class DIDStore {
@@ -44,11 +46,11 @@ export class LinkCache {
     this.store = db || store
   }
 
-  async setLinkedDid(accountId: string, did: string): Promise<void> {
+  async setLinkedDid(accountId: AccountId, did: string): Promise<void> {
     this.store.set(caipToKey(accountId), did)
   }
 
-  async getLinkedDid(accountId: string): Promise<string | null> {
+  async getLinkedDid(accountId: AccountId): Promise<string | null> {
     return (this.store.get(caipToKey(accountId)) as string) || null
   }
 
