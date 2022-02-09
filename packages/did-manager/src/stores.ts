@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { toHex, fromHex } from '@3id/common'
+import { normalizeAccountId, toLegacyAccountId } from '@ceramicnetwork/common'
 import store from 'store'
 
 const DIDSTORE_PREFIX = 'ACC_'
@@ -8,8 +9,8 @@ const LINKCACHE_PREFIX = 'LINK_'
 const didToKey = (account: string): string => `${DIDSTORE_PREFIX}${account}`
 const didFromKey = (key: string): string => key.replace(DIDSTORE_PREFIX, '')
 
-const caipToKey = (account: string): string => `${LINKCACHE_PREFIX}${account}`
-const caipFromKey = (key: string): string => key.replace(LINKCACHE_PREFIX, '')
+const caipToKey = (account: string): string => `${LINKCACHE_PREFIX}${toLegacyAccountId(account)}`
+const caipFromKey = (key: string): string =>  normalizeAccountId(key.replace(LINKCACHE_PREFIX, '')).toString()
 
 export class DIDStore {
   store: StoreJsAPI
