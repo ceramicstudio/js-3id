@@ -8,7 +8,7 @@ import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { DIDProvider } from 'dids'
 import type { Subscription } from 'rxjs'
 import { isValidNetwork, iframeByNetwork, iframeManageUrl, Network, iframeUrl } from '@3id/common'
-import { DidProviderWindowProxy } from './DidProviderWindowProxy'
+import { DidProviderWindowProxy } from './DidProviderWindowProxy.js'
 
 const DEFAULT_NETWORK = 'testnet-clay'
 

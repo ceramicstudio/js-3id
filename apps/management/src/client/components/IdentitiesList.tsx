@@ -1,10 +1,10 @@
-import type { Manager } from '@3id/manager'
+import type { Manager } from '@3id/did-manager'
 import { Avatar, Box, Text } from 'grommet'
 import { useMemo } from 'react'
 
 import Button from '../../components/Button'
 import { formatDID, getImageSrc, longFormatDID } from '../../data/idx'
-import avatarPlaceholder from '../../images/avatar-placeholder.png'
+// import avatarPlaceholder from '../../images/avatar-placeholder.png'
 import { ACCENT_COLOR } from '../../theme'
 import type { DIDData, DIDsData } from '../../types'
 
@@ -22,9 +22,9 @@ function IdentityItem({ data, did, manager }: ItemProps) {
   const [ethereum] = useEthereum()
 
   const avatarSrc = useMemo(() => {
-    return profile?.image
-      ? getImageSrc(profile.image, { height: 65, width: 65 })
-      : avatarPlaceholder
+    // return profile?.image
+    //   ? getImageSrc(profile.image, { height: 65, width: 65 })
+    //   : avatarPlaceholder
   }, [profile])
 
   let hasConnectedAccount = false
@@ -58,7 +58,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
   return (
     <Box border={{ color: 'neutral-5' }} margin={{ bottom: 'medium' }} round="small">
       <Box direction="row" gap="small" pad="medium">
-        <Avatar size="65px" src={avatarSrc} />
+        {/* <Avatar size="65px" src={avatarSrc} /> */}
         <Box flex>{renderName()}</Box>
         <Box>
           <Button

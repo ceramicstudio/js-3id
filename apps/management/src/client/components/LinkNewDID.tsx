@@ -1,4 +1,4 @@
-import type { Manager } from '@3id/manager'
+import type { Manager } from '@3id/did-manager'
 import { Box, Text } from 'grommet'
 
 import Button from '../../components/Button'
