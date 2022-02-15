@@ -3,18 +3,17 @@
  */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment*/
 
-import { model as idxModel } from '@3id/model'
+import { aliases as idxAliases } from '@3id/model'
 import { EthereumMigrationMockAuthProvider, createAuthProvider } from '@3id/test-utils'
 import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-provider'
-import type { CeramicApi} from '@ceramicnetwork/common'
-import { toLegacyAccountId  } from '@ceramicnetwork/common'
+import type { CeramicApi } from '@ceramicnetwork/common'
+import { toLegacyAccountId } from '@ceramicnetwork/common'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { jest } from '@jest/globals'
 import { toHex } from '@3id/common'
 import store from 'store'
 
-import { Manager, DIDStore, LinkCache  } from '../src'
-
+import { Manager, DIDStore, LinkCache } from '../src'
 
 declare global {
   const ceramic: CeramicApi
@@ -23,7 +22,7 @@ declare global {
 describe('3ID Manager', () => {
   jest.setTimeout(60000)
 
-  const dataStore = new DIDDataStore({ ceramic, model: idxModel })
+  const dataStore = new DIDDataStore({ ceramic, model: idxAliases })
 
   test('creates/loads new did', async () => {
     // auth provider create

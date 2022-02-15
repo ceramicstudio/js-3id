@@ -11,6 +11,6 @@ export default class ThreeIDEnvironment extends CeramicEnvironment {
       resolver: { ...getKeyResolver(), ...get3IDResolver(this.global.ceramic) },
     })
     const manager = createModelManager(this.global.ceramic)
-    this.global.publishedModel = await manager.toPublished()
+    this.global.modelAliases = await manager.deploy()
   }
 }
