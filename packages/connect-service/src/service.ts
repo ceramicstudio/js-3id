@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
-
-import { ThreeIDError, assert } from '@3id/common'
+import { assert, DIDRPCNameSpace } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import {
   Manager,
@@ -10,23 +9,46 @@ import {
   waitMS,
 } from '@3id/did-manager'
 import { ThreeIdProvider } from '@3id/did-provider'
-import { UIProvider, ThreeIDManagerUI, AuthParams } from '@3id/ui-provider'
+import { UIProvider, ThreeIDManagerUI } from '@3id/ui-provider'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 import { DIDDataStore } from '@glazed/did-datastore'
-import type { DIDMethodName, DIDProvider, DIDProviderMethods, DIDRequest, DIDResponse } from 'dids'
-// @ts-ignore missing types
-import { expose } from 'postmsg-rpc'
-import type { RPCErrorObject, RPCRequest, RPCResponse, RPCResultResponse } from 'rpc-utils'
+import { RPCClient } from 'rpc-utils'
 import Url from 'url-parse'
-
-import { rpcError } from './utils.js'
-
-// const { expose } = require('postmsg-rpc')
+import { createServer } from '@ceramicnetwork/rpc-window'
+import type { 
+  DIDProvider, 
+  DIDProviderMethods, 
+  GeneralJWS, 
+  CreateJWSParams, 
+  DecryptJWEParams,
+  AuthParams 
+} from 'dids'
+import type { ServerPayload } from '@ceramicnetwork/rpc-window'
+import type { Observable } from 'rxjs'
 
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
 
-// Any other supported method?
-type Methods = DIDProviderMethods
+function createDIDProviderServer<NS extends string>(
+  authHandler: (params: AuthParams, origin: string) => Promise<GeneralJWS>,
+  relayHandler: <MethodName extends keyof DIDProviderMethods>(
+    method: MethodName, 
+    params: DIDProviderMethods[MethodName]['params']
+  )=> Promise<DIDProviderMethods[MethodName]['result']>,
+  namespace = DIDRPCNameSpace
+): Observable<ServerPayload<DIDProviderMethods, NS>> {
+  return createServer<DIDProviderMethods, NS>(namespace as NS, {
+    did_authenticate: async (_event, params: AuthParams) => {
+      const origin = new Url(document.referrer).host
+      return authHandler(params, origin)
+    },
+    did_createJWS: async (_event, params: CreateJWSParams & { did: string }) => {
+      return relayHandler('did_createJWS', params)
+    },
+    did_decryptJWE: async (_event, params: DecryptJWEParams) => {
+      return relayHandler('did_decryptJWE', params)
+    }
+  })
+}
 
 /**
  *  ConnectService runs a 3ID DID provider instance and rpc server with
@@ -37,6 +59,8 @@ export class ThreeIDService {
   dataStore: DIDDataStore | undefined
   threeId: ThreeIdProvider | undefined
   provider: DIDProvider | undefined
+  authProviderRelay: AuthProviderClient<string> | undefined
+  didClient: RPCClient<DIDProviderMethods> | undefined
 
   manageApp: DisplayManageClientRPC | undefined
 
@@ -52,22 +76,20 @@ export class ThreeIDService {
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.dataStore = dataStore
     this.manageApp = new DisplayManageClientRPC()
-    expose('send', this.requestHandler.bind(this), {
-      postMessage: window.parent.postMessage.bind(window.parent),
-    })
+    createDIDProviderServer(this._didAuthReq.bind(this), this._relayDidReq.bind(this)).subscribe()
   }
 
   async init(
     accountId: string,
-    authReq: DIDRequest<'did_authenticate'>,
-    domain?: string | null
+    authParams: AuthParams,
+    origin: string
   ): Promise<void> {
     assert.isDefined(this.uiManager, 'UI Manager must be defined')
     assert.isDefined(this.manageApp, 'manageApp must be defined')
     assert.isDefined(this.dataStore, 'dataStore must be defined')
 
-    const authProviderRelay = new AuthProviderClient(window.parent)
-    const manage = new Manager(authProviderRelay, { dataStore: this.dataStore })
+    this.authProviderRelay = new AuthProviderClient(window.parent)
+    const manage = new Manager(this.authProviderRelay, { dataStore: this.dataStore })
 
     //TODO if exist in state, return before even looking up links
     const existLocally = await manage.cache.getLinkedDid(accountId)
@@ -83,7 +105,7 @@ export class ThreeIDService {
 
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {
-      await this.userPermissionRequest(authReq, domain)
+      await this.userPermissionRequest(authParams, origin)
     }
 
     //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
@@ -99,7 +121,7 @@ export class ThreeIDService {
     let muportDid
 
     if (legacyDid) {
-      await this.userPermissionRequest(authReq, domain)
+      await this.userPermissionRequest(authParams, origin, legacyDid)
     }
 
     // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
@@ -144,13 +166,13 @@ export class ThreeIDService {
     }
 
     this.threeId = manage.threeIdProviders[did]
-    // @ts-ignore
-    this.provider = this.threeId.getDidProvider(domain) as DIDProvider
+    const provider = this.threeId.getDidProvider(origin)
+    this.didClient = new RPCClient<DIDProviderMethods>(provider)
 
     if (muportDid) {
       //Try to migrate profile data still for muport did
       try {
-        const migration = new Migrate3IDV0(this.provider, manage.dataStore)
+        const migration = new Migrate3IDV0(provider, manage.dataStore)
         await migration.migrate3BoxProfile(muportDid)
       } catch (e) {
         // If not available, continue
@@ -159,113 +181,55 @@ export class ThreeIDService {
 
     // After since 3id-did-provider permissions may exist
     if (existLocally) {
-      await this.userPermissionRequest(authReq, domain, did)
+      await this.userPermissionRequest(authParams, origin, did)
     }
   }
 
   async userPermissionRequest(
-    authReq: DIDRequest,
-    domain?: string | null,
-    did?: string
+    authParams: AuthParams,
+    origin: string, 
+    did?: string 
   ): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
-    const userReq = this._createUserRequest(authReq, domain, did)
-    if (!userReq) return
-    const userPermission = userReq ? await this.uiManager.promptAuthenticate(userReq) : null
+    if (this.threeId) {
+      const has = authParams.paths ? this.threeId.permissions.has(origin, authParams.paths) : true
+      if (has) return 
+    }
+    const userPermission = await this.uiManager.promptAuthenticate({ paths: authParams.paths, origin, did })
     if (!userPermission) throw new Error('3id-connect: Request not authorized')
   }
 
-  async requestHandler(message: RPCRequest<Methods, keyof Methods>): Promise<string> {
-    const domain = new Url(document.referrer).host
-    if (message.method.startsWith('did')) {
-      const res = await this.requestHandlerDid(message, domain)
-      return JSON.stringify(res)
-    } else {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const msg = `Unsupported method ${message.method}: only did_ and 3id_ methods are supported`
-      return JSON.stringify(new ThreeIDError(4, msg))
-    }
-  }
-
-  /**
-   *  Consumes DID RPC request message and relays to IDW didprovider instance. Also handles
-   *  logic to retry requests and cancel requests.
-   *
-   * @param     {Object}      message    DID RPC request message
-   * @return    {String}                 response message string
-   */
-
-  async requestHandlerDid<K extends DIDMethodName>(
-    message: DIDRequest<K>,
-    domain?: string
-  ): Promise<
-    K extends 'did_authenticate'
-      ? RPCResultResponse<DIDProviderMethods['did_authenticate']['result']> | RPCErrorObject | void
-      : DIDResponse<K> | null
-  > {
-    return message.method === 'did_authenticate'
-      ? ((await this._didAuthReq(message as DIDRequest<'did_authenticate'>, domain)) as any)
-      : await this._relayDidReq(message)
-  }
-
   async _didAuthReq(
-    message: RPCRequest<DIDProviderMethods, 'did_authenticate'>,
-    domain?: string | null
-  ): Promise<
-    | RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
-    | RPCErrorObject
-    | null
-    | void
-  > {
-    assert.isDefined(message.params, 'Message parameters must be defined')
+    params: AuthParams, 
+    origin: string
+  ): Promise<GeneralJWS>{
     assert.isDefined(this.uiManager, 'A uiManager must be defined')
+    assert.isDefined(this.authProviderRelay, 'A uiManager must be defined')
+    assert.isDefined(this.didClient, 'A uiManager must be defined')
 
     try {
-      const accountId = (message.params as unknown as { accountId: string }).accountId
-
-      await this.init(accountId, message, domain)
-
-      assert.isDefined(this.provider, 'DID provider must be defined')
-      const res = await this.provider.send(message)
+      const accountId = (await this.authProviderRelay.accountId()).toString()
+      await this.init(accountId, params, origin)
+      const resPromise = this._relayDidReq('did_authenticate', params)
       void this.uiManager.noftifyClose()
-      return res as RPCResultResponse<DIDProviderMethods['did_authenticate']['result']>
+      return resPromise
     } catch (e) {
       const err = (e as Error).toString()
       if (err.includes('authorized') || err.includes('cancellation')) {
         void this.uiManager.noftifyClose()
-        return rpcError(message.id!)
+        throw new Error('Request cancelled')
       }
       // @ts-ignore error data type
       void this.uiManager.noftifyError({ code: 0, data: err, message: 'Error: Unable to connect' })
+      throw new Error('Request failed')
     }
   }
 
-  async _relayDidReq<K extends keyof DIDProviderMethods>(
-    req: RPCRequest<DIDProviderMethods, K>
-  ): Promise<RPCResponse<DIDProviderMethods, K> | null> {
-    assert.isDefined(this.provider, 'DID provider must be defined')
-    return await this.provider.send(req)
-  }
-
-  _createUserRequest<K extends keyof DIDProviderMethods>(
-    req: RPCRequest<DIDProviderMethods, K>,
-    origin?: string | null,
-    did?: string
-  ): AuthParams | null {
-    assert.isDefined(req.params, 'Request parameters must be provided')
-    const params = req.params as DIDProviderMethods[K]['params'] & { paths?: Array<string> }
-
-    if (this.threeId) {
-      const has = params.paths ? this.threeId.permissions.has(origin, params.paths) : true
-      if (has) return null
-    }
-
-    return {
-      type: 'authenticate',
-      // @ts-ignore
-      origin,
-      paths: params.paths || [],
-      did: did || '',
-    }
+  async _relayDidReq<MethodName extends keyof DIDProviderMethods>(
+    method: MethodName, 
+    params: DIDProviderMethods[MethodName]['params']
+  ): Promise<DIDProviderMethods[MethodName]['result']> {
+    assert.isDefined(this.didClient, 'DID client must be defined')
+    return this.didClient.request(method, params)
   }
 }

@@ -38,12 +38,15 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
+    "@ceramicnetwork/rpc-window": "^0.6.0",
+    "dids": "^3.0.0-alpha.0",
     "errors-utils": "^0.2.0",
+    "rpc-utils": "^0.6.1",
+    "rxjs": "7.5.4",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
-    "did-jwt": "^5.12.4",
-    "rpc-utils": "^0.6.0"
+    "did-jwt": "^5.12.4"
   },
   "jest": {
     "extensionsToTreatAsEsm": [
@@ -62,3 +65,4 @@
     }
   }
 }
+

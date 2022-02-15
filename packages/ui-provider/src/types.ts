@@ -39,7 +39,7 @@ export type AccountRes = {
 export type AuthParams = {
   origin: string
   paths: Array<string>
-  did: string
+  did?: string
 }
 
 export type AuthRes = {

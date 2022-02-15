@@ -39,7 +39,7 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "rpc-utils": "^0.6.0"
+    "rpc-utils": "^0.6.1"
   },
   "jest": {
     "extensionsToTreatAsEsm": [

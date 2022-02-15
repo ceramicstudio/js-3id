@@ -48,8 +48,7 @@
     "@3id/window-auth-provider": "^0.4.0-alpha.0",
     "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
     "errors-utils": "^0.2.0",
-    "postmsg-rpc": "^2.4.0",
-    "rpc-utils": "^0.6.0",
+    "rpc-utils": "^0.6.1",
     "url-parse": "^1.5.4"
   },
   "jest": {
