@@ -1,4 +1,10 @@
-import { type AuthData, type JWE, type ModelTypes, type WrappedJWE, model } from '@3id/model'
+import {
+  type AuthData,
+  type JWE,
+  type ModelTypes,
+  type WrappedJWE,
+  aliases as idxAliases,
+} from '@3id/model'
 import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver'
 import type { CeramicApi, CeramicCommit } from '@ceramicnetwork/common'
 import { SubscriptionSet } from '@ceramicnetwork/common'
@@ -58,7 +64,7 @@ export class ThreeIDX {
     this.#dataStore = new DIDDataStore({
       ceramic,
       loader: loader ?? new TileLoader({ ceramic, cache: true }),
-      model,
+      model: idxAliases,
     })
     this.#subscriptionSet = new SubscriptionSet()
     this.resolver = new Resolver({ ...getKeyResolver(), ...get3IDResolver(this.#ceramic) })
