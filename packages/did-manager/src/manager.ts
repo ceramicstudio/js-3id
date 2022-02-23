@@ -1,9 +1,9 @@
 import { assert } from '@3id/common'
 import { ThreeIdProvider } from '@3id/did-provider'
-import { type CryptoAccountLinks, model as idxModel } from '@3id/model'
+import { type CryptoAccountLinks, aliases as idxAliases } from '@3id/model'
 import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver'
 import type { AuthProvider, LinkProof } from '@ceramicnetwork/blockchain-utils-linking'
-import { CeramicApi, toLegacyAccountId  } from '@ceramicnetwork/common'
+import { CeramicApi, toLegacyAccountId } from '@ceramicnetwork/common'
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link'
 import { DIDDataStore } from '@glazed/did-datastore'
@@ -44,7 +44,10 @@ export class Manager {
     this.cache = opts.cache || new LinkCache()
     this.dataStore =
       opts.dataStore ||
-      new DIDDataStore({ ceramic: opts.ceramic || new CeramicClient(CERAMIC_API), model: idxModel })
+      new DIDDataStore({
+        ceramic: opts.ceramic || new CeramicClient(CERAMIC_API),
+        model: idxAliases,
+      })
     this.ceramic = opts.ceramic || this.dataStore.ceramic
     this.threeIdProviders = {}
   }
@@ -195,7 +198,9 @@ export class Manager {
     })
     await accountLink.setDidProof(linkProof)
     await this.ceramic.pin.add(accountLink.id)
-    const links = Object.assign(existing, { [toLegacyAccountId(accountId.toString())]: accountLink.id.toUrl() })
+    const links = Object.assign(existing, {
+      [toLegacyAccountId(accountId.toString())]: accountLink.id.toUrl(),
+    })
     await this.dataStore.set('cryptoAccounts', links)
     await this.cache.setLinkedDid(accountId.toString(), did)
   }

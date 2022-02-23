@@ -1,6 +1,6 @@
 # jest-environment-3id
 
-3ID environment for Jest, using Ceramic with a 3ID resolver and published datamodel.
+3ID environment for Jest, using Ceramic with a 3ID resolver and deployed datamodel.
 
 ## Installation
 
@@ -16,7 +16,7 @@ Set `jest-environment-3id` as Jest `testEnvironment`
 
 - `ceramic`: Ceramic core instance (from `jest-environment-ceramic`)
 - `ipfs`: IPFS instance (from `jest-environment-ceramic`)
-- `publishedModel`: published datamodel aliases
+- `modelAliases`: deployed datamodel aliases
 
 ## License
 
