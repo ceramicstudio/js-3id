@@ -87,8 +87,8 @@ export class ThreeIDService {
     assert.isDefined(this.uiManager, 'UI Manager must be defined')
     assert.isDefined(this.manageApp, 'manageApp must be defined')
     assert.isDefined(this.dataStore, 'dataStore must be defined')
+    assert.isDefined(this.authProviderRelay, 'authProviderRelay must be defined')
 
-    this.authProviderRelay = new AuthProviderClient(window.parent)
     const manage = new Manager(this.authProviderRelay, { dataStore: this.dataStore })
 
     //TODO if exist in state, return before even looking up links
@@ -204,8 +204,7 @@ export class ThreeIDService {
     origin: string
   ): Promise<GeneralJWS>{
     assert.isDefined(this.uiManager, 'A uiManager must be defined')
-    assert.isDefined(this.authProviderRelay, 'A uiManager must be defined')
-    assert.isDefined(this.didClient, 'A uiManager must be defined')
+    this.authProviderRelay = new AuthProviderClient(window.parent)
 
     try {
       const accountId = (await this.authProviderRelay.accountId()).toString()
