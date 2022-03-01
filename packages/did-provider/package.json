@@ -57,7 +57,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "key-did-provider-ed25519": "^2.0.0-alpha.0",
     "key-did-resolver": "^2.0.0-alpha.1",
-    "rpc-utils": "^0.6.0",
+    "rpc-utils": "^0.6.1",
     "store": "^2.0.12",
     "uint8arrays": "^3.0.0"
   },

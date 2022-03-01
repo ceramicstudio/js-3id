@@ -52,7 +52,7 @@
     "cross-fetch": "^3.0.6",
     "dids": "^3.0.0-alpha.0",
     "errors-utils": "^0.2.0",
-    "rpc-utils": "^0.6.0",
+    "rpc-utils": "^0.6.1",
     "store": "^2.0.12",
     "uint8arrays": "^3.0.0"
   },
