@@ -3,6 +3,8 @@ import { fromString, toString } from 'uint8arrays'
 
 const HTTPError = (status: number, message: string): Error => {
   const e = new Error(message)
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   e.statusCode = status
   return e
@@ -27,7 +29,7 @@ export const fetchJson = async <T = unknown>(
   if (r.ok) {
     return res as T
   } else {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
     throw HTTPError(r.status, res.message)
   }
 }

@@ -14,7 +14,7 @@ import type {
   UIMethodName,
 } from './types.js'
 
-type Context = {}
+type Context = Record<string, never>
 
 export class UIProvider implements UIProviderInterface {
   _handle: SendRequestFunc<UIProviderMethods>

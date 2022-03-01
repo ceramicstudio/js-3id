@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/require-await, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call */
 import { toHex, fromHex } from '@3id/common'
 import { normalizeAccountId, toLegacyAccountId } from '@ceramicnetwork/common'
 import store from 'store'
@@ -10,7 +10,8 @@ const didToKey = (account: string): string => `${DIDSTORE_PREFIX}${account}`
 const didFromKey = (key: string): string => key.replace(DIDSTORE_PREFIX, '')
 
 const caipToKey = (account: string): string => `${LINKCACHE_PREFIX}${toLegacyAccountId(account)}`
-const caipFromKey = (key: string): string =>  normalizeAccountId(key.replace(LINKCACHE_PREFIX, '')).toString()
+const caipFromKey = (key: string): string =>
+  normalizeAccountId(key.replace(LINKCACHE_PREFIX, '')).toString()
 
 export class DIDStore {
   store: StoreJsAPI
@@ -30,8 +31,8 @@ export class DIDStore {
 
   async getDIDs(): Promise<Array<string>> {
     const res: Array<string> = []
-    // @ts-ignore
-    store.each((v: string, k: string) => {
+
+    store.each((_v: string, k: string) => {
       if (k.startsWith(DIDSTORE_PREFIX)) res.push(didFromKey(k))
     })
     return res
@@ -55,8 +56,7 @@ export class LinkCache {
 
   async getLinkedAccounts(): Promise<Array<string> | null> {
     const res: Array<string> = []
-    // @ts-ignore
-    store.each((v: string, k: string) => {
+    store.each((_v: string, k: string) => {
       if (k.startsWith(LINKCACHE_PREFIX)) res.push(caipFromKey(k))
     })
     return res

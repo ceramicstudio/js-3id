@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument,  @typescript-eslint/no-unsafe-return */
 import {
   type AuthData,
   type JWE,
@@ -263,6 +264,7 @@ export class ThreeIDX {
     })
     // Rotate keys in 3ID document and update keychain
     await threeID.update(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       { ...threeID.content, publicKeys: threeIdState.content.publicKeys },
       threeIdState.metadata,
       { asDID: didKey }

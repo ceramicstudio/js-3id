@@ -24,6 +24,10 @@ jobs:
             sudo chmod -R 777 /usr/local
             npm i -g lerna
             yarn install --frozen-lockfile
+      
+      - run:
+          name: build libraries
+          command: yarn build
 
       - run:
           name: lint

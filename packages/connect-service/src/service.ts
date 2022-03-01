@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 import { assert, DIDRPCNameSpace } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
 import {
@@ -15,13 +15,13 @@ import { DIDDataStore } from '@glazed/did-datastore'
 import { RPCClient } from 'rpc-utils'
 import Url from 'url-parse'
 import { createServer } from '@ceramicnetwork/rpc-window'
-import type { 
-  DIDProvider, 
-  DIDProviderMethods, 
-  GeneralJWS, 
-  CreateJWSParams, 
+import type {
+  DIDProvider,
+  DIDProviderMethods,
+  GeneralJWS,
+  CreateJWSParams,
   DecryptJWEParams,
-  AuthParams 
+  AuthParams,
 } from 'dids'
 import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Observable } from 'rxjs'
@@ -31,9 +31,9 @@ const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' :
 function createDIDProviderServer<NS extends string>(
   authHandler: (params: AuthParams, origin: string) => Promise<GeneralJWS>,
   relayHandler: <MethodName extends keyof DIDProviderMethods>(
-    method: MethodName, 
+    method: MethodName,
     params: DIDProviderMethods[MethodName]['params']
-  )=> Promise<DIDProviderMethods[MethodName]['result']>,
+  ) => Promise<DIDProviderMethods[MethodName]['result']>,
   namespace = DIDRPCNameSpace
 ): Observable<ServerPayload<DIDProviderMethods, NS>> {
   return createServer<DIDProviderMethods, NS>(namespace as NS, {
@@ -46,7 +46,7 @@ function createDIDProviderServer<NS extends string>(
     },
     did_decryptJWE: async (_event, params: DecryptJWEParams) => {
       return relayHandler('did_decryptJWE', params)
-    }
+    },
   })
 }
 
@@ -71,7 +71,6 @@ export class ThreeIDService {
    * @param     {Function}    cancel               Function to cancel request, consumes callback, which is called when request is cancelled (cb) => {...}
    * @param     {Network}     network              Network to run service on, testnet-clay, dev-unstable, local and mainnet are supported or API url
    */
-  // @ts-ignore method override
   start(uiProvider: UIProvider, dataStore: DIDDataStore): void {
     this.uiManager = new ThreeIDManagerUI(uiProvider)
     this.dataStore = dataStore
@@ -79,11 +78,7 @@ export class ThreeIDService {
     createDIDProviderServer(this._didAuthReq.bind(this), this._relayDidReq.bind(this)).subscribe()
   }
 
-  async init(
-    accountId: string,
-    authParams: AuthParams,
-    origin: string
-  ): Promise<void> {
+  async init(accountId: string, authParams: AuthParams, origin: string): Promise<void> {
     assert.isDefined(this.uiManager, 'UI Manager must be defined')
     assert.isDefined(this.manageApp, 'manageApp must be defined')
     assert.isDefined(this.dataStore, 'dataStore must be defined')
@@ -152,8 +147,9 @@ export class ThreeIDService {
     let did: string
     try {
       // Skip migration if muport or known failure
-      // @ts-ignore
-      did = await manage.createAccount({ legacyDid, skipMigration: Boolean(muportDid || willFail) })
+      const skipMigration = Boolean(muportDid || willFail)
+      const createConfig = legacyDid ? { legacyDid, skipMigration } : { skipMigration }
+      did = await manage.createAccount(createConfig)
     } catch (e) {
       if (legacyDid) {
         await this.uiManager.promptMigrationFail({ caip10: accountId })
@@ -185,24 +181,21 @@ export class ThreeIDService {
     }
   }
 
-  async userPermissionRequest(
-    authParams: AuthParams,
-    origin: string, 
-    did?: string 
-  ): Promise<void> {
+  async userPermissionRequest(authParams: AuthParams, origin: string, did?: string): Promise<void> {
     assert.isDefined(this.uiManager, 'User request handler must be defined')
     if (this.threeId) {
       const has = authParams.paths ? this.threeId.permissions.has(origin, authParams.paths) : true
-      if (has) return 
+      if (has) return
     }
-    const userPermission = await this.uiManager.promptAuthenticate({ paths: authParams.paths, origin, did })
+    const userPermission = await this.uiManager.promptAuthenticate({
+      paths: authParams.paths,
+      origin,
+      did,
+    })
     if (!userPermission) throw new Error('3id-connect: Request not authorized')
   }
 
-  async _didAuthReq(
-    params: AuthParams, 
-    origin: string
-  ): Promise<GeneralJWS>{
+  async _didAuthReq(params: AuthParams, origin: string): Promise<GeneralJWS> {
     assert.isDefined(this.uiManager, 'A uiManager must be defined')
     this.authProviderRelay = new AuthProviderClient(window.parent)
 
@@ -218,14 +211,14 @@ export class ThreeIDService {
         void this.uiManager.noftifyClose()
         throw new Error('Request cancelled')
       }
-      // @ts-ignore error data type
-      void this.uiManager.noftifyError({ code: 0, data: err, message: 'Error: Unable to connect' })
+      console.log(err)
+      void this.uiManager.noftifyError({ code: 0, message: 'Error: Unable to connect' })
       throw new Error('Request failed')
     }
   }
 
   async _relayDidReq<MethodName extends keyof DIDProviderMethods>(
-    method: MethodName, 
+    method: MethodName,
     params: DIDProviderMethods[MethodName]['params']
   ): Promise<DIDProviderMethods[MethodName]['result']> {
     assert.isDefined(this.didClient, 'DID client must be defined')
