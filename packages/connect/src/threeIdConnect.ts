@@ -6,28 +6,11 @@ import {
 import { createAuthProviderServer } from '@3id/window-auth-provider'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { DIDProvider } from 'dids'
-import { caller } from 'postmsg-rpc'
-import { RPCClient } from 'rpc-utils'
-import type { RPCConnection } from 'rpc-utils'
 import type { Subscription } from 'rxjs'
-import { DidProviderProxy } from './didProviderProxy'
 import { isValidNetwork, iframeByNetwork, iframeManageUrl, Network, iframeUrl } from '@3id/common'
+import { DidProviderWindowProxy } from './DidProviderWindowProxy'
 
 const DEFAULT_NETWORK = 'testnet-clay'
-
-type PostMessage = (
-  message: any,
-  targetOrigin: string,
-  transfer?: Array<Transferable> | undefined
-) => void
-
-const createRPCProvider = (postMessage: PostMessage): DIDProvider => {
-  const sendRPC = caller<Array<any>, string>('send', { postMessage })
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    send: async (req: any) => JSON.parse(await sendRPC(req)),
-  }
-}
 
 const assertBrowser = () => {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -43,11 +26,6 @@ const assertBrowser = () => {
 export class ThreeIdConnect {
   iframe: HTMLIFrameElement
   iframeLoadedPromise: Promise<void>
-  postMessage: PostMessage | undefined
-
-  RPCProvider: DIDProvider | undefined
-  RPCClient: RPCClient<any> | undefined
-
   authProvider: AuthProvider | undefined
   accountId: string | undefined
   manageUrl: string
@@ -88,16 +66,11 @@ export class ThreeIdConnect {
       await this.setAuthProvider(provider)
     }
     await this.iframeLoadedPromise
-    this.postMessage = this.iframe.contentWindow!.postMessage.bind(this.iframe.contentWindow)
 
     // TODO: this should only be set if there is a provider injected, also need to stop current subscription
     this._authProviderSubscription = createAuthProviderServer(provider).subscribe()
     createDisplayConnectServerRPC(this.iframe).subscribe()
     createDisplayManageServerRPC(this.manageUrl).subscribe()
-
-    // TODO also change this to use transports
-    this.RPCProvider = createRPCProvider(this.postMessage)
-    this.RPCClient = new RPCClient(this.RPCProvider as RPCConnection<any>)
     this._connected = true
   }
 
@@ -113,10 +86,11 @@ export class ThreeIdConnect {
   /**
    *  Returns a DID provider, which can send and receive messages from iframe
    *
-   * @return    {DidProviderProxy}     A DID provider
+   * @return    {DIDProvider}     A DID provider
    */
-  getDidProvider(): DidProviderProxy {
+  getDidProvider(): DIDProvider  {
     if (!this.authProvider) throw new Error('setAuthProvider required')
-    return new DidProviderProxy(this.RPCProvider as DIDProvider, this.accountId!)
+    if (!this.iframe.contentWindow) throw new Error('3id connect iframe service not found')
+    return new DidProviderWindowProxy(this.iframe.contentWindow)
   }
 }

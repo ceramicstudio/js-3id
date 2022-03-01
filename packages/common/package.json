@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "did-jwt": "^5.12.4",
-    "rpc-utils": "^0.6.0"
+    "rpc-utils": "^0.6.1"
   },
   "jest": {
     "extensionsToTreatAsEsm": [
@@ -60,3 +60,4 @@
     }
   }
 }
+
