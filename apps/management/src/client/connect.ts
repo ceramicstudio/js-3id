@@ -1,6 +1,6 @@
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import { createPostMessageObserver } from '@ceramicnetwork/transport-postmessage'
-import { Manager } from '@3id/manager'
+import { Manager } from '@3id/did-manager'
 import { AuthProviderClient } from '@3id/window-auth-provider'
 
 import { ceramic } from '../data/ceramic'
