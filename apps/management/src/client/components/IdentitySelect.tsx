@@ -1,4 +1,4 @@
-import type { Manager } from '@3id/manager'
+import type { Manager } from '@3id/did-manager'
 import { Box, Heading, Text } from 'grommet'
 
 import type { DIDsData } from '../../types'

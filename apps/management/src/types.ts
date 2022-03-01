@@ -1,18 +1,18 @@
-import type { Manager } from '@3id/manager'
+import type { Manager } from '@3id/did-manager'
 import type { AuthProvider } from '@ceramicnetwork/blockchain-utils-linking'
 import type { BasicProfile } from '@datamodels/identity-profile-basic'
-import type { AccountID } from 'caip'
+import type { AccountId } from 'caip'
 import type { UIRequest, UIMethodName  } from '@3id/ui-provider'
 import { Deferred } from './utils'
 
 export type DIDData = {
-  accounts: Array<AccountID>
+  accounts: Array<AccountId>
   profile: BasicProfile | null
 }
 export type DIDsData = Record<string, DIDData>
 
 export type EthereumData = {
-  account: AccountID
+  account: AccountId
   manager: Manager
   provider: any
 }
