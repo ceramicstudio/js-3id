@@ -95,7 +95,7 @@ export default function HeaderContainer() {
           onClick={() => {
             reqState?.respond.resolve({error: 'cancellation'})
         }}>
-          <img src={close} />
+          <img src={close.src} />
         </div>
       </div>
       {imageHeaders}

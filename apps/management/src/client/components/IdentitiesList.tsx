@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import Button from '../../components/Button'
 import { formatDID, getImageSrc, longFormatDID } from '../../data/idx'
-// import avatarPlaceholder from '../../images/avatar-placeholder.png'
+import avatarPlaceholder from '../../images/avatar-placeholder.png'
 import { ACCENT_COLOR } from '../../theme'
 import type { DIDData, DIDsData } from '../../types'
 
@@ -22,9 +22,9 @@ function IdentityItem({ data, did, manager }: ItemProps) {
   const [ethereum] = useEthereum()
 
   const avatarSrc = useMemo(() => {
-    // return profile?.image
-    //   ? getImageSrc(profile.image, { height: 65, width: 65 })
-    //   : avatarPlaceholder
+    return profile?.image
+      ? getImageSrc(profile.image, { height: 65, width: 65 })
+      : avatarPlaceholder.src
   }, [profile])
 
   let hasConnectedAccount = false
