@@ -36,3 +36,5 @@ export const iframeUrl = (base: string) => `${base}${DEFAULT_IFRAME_PATH}`
 export const iframeByNetwork = (network: Network) => CERAMIC_NETWORK_IFRAME[network]
 export const apiByNetwork = (network: Network) => CERAMIC_NETWORK_API[network]
 export const isValidNetwork = (network: string) => VALID_NETWORKS.includes(network)
+
+export const DIDRPCNameSpace = '3id-connect-did-provider'
