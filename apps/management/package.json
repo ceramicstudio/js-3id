@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "build:prod": "npm run build && rm -rf ../../public/v1 && mkdir -p ../../public/v1 && mv ./out/* ../../public/v1",
+    "build:prod": "npm run build && rm -rf ../../public/v2 && mkdir -p ../../public/v2 && mv ./out/* ../../public/v2",
     "dev:build": "NEXT_PUBLIC_CERAMIC_NETWORK=local npm run build:prod",
     "build:dev": "NEXT_PUBLIC_CERAMIC_NETWORK=dev-unstable npm run build:prod",
     "build:test": "NEXT_PUBLIC_CERAMIC_API=http://localhost:7777 npm run build:prod",
-    "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/v1 && mkdir -p ../../public-clay/v1 && mv ./out/* ../../public-clay/v1"
+    "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/v2 && mkdir -p ../../public-clay/v2 && mv ./out/* ../../public-clay/v2"
   },
   "dependencies": {
     "@3id/did-manager": "^0.1.0-alpha.0",

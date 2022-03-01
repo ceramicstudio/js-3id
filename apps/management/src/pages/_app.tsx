@@ -13,8 +13,8 @@ const GlobalStyle = createGlobalStyle`
     font-display: fallback;
     src: local('Segment Regular'),
       local('Segment-Regular'),
-      url('/v1/fonts/Segment-Regular.woff2') format('woff2'),
-      url('/v1/fonts/Segment-Regular.woff') format('woff');
+      url('/v2/fonts/Segment-Regular.woff2') format('woff2'),
+      url('/v2/fonts/Segment-Regular.woff') format('woff');
   }
   @font-face {
     font-family: Segment;       
@@ -23,8 +23,8 @@ const GlobalStyle = createGlobalStyle`
     font-display: fallback;
     src: local('Segment Medium'),
       local('Segment-Medium'),
-      url('/v1/fonts/Segment-Medium.woff2') format('woff2'),
-      url('/v1/fonts/Segment-Medium.woff') format('woff');
+      url('/v2/fonts/Segment-Medium.woff2') format('woff2'),
+      url('/v2/fonts/Segment-Medium.woff') format('woff');
   }
   @font-face {
     font-family: Segment;       
@@ -33,8 +33,8 @@ const GlobalStyle = createGlobalStyle`
     font-display: fallback;
     src: local('Segment SemiBold'),
       local('Segment-SemiBold'),
-      url('/v1/fonts/Segment-SemiBold.woff2') format('woff2'),
-      url('/v1/fonts/Segment-SemiBold.woff') format('woff');
+      url('/v2/fonts/Segment-SemiBold.woff2') format('woff2'),
+      url('/v2/fonts/Segment-SemiBold.woff') format('woff');
   }
 
   body {
