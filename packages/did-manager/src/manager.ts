@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
 import { assert } from '@3id/common'
 import { ThreeIdProvider } from '@3id/did-provider'
 import { type CryptoAccountLinks, aliases as idxAliases } from '@3id/model'
@@ -104,8 +105,8 @@ export class Manager {
     if (migrating && legacyDid) {
       // if data or link fails, continue, can create new link instead and add data later if necessary
       try {
-        const didProvider = this.threeIdProviders[did].getDidProvider() as DIDProvider
-        const migration = new Migrate3IDV0(didProvider as any, this.dataStore)
+        const didProvider = this.threeIdProviders[did].getDidProvider()
+        const migration = new Migrate3IDV0(didProvider, this.dataStore)
         const promChain = async (): Promise<void> => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const profile3Box = await migration.migrate3BoxProfile(did)

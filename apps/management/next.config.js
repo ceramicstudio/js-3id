@@ -4,5 +4,5 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
-  basePath: '/v1',
+  basePath: '/v2',
 })

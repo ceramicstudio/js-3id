@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
 import type { DIDMethodName, DIDProvider, DIDProviderMethods } from 'dids'
 import { RPCClient, RPCResponse, RPCRequest } from 'rpc-utils'
 import { createClient } from '@ceramicnetwork/rpc-window'

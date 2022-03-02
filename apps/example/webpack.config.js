@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 
-const LOCAL_URL = 'http://localhost:30001/v1'
+const LOCAL_URL = 'http://localhost:30001/v2'
 
 module.exports = {
   entry: './src/app.ts',

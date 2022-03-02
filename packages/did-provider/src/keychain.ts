@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 import type { AuthData, JWE as StoredJWE, WrappedJWE } from '@3id/model'
 import type { JWE } from 'did-jwt'
 import { DID } from 'dids'

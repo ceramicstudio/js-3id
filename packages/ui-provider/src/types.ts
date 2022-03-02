@@ -53,7 +53,7 @@ export type UIProviderMethods = {
   prompt_account: { params: AccountParams; result: AccountRes }
   prompt_authenticate: { params: AuthParams; result: AuthRes }
   inform_error: { params: RPCErrorObject; result: null }
-  inform_close: { params: {}; result: null }
+  inform_close: { params: Record<string, never>; result: null }
 }
 
 export type UIMethodName = keyof UIProviderMethods
@@ -62,4 +62,4 @@ export type UIResponse<K extends UIMethodName = UIMethodName> = RPCResponse<UIPr
 export type UIProviderInterface = RPCConnection<UIProviderMethods>
 export type UIProviderClient = RPCClient<UIProviderMethods>
 export type UIProviderOrClient = UIProviderInterface | UIProviderClient
-export type UIProviderHandlers = HandlerMethods<{}, UIProviderMethods>
+export type UIProviderHandlers = HandlerMethods<Record<string, never>, UIProviderMethods>

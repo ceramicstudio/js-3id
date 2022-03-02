@@ -7,7 +7,7 @@ jobs:
   test-and-build:
     working_directory: ~/3id-connect
     docker:
-      - image: mcr.microsoft.com/playwright@sha256:9ed647342dba733508fdf102ae13b669b3e3ad11f16045e42b1af50a29d4b871
+      - image: cimg/node:16.9.1
         environment:
           NODE_ENV: development
     steps:
@@ -21,10 +21,13 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get update && apt-get install -y --no-install-recommends python make gcc g++
-            npm i -g codecov lerna node-gyp
+            sudo chmod -R 777 /usr/local
+            npm i -g lerna
             yarn install --frozen-lockfile
-            npx playwright install-deps
+      
+      - run:
+          name: build libraries
+          command: yarn build
 
       - run:
           name: lint
@@ -84,12 +87,12 @@ jobs:
           at: .
       - aws-s3/sync:
           arguments: '--acl public-read --cache 604800'
-          from: public/v1
+          from: public/v2
           overwrite: true
-          to: 's3://3id-connect-dev-ceramic/v1'
+          to: 's3://3id-connect-dev-ceramic/v2'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /v1 /v1/*
+          command: aws cloudfront create-invalidation --distribution-id E1PKS2J8XTFTYN --paths /v2 /v2/*
 
   deploy-prod:
     working_directory: ~/3id-connect
@@ -100,12 +103,12 @@ jobs:
           at: .
       - aws-s3/sync:
           arguments: '--acl public-read --cache 604800'
-          from: public/v1
+          from: public/v2
           overwrite: true
-          to: 's3://3id-connect-prod-ceramic/v1'
+          to: 's3://3id-connect-prod-ceramic/v2'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /v1 /v1/*
+          command: aws cloudfront create-invalidation --distribution-id E1JN8AUJY96OQ9 --paths /v2 /v2/*
 
   deploy-clay:
     working_directory: ~/3id-connect
@@ -116,12 +119,12 @@ jobs:
           at: .
       - aws-s3/sync:
           arguments: '--acl public-read --cache 604800'
-          from: public-clay/v1
+          from: public-clay/v2
           overwrite: true
-          to: 's3://3id-connect-clay-ceramic/v1'
+          to: 's3://3id-connect-clay-ceramic/v2'
       - run:
           name: 'Invalidate CloudFront Cache'
-          command: aws cloudfront create-invalidation --distribution-id E11EBQ4LUR3PLA --paths /v1 /v1/*
+          command: aws cloudfront create-invalidation --distribution-id E11EBQ4LUR3PLA --paths /v2 /v2/*
 
 workflows:
   build-deploy:

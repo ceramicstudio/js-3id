@@ -31,7 +31,7 @@
     "build:js": "swc src -d ./dist --config-file ../../.swcrc",
     "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
     "build": "yarn build:clean && yarn build:types && yarn build:js",
-    "lint": "eslint src test --fix",
+    "lint": "eslint src --fix",
     "prepare": "yarn build",
     "prepublishOnly": "package-check"
   },

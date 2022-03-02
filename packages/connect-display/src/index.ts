@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createClient, createServer } from '@ceramicnetwork/rpc-window'
 import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Wrapped } from '@ceramicnetwork/transport-subject'
