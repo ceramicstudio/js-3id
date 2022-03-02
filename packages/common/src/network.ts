@@ -1,7 +1,7 @@
 import { Network } from './types.js'
 
 export const VALID_NETWORKS = ['dev-unstable', 'testnet-clay', 'mainnet', 'local']
-const version = 'v1'
+const version = 'v2'
 
 // PRIVATE NODES, could be moved to private package/const later
 export const DEV_API_URL = 'https://ceramic-private-dev.3boxlabs.com'
