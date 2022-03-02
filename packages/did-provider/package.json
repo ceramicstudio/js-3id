@@ -1,6 +1,6 @@
 {
   "name": "@3id/did-provider",
-  "version": "0.4.0-alpha.1",
+  "version": "0.4.1-alpha.0",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/js-3id#readme",
@@ -40,7 +40,7 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "@3id/model": "^0.4.0-alpha.0",
+    "@3id/model": "^0.4.1-alpha.0",
     "@ceramicnetwork/3id-did-resolver": "^2.0.0-alpha.0",
     "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
     "@ceramicnetwork/stream-tile": "^2.0.0-alpha.0",
