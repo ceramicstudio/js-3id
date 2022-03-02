@@ -1,6 +1,6 @@
 {
   "name": "3id-management-app",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,8 +13,8 @@
     "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/v2 && mkdir -p ../../public-clay/v2 && mv ./out/* ../../public-clay/v2"
   },
   "dependencies": {
-    "@3id/did-manager": "^0.1.0-alpha.0",
-    "@3id/did-provider": "^0.1.0-alpha.0",
+    "@3id/did-manager": "^0.4.0-alpha.0",
+    "@3id/did-provider": "^0.4.0-alpha.0",
     "@3id/window-auth-provider": "^0.4.0-alpha.0",
     "@ceramicnetwork/blockchain-utils-linking": "^2.0.0-alpha.0",
     "@ceramicnetwork/http-client": "^2.0.0-alpha.0",
