@@ -1,8 +1,7 @@
 /**
  * @jest-environment 3id
  */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment*/
-
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument*/
 import { aliases as idxAliases } from '@3id/model'
 import { EthereumMigrationMockAuthProvider, createAuthProvider } from '@3id/test-utils'
 import { AuthProviderClient, createAuthProviderServer } from '@3id/window-auth-provider'
@@ -111,7 +110,7 @@ describe('3ID Manager', () => {
     expect(manager.ceramic.did?.id).toEqual(did)
   })
 
-  test('setDid returns with did from store with existing CAIP10 V0 mappings ', async () => {
+  test('setDid returns with did from store with existing CAIP10 V0 mappings', async () => {
     const authProvider = await createAuthProvider(9)
     const accountId = await authProvider.accountId()
     const caipv0 = '0x5460D2749ba58ae551683FF14CE90AB34503fa12@eip155:1'

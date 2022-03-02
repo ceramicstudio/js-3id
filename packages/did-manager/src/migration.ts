@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call */
-
+/* eslint-disable  @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call */
 import { fromHex } from '@3id/common'
 import type { Account as AlsoKnownAsAccount, BasicProfile } from '@3id/model'
 import { getResolver } from '@ceramicnetwork/3id-did-resolver'

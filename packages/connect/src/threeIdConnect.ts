@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import {
   createConnectIframe,
   createDisplayConnectServerRPC,
@@ -88,7 +89,7 @@ export class ThreeIdConnect {
    *
    * @return    {DIDProvider}     A DID provider
    */
-  getDidProvider(): DIDProvider  {
+  getDidProvider(): DIDProvider {
     if (!this.authProvider) throw new Error('setAuthProvider required')
     if (!this.iframe.contentWindow) throw new Error('3id connect iframe service not found')
     return new DidProviderWindowProxy(this.iframe.contentWindow)
