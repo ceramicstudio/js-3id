@@ -13,6 +13,7 @@
     "build:clay": "NEXT_PUBLIC_CERAMIC_NETWORK=testnet-clay npm run build && rm -rf ../../public-clay/v2 && mkdir -p ../../public-clay/v2 && mv ./out/* ../../public-clay/v2"
   },
   "dependencies": {
+    "@3id/common": "^0.4.1-alpha.0",
     "@3id/did-manager": "^0.4.1-alpha.0",
     "@3id/did-provider": "^0.4.1-alpha.0",
     "@3id/window-auth-provider": "^0.4.1-alpha.0",
