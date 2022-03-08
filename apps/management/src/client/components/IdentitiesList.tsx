@@ -58,7 +58,7 @@ function IdentityItem({ data, did, manager }: ItemProps) {
   return (
     <Box border={{ color: 'neutral-5' }} margin={{ bottom: 'medium' }} round="small">
       <Box direction="row" gap="small" pad="medium">
-        {/* <Avatar size="65px" src={avatarSrc} /> */}
+        <Avatar size="65px" src={avatarSrc} />
         <Box flex>{renderName()}</Box>
         <Box>
           <Button
