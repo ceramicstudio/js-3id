@@ -1,6 +1,6 @@
 {
   "name": "@3id/connect",
-  "version": "0.4.1-alpha.0",
+  "version": "0.4.1-alpha.1",
   "description": "Account management for 3ID",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
@@ -28,7 +28,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=14.14"
   },
   "sideEffects": false,
   "scripts": {

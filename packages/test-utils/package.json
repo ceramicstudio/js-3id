@@ -1,6 +1,6 @@
 {
   "name": "@3id/test-utils",
-  "version": "0.4.0-alpha.0",
+  "version": "0.4.0-alpha.1",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
   "private": true,
@@ -24,7 +24,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=14.14"
   },
   "sideEffects": false,
   "scripts": {
