@@ -1,6 +1,6 @@
 {
   "name": "jest-environment-3id",
-  "version": "0.4.1-alpha.0",
+  "version": "0.4.1-rc.0",
   "description": "3ID environment for Jest",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
@@ -22,9 +22,9 @@
     "lint": "eslint index.js --fix"
   },
   "dependencies": {
-    "@3id/model-manager": "^0.4.1-alpha.0",
-    "@ceramicnetwork/3id-did-resolver": "^2.0.0-alpha.0",
-    "jest-environment-ceramic": "^0.15.0-alpha.0",
-    "key-did-resolver": "^2.0.0-alpha.1"
+    "@3id/model-manager": "^0.4.1-rc.0",
+    "@ceramicnetwork/3id-did-resolver": "^2.0.0-rc.0",
+    "jest-environment-ceramic": "^0.15.0-rc.0",
+    "key-did-resolver": "^2.0.0-rc.0"
   }
 }
