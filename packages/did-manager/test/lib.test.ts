@@ -19,7 +19,7 @@ declare global {
 }
 
 describe('3ID Manager', () => {
-  jest.setTimeout(60000)
+  jest.setTimeout(120000)
 
   const dataStore = new DIDDataStore({ ceramic, model: idxAliases })
 
