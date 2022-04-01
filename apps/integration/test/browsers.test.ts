@@ -10,12 +10,12 @@ beforeAll(async () => {
 })
 
 describe('connect flow', () => {
-  jest.setTimeout(120000)
+  jest.setTimeout(240000)
 
   beforeEach(async () => {
     await jestPlaywright.resetContext()
     await page.goto('http://localhost:30000/app.html')
-    page.setDefaultTimeout(120000)
+    page.setDefaultTimeout(240000)
     // page.on('console', (consoleObj) => console.log(consoleObj.text()))
   })
 

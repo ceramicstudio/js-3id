@@ -59,7 +59,7 @@ const didDocResult = (id: string) => ({
 const pauseSeconds = (sec: number) => new Promise((res) => setTimeout(res, sec * 1000))
 
 describe('ThreeIdProvider', () => {
-  jest.setTimeout(45000)
+  jest.setTimeout(240000)
 
   describe('.create', () => {
     it('Creates instance from seed', async () => {

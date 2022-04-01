@@ -75,7 +75,7 @@ const mockedPermissions = {
 } as unknown as Permissions
 
 describe('ThreeIDX', () => {
-  jest.setTimeout(250000)
+  jest.setTimeout(360000)
 
   const anchorService = ceramic.context.anchorService
   let cache: TileCache
