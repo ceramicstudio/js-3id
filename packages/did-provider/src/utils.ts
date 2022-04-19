@@ -49,10 +49,6 @@ export function hexToU8A(s: string): Uint8Array {
   return u8a.fromString(s, B16)
 }
 
-export function u8aToHex(b: Uint8Array): string {
-  return u8a.toString(b, B16)
-}
-
 export function encodeBase64(b: Uint8Array): string {
   return u8a.toString(b, B64)
 }

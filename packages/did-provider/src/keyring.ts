@@ -14,7 +14,7 @@ import { randomBytes } from '@stablelib/random'
 import { prepareCleartext, decodeCleartext } from 'dag-jose-utils'
 import type { StreamMetadata } from '@ceramicnetwork/common'
 
-import { encodeKey, hexToU8A, u8aToHex } from './utils.js'
+import { encodeKey, hexToU8A } from './utils.js'
 
 export const LATEST = 'latest'
 const GENESIS = 'genesis'
@@ -170,7 +170,7 @@ export class Keyring {
     // If we get an unknown version it's the latest
     // since we only store the version after a key rotation.
     const keyset = this.#keySets[version] || this.#keySets[LATEST]
-    return ES256KSigner(u8aToHex(keyset.secretKeys.signing))
+    return ES256KSigner(keyset.secretKeys.signing)
   }
 
   getKeyFragment(version: string = LATEST, encKey = false): string {
@@ -186,7 +186,7 @@ export class Keyring {
   getMgmtSigner(pubKey: string): Signer {
     const keyset = this.#keySets[this.#versionMap[pubKey]].secretKeys
     if (!keyset) throw new Error(`Key not found: ${pubKey}`)
-    return ES256KSigner(u8aToHex(keyset.management))
+    return ES256KSigner(keyset.management)
   }
 
   getEncryptionPublicKey(): Uint8Array {
