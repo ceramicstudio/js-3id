@@ -1,6 +1,6 @@
 {
   "name": "3id-integration-app",
-  "version": "0.4.1-rc.0",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "build:app": "webpack --config webpack.config.js --mode=development",
@@ -12,13 +12,13 @@
     "test:integration": "CERAMIC_API=http://localhost:7777 lerna run build:test && npm run test:run"
   },
   "dependencies": {
-    "@3id/connect": "^0.4.1-rc.1",
-    "@3id/test-utils": "^0.4.0-rc.1",
+    "@3id/connect": "^0.4.1",
+    "@3id/test-utils": "^0.4.0",
     "@babel/runtime": "7.17.9",
-    "@ceramicnetwork/3id-did-resolver": "^2.0.0-rc.0",
-    "@ceramicnetwork/http-client": "^2.0.0-rc.0",
-    "dids": "^3.0.0-rc.0",
-    "key-did-resolver": "^2.0.0-rc.0"
+    "@ceramicnetwork/3id-did-resolver": "^2.0.0",
+    "@ceramicnetwork/http-client": "^2.0.0",
+    "dids": "^3.0.0",
+    "key-did-resolver": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.8",

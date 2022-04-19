@@ -1,6 +1,6 @@
 {
   "name": "@3id/did-manager",
-  "version": "0.4.1-rc.1",
+  "version": "0.4.1",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/js-3id#readme",
@@ -40,29 +40,29 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "@3id/common": "^0.4.1-rc.1",
-    "@3id/did-provider": "^0.4.1-rc.1",
-    "@ceramicnetwork/blockchain-utils-linking": "^2.0.0-rc.0",
-    "@ceramicnetwork/http-client": "^2.0.0-rc.0",
-    "@ceramicnetwork/stream-caip10-link": "^2.0.0-rc.0",
+    "@3id/common": "^0.4.1",
+    "@3id/did-provider": "^0.4.1",
+    "@ceramicnetwork/blockchain-utils-linking": "^2.0.0",
+    "@ceramicnetwork/http-client": "^2.0.0",
+    "@ceramicnetwork/stream-caip10-link": "^2.0.0",
     "@ethersproject/hdnode": "^5.0.8",
-    "@glazed/did-datastore": "^0.3.0-rc.0",
+    "@glazed/did-datastore": "^0.3.0",
     "@stablelib/sha256": "^1.0.0",
     "caip": "^1.0.0",
     "cross-fetch": "^3.0.6",
-    "dids": "^3.0.0-rc.0",
+    "dids": "^3.0.0",
     "errors-utils": "^0.2.0",
     "rpc-utils": "^0.6.1",
     "store": "^2.0.12",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
-    "@3id/model": "^0.4.1-rc.1",
-    "@3id/test-utils": "^0.4.0-rc.1",
-    "@ceramicnetwork/common": "^2.0.0-rc.0",
+    "@3id/model": "^0.4.1",
+    "@3id/test-utils": "^0.4.0",
+    "@ceramicnetwork/common": "^2.0.0",
     "did-jwt": "^6.0.0",
     "ipfs-repo": "^14.0.1",
-    "jest-environment-3id": "^0.4.1-rc.1"
+    "jest-environment-3id": "^0.4.1"
   },
   "jest": {
     "extensionsToTreatAsEsm": [

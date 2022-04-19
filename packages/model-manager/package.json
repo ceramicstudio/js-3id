@@ -1,6 +1,6 @@
 {
   "name": "@3id/model-manager",
-  "version": "0.4.1-rc.1",
+  "version": "0.4.1",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/js-3id#readme",
@@ -37,14 +37,14 @@
     "prepublishOnly": "package-check"
   },
   "dependencies": {
-    "@datamodels/3id-keychain": "^0.2.0-rc.0",
-    "@datamodels/identity-accounts-crypto": "^0.2.0-rc.0",
-    "@datamodels/identity-accounts-web": "^0.2.0-rc.0",
-    "@datamodels/identity-profile-basic": "^0.2.0-rc.0",
-    "@glazed/devtools": "^0.2.0-rc.1"
+    "@datamodels/3id-keychain": "^0.2.0",
+    "@datamodels/identity-accounts-crypto": "^0.2.0",
+    "@datamodels/identity-accounts-web": "^0.2.0",
+    "@datamodels/identity-profile-basic": "^0.2.0",
+    "@glazed/devtools": "^0.2.0"
   },
   "devDependencies": {
-    "@ceramicnetwork/common": "^2.0.0-rc.0"
+    "@ceramicnetwork/common": "^2.0.0"
   },
   "jest": {
     "extensionsToTreatAsEsm": [
