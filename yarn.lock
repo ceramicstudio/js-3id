@@ -984,7 +984,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@ceramicnetwork/3id-did-resolver@^2.0.0-alpha.0", "@ceramicnetwork/3id-did-resolver@^2.0.0-rc.0", "@ceramicnetwork/3id-did-resolver@^2.0.0-rc.1":
+"@ceramicnetwork/3id-did-resolver@^2.0.0-rc.0", "@ceramicnetwork/3id-did-resolver@^2.0.0-rc.1":
   version "2.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/3id-did-resolver/-/3id-did-resolver-2.0.0-rc.1.tgz#1a42d4f2eaca16d343f84d0c5f07d3dc2c4da382"
   integrity sha512-Sk7Hfm5n2aA5wRFz8s1tpBj8mopbmKWu4lAdmoNuM8c0SshHGZ+KrJtYNyYMCAroLSel4ui1pqEYU8csFzJ3WA==
@@ -997,7 +997,7 @@
     multiformats "^9.5.8"
     uint8arrays "^3.0.0"
 
-"@ceramicnetwork/blockchain-utils-linking@^2.0.0-alpha.0", "@ceramicnetwork/blockchain-utils-linking@^2.0.0-rc.0":
+"@ceramicnetwork/blockchain-utils-linking@^2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/blockchain-utils-linking/-/blockchain-utils-linking-2.0.0-rc.0.tgz#ef2349d4c7d7f39e145c61c6eb380e3e27cf781e"
   integrity sha512-b7PpA5ADcqy0nh0ll3grdAbHc/IIqKbByPtWckgXQlSyFeZWcL4bi+Qvqrz51Flb5JrYQ/emDTzEv8WKcXfROg==
@@ -1117,7 +1117,7 @@
     rxjs "^7.5.2"
     uint8arrays "^3.0.0"
 
-"@ceramicnetwork/http-client@^2.0.0-alpha.0", "@ceramicnetwork/http-client@^2.0.0-rc.0", "@ceramicnetwork/http-client@^2.0.0-rc.1":
+"@ceramicnetwork/http-client@^2.0.0-rc.0", "@ceramicnetwork/http-client@^2.0.0-rc.1":
   version "2.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-2.0.0-rc.1.tgz#46afb7903c8f9622b0076ca55a4df49f38559f28"
   integrity sha512-Zm8Rv/X/YSpCbDKhDB3lMS2TbiJ7RClMtAhIIU+nY4V8LN3t8n1Jy3SYHpD6kboOD82bygsGv4aCh7fR6w5c2w==
@@ -4229,16 +4229,7 @@
   dependencies:
     "@types/react" "^17"
 
-"@types/react@*":
-  version "18.0.5"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.5.tgz#1a4d4b705ae6af5aed369dec22800b20f89f5301"
-  integrity sha512-UPxNGInDCIKlfqBrm8LDXYWNfLHwIdisWcsH5GpMyGjhEDLFgTtlRBaoWuCua9HcyuE0rMkmAeZ3FXV1pYLIYQ==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^17", "@types/react@^17.0.38":
+"@types/react@*", "@types/react@^17", "@types/react@^17.0.38", "@types/react@^17.0.44":
   version "17.0.44"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.44.tgz#c3714bd34dd551ab20b8015d9d0dbec812a51ec7"
   integrity sha512-Ye0nlw09GeMp2Suh8qoOv0odfgCoowfM/9MG6WeRD60Gq9wS90bdkdRtYbRkNhXOpG4H+YXGvj4wOWhAC0LJ1g==
@@ -7326,7 +7317,7 @@ did-resolver@^3.1.5:
   resolved "https://registry.yarnpkg.com/did-resolver/-/did-resolver-3.2.0.tgz#b89edd0dd70ad6f1c65ca1285472e021c2239707"
   integrity sha512-8YiTRitfGt9hJYDIzjc254gXgJptO4zq6Q2BMZMNqkbCf9EFkV6BD4QIh5BUF4YjBglBgJY+duQRzO3UZAlZsw==
 
-dids@^3.0.0-alpha.0, dids@^3.0.0-alpha.12, dids@^3.0.0-rc.0:
+dids@^3.0.0-alpha.12, dids@^3.0.0-rc.0:
   version "3.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/dids/-/dids-3.0.0-rc.0.tgz#459029773b5852714eba53d95d81628877cb2a9f"
   integrity sha512-YeTWXxqaI6qPAFLqts9gSZ3wB4UCAqBNEx4z9FqXoy7DRAidupuVgX5wHmBigIWqeQ//i5lFIHK4CiJGTdvxmw==
@@ -11632,7 +11623,7 @@ key-did-provider-ed25519@^2.0.0-rc.0:
     rpc-utils "^0.6.2"
     uint8arrays "^3.0.0"
 
-key-did-resolver@^2.0.0-alpha.0, key-did-resolver@^2.0.0-rc.0:
+key-did-resolver@^2.0.0-rc.0:
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/key-did-resolver/-/key-did-resolver-2.0.0-rc.0.tgz#64b650cf24d0aaca3447047b1ff89b8a03a832b7"
   integrity sha512-cLDjE/+B9Op7dZYIuFQobXoIp2qxn/kHVP0b/c541nfoAC0/UukvbHuHf8CTgOroIliVpeGh/632G0/z0jdXLA==

@@ -6,6 +6,9 @@
     "apps/*",
     "packages/*"
   ],
+  "resolutions": {
+    "@types/react": "^17.0.44"
+  },
   "scripts": {
     "docs": "typedoc --tsconfig tsconfig.docs.json",
     "test": "yarn turbo run test",
