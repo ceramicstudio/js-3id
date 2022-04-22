@@ -18,7 +18,8 @@ const headerData = (req: RequestState) => {
   }
 
   let headerStr
-  if (req.type === 'prompt_authenticate') {
+  // @ts-ignore
+  if (req.type === 'prompt_authenticate' && req.params?.did) {
     // @ts-ignore
     headerStr = didShorten(req.params.did)
   } else if (req.type === 'prompt_migration') {
