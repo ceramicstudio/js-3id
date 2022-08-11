@@ -26,7 +26,7 @@ import type {
 import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Observable } from 'rxjs'
 
-const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
+const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : false // default false
 
 function createDIDProviderServer<NS extends string>(
   authHandler: (params: AuthParams, origin: string) => Promise<GeneralJWS>,

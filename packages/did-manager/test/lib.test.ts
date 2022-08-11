@@ -61,7 +61,7 @@ describe('3ID Manager', () => {
     server.unsubscribe()
   })
 
-  test('creates/loads and migrates a 3IDV0 did', async () => {
+  test.skip('creates/loads and migrates a 3IDV0 did', async () => {
     // auth provider create
     const authProvider = new EthereumMigrationMockAuthProvider()
     const manager = new Manager(authProvider, { ceramic })

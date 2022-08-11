@@ -20,12 +20,12 @@ import type { AuthConfig, SeedConfig } from './types.js'
 import { waitMS } from './utils.js'
 
 let CERAMIC_API = 'https://ceramic-clay.3boxlabs.com'
-let DID_MIGRATION = true
+let DID_MIGRATION = false
 
 typeof process !== 'undefined' &&
   (CERAMIC_API = process.env.CERAMIC_API || 'https://ceramic-clay.3boxlabs.com')
 typeof process !== 'undefined' &&
-  (DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true)
+  (DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : false)
 
 export class Manager {
   authProvider: AuthProvider
