@@ -26,7 +26,7 @@ import type {
 import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Observable } from 'rxjs'
 
-const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : true // default true
+const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : false // default false
 
 function createDIDProviderServer<NS extends string>(
   authHandler: (params: AuthParams, origin: string) => Promise<GeneralJWS>,
@@ -96,7 +96,7 @@ export class ThreeIDService {
     const newAccount = !existNetwork && !existLocally
 
     // Await during user prompt, only lookup legacy if no link in network already
-    const legacyDidPromise = existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
+    const legacyDidPromise = !DID_MIGRATION || existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
 
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {

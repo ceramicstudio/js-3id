@@ -1,6 +1,6 @@
 {
   "name": "@3id/connect-service",
-  "version": "0.4.1",
+  "version": "0.4.2-beta.1",
   "author": "3Box Labs",
   "license": "(Apache-2.0 OR MIT)",
   "homepage": "https://github.com/ceramicstudio/js-3id#readme",
@@ -42,7 +42,7 @@
   "dependencies": {
     "@3id/common": "^0.4.1",
     "@3id/connect-display": "^0.4.1",
-    "@3id/did-manager": "^0.4.1",
+    "@3id/did-manager": "^0.4.2-beta.0",
     "@3id/did-provider": "^0.4.1",
     "@3id/ui-provider": "^0.4.1",
     "@3id/window-auth-provider": "^0.4.1",
