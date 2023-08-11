@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires */
 import { assert, DIDRPCNameSpace } from '@3id/common'
 import { DisplayManageClientRPC } from '@3id/connect-display'
-import {
-  Manager,
-  legacyDIDLinkExist,
-  willMigrationFail,
-  Migrate3IDV0,
-  waitMS,
-} from '@3id/did-manager'
+import { Manager, Migrate3IDV0 } from '@3id/did-manager'
 import { ThreeIdProvider } from '@3id/did-provider'
 import { UIProvider, ThreeIDManagerUI } from '@3id/ui-provider'
 import { AuthProviderClient } from '@3id/window-auth-provider'
@@ -27,6 +21,10 @@ import type { ServerPayload } from '@ceramicnetwork/rpc-window'
 import type { Observable } from 'rxjs'
 
 const DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : false // default false
+
+const waitMS = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 function createDIDProviderServer<NS extends string>(
   authHandler: (params: AuthParams, origin: string) => Promise<GeneralJWS>,
@@ -95,9 +93,6 @@ export class ThreeIDService {
 
     const newAccount = !existNetwork && !existLocally
 
-    // Await during user prompt, only lookup legacy if no link in network already
-    const legacyDidPromise = !DID_MIGRATION || existNetwork ? Promise.resolve(null) : legacyDIDLinkExist(accountId)
-
     // Before to give context, and no 3id-did-provider permission exist
     if (!existLocally && !newAccount) {
       await this.userPermissionRequest(authParams, origin)
@@ -105,32 +100,10 @@ export class ThreeIDService {
 
     //TODO if not exist locally and not in network, then skip first modal aboev, and merge below with create
 
-    let legacyDid
-
-    try {
-      legacyDid = await legacyDidPromise
-    } catch (e) {
-      legacyDid = null
-    }
-
+    const legacyDid = null
     let muportDid
-
-    if (legacyDid) {
-      await this.userPermissionRequest(authParams, origin, legacyDid)
-    }
-
-    // For legacy muport dids, do not migrate, create new did, but still try to migrate profile data
-    if (legacyDid && legacyDid.includes('muport')) {
-      muportDid = legacyDid
-      legacyDid = null
-    }
-
     // For known failure cases, skip migrations prompts
     let willFail
-    if (legacyDid) {
-      willFail = await willMigrationFail(accountId, legacyDid)
-      if (willFail) legacyDid = null
-    }
 
     // If new account (and not migration), ask user to link or create
     if (!(legacyDid || muportDid || willFail) && newAccount) {
