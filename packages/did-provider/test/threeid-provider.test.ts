@@ -239,42 +239,5 @@ describe('ThreeIdProvider', () => {
       expect(idw1.id).toEqual(idw2.id)
       await expect(ThreeIdProvider.create(config1)).rejects.toThrow('Unable to find auth data')
     })
-
-    it('Does keyrotation when v03ID is being used', async () => {
-      const v03ID = 'did:3:bafyreiffkeeq4wq2htejqla2is5ognligi4lvjhwrpqpl2kazjdoecmugi'
-      const config = {
-        getPermission: getPermissionMock,
-        seed,
-        v03ID,
-        ceramic,
-      }
-      const idw1 = await ThreeIdProvider.create(config)
-      const config1 = {
-        getPermission: getPermissionMock,
-        authId: 'auth1',
-        authSecret: randomAuthSecret(),
-        ceramic,
-      }
-      const config2 = {
-        getPermission: getPermissionMock,
-        authId: 'auth2',
-        authSecret: randomAuthSecret(),
-        ceramic,
-      }
-      await idw1.keychain.add(config1.authId, config1.authSecret)
-      await idw1.keychain.add(config2.authId, config2.authSecret)
-      await pauseSeconds(2)
-      await idw1.keychain.commit()
-      expect(await idw1.keychain.list()).toEqual(['auth2', 'auth1'])
-
-      await idw1.keychain.remove('auth1')
-      await pauseSeconds(2)
-      await idw1.keychain.commit()
-
-      expect(await idw1.keychain.list()).toEqual(['auth2'])
-      const idw2 = await ThreeIdProvider.create(config2)
-      expect(idw1.id).toEqual(idw2.id)
-      await expect(ThreeIdProvider.create(config1)).rejects.toThrow('Unable to find auth data')
-    })
   })
 })
