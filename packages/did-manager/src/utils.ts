@@ -40,7 +40,3 @@ export const jwtDecode = <T>(jwt: string): T => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return JSON.parse(toString(uint8))
 }
-
-export const waitMS = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}

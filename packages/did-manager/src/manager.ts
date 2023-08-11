@@ -14,10 +14,9 @@ import { DID, type DIDProvider } from 'dids'
 import { getResolver as getKeyResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays'
 
-import { Migrate3IDV0, legacyDIDLinkExist, get3BoxLinkProof } from './migration.js'
+import { Migrate3IDV0, get3BoxLinkProof } from './migration.js'
 import { DIDStore, LinkCache } from './stores.js'
 import type { AuthConfig, SeedConfig } from './types.js'
-import { waitMS } from './utils.js'
 
 let CERAMIC_API = 'https://ceramic-clay.3boxlabs.com'
 let DID_MIGRATION = false
@@ -83,10 +82,7 @@ export class Manager {
     // Look up if migration neccessary, if so auth create migration
     let legacyDid, seed, legacyConfig, migrating, authSecretAdd
     if (migrate) {
-      legacyDid =
-        opts && 'legacyDid' in opts
-          ? opts.legacyDid
-          : await Promise.race([legacyDIDLinkExist(accountId), waitMS(500)])
+      legacyDid = opts?.legacyDid
       if (legacyDid && !didNetwork) {
         seed = await Migrate3IDV0.legacySeedCreate(this.authProvider)
         authSecretAdd = authSecret
