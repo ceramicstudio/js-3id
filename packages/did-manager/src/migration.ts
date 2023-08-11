@@ -12,7 +12,6 @@ import { DagJWS, DID, DIDProvider } from 'dids'
 import type { ExcludesBoolean, LinksArray } from './types.js'
 import { fetchJson, jwtDecode } from './utils.js'
 
-const LEGACY_ADDRESS_SERVER = 'https://beta.3box.io/address-server'
 const THREEBOX_PROFILE_API = 'https://ipfs.3box.io'
 let VERIFICATION_SERVICE = 'https://verifications-clay.3boxlabs.com'
 typeof process !== 'undefined' &&
@@ -133,31 +132,6 @@ const errorNotFound = (err: any): boolean => {
     return err?.statusCode === 404
   }
   return false
-}
-
-export const legacyDIDLinkExist = async (accountId: string): Promise<string | null> => {
-  const account = new AccountId(accountId)
-  if (account.chainId.namespace !== 'eip155') {
-    // Only attempt migration for Ethereum accounts
-    return null
-  }
-  const address = account.address.toLowerCase()
-  try {
-    const res = await fetchJson<{ data: { did: string } }>(
-      `${LEGACY_ADDRESS_SERVER}/odbAddress/${address}`
-    )
-    const { did } = res.data
-    return did
-  } catch (err) {
-    if (errorNotFound(err)) {
-      console.log(
-        'Note: 404 Error is expected behavior, and indicates the user does not have a legacy 3Box profile.'
-      )
-      return null
-    }
-    console.error(`Error while resolving V03ID`)
-    return null
-  }
 }
 
 export const get3BoxProfile = async (did: string): Promise<any> => {
