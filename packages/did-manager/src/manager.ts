@@ -9,6 +9,7 @@ import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link'
 import { DIDDataStore } from '@glazed/did-datastore'
 import { hash } from '@stablelib/sha256'
+import { TileLoader, getDeterministicQuery, keyToQuery } from '@glazed/tile-loader'
 import { Resolver } from 'did-resolver'
 import { DID, type DIDProvider } from 'dids'
 import { getResolver as getKeyResolver } from 'key-did-resolver'
@@ -26,6 +27,9 @@ typeof process !== 'undefined' &&
 typeof process !== 'undefined' &&
   (DID_MIGRATION = process.env.MIGRATION ? process.env.MIGRATION === 'true' : false)
 
+const definitionIDs = Object.values(idxAliases.definitions)
+const schemaQueries = Object.values(idxAliases.schemas).map((val) => keyToQuery(val.split('//')[1]))
+
 export class Manager {
   authProvider: AuthProvider
   store: DIDStore
@@ -33,6 +37,7 @@ export class Manager {
   dataStore: DIDDataStore
   ceramic: CeramicApi
   threeIdProviders: Record<string, ThreeIdProvider>
+  loader: TileLoader
 
   // needs work on wording for "account", did, caip10 etc
   constructor(
@@ -42,14 +47,32 @@ export class Manager {
     this.authProvider = authprovider
     this.store = opts.store || new DIDStore()
     this.cache = opts.cache || new LinkCache()
+    this.ceramic =
+      opts.ceramic ||
+      opts.dataStore?.ceramic ||
+      new CeramicClient(CERAMIC_API, { syncInterval: 30 * 60 * 1000 })
+    const loader = new TileLoader({ ceramic: this.ceramic, cache: true })
     this.dataStore =
-      opts.dataStore ||
-      new DIDDataStore({
-        ceramic: opts.ceramic || new CeramicClient(CERAMIC_API),
-        model: idxAliases,
-      })
-    this.ceramic = opts.ceramic || this.dataStore.ceramic
+      opts.dataStore || new DIDDataStore({ ceramic: this.ceramic, model: idxAliases, loader })
+    this.loader = this.dataStore.loader
     this.threeIdProviders = {}
+  }
+
+  async preload(accountId: string): Promise<void> {
+    definitionIDs.forEach((val) => void this.dataStore.getDefinition(val))
+    const preloadFamilies = ['IDX', 'authLink', ...definitionIDs]
+    const did = await this.linkInNetwork(accountId)
+
+    if (did != null) {
+      const queries = await Promise.all(
+        preloadFamilies.map(async (family) => {
+          return await getDeterministicQuery({ controllers: [did], family })
+        })
+      )
+      await this.loader.loadMany(queries.concat(schemaQueries))
+    } else {
+      await this.loader.loadMany(schemaQueries)
+    }
   }
 
   // Create DID
@@ -132,6 +155,7 @@ export class Manager {
     const threeIdConfig = Object.assign(config, {
       getPermission,
       ceramic: this.ceramic,
+      loader: this.loader,
     })
     const threeId = await ThreeIdProvider.create(threeIdConfig)
     this.threeIdProviders[threeId.id] = threeId

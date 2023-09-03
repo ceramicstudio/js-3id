@@ -83,6 +83,7 @@ export class ThreeIDService {
     assert.isDefined(this.authProviderRelay, 'authProviderRelay must be defined')
 
     const manage = new Manager(this.authProviderRelay, { dataStore: this.dataStore })
+    void manage.preload(accountId)
 
     //TODO if exist in state, return before even looking up links
     const existLocally = await manage.cache.getLinkedDid(accountId)
