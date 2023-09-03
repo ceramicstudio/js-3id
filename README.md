@@ -6,7 +6,7 @@
 
 ![3ID Connect Image](./assets/3id-connect_readme-image.png)
 
-3ID Connect provides 3ID user account management in a iframe, an easy way to access a DID provider, specifically [ThreeIdProvider](https://github.com/ceramicstudio/js-3id-did-provider) in the browser.
+3ID Connect provides 3ID user account management in an iframe, an easy way to access a DID provider, specifically [ThreeIdProvider](https://github.com/ceramicstudio/js-3id-did-provider) in the browser.
 It allows users to authenticate, manage, link and permission their 3ID keys to applications.
 
 The library [js-3id-did-provider](https://github.com/ceramicstudio/js-3id-did-provider) handles most operations and the parent window (application) communicates with the iframe service over an RPC layer.
@@ -33,7 +33,7 @@ await threeIdConnect.connect(authProvider)
 
 See the [example app](./apps/example) for more details
 
-## Developement
+## Development
 
 ### Prerequisites
 
