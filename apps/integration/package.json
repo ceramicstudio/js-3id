@@ -34,7 +34,7 @@
     "eslint-plugin-jest-playwright": "^0.7.1",
     "expect-playwright": "^0.8.0",
     "jest-playwright-preset": "^1.4.5",
-    "node-sass": "^6.0.0",
+    "node-sass": "^7.0.0",
     "playwright": "^1.18.1",
     "sass-loader": "^11.1.1",
     "style-loader": "^2.0.0",
